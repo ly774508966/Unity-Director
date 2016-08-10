@@ -33,7 +33,7 @@ namespace TangzxInternal
         {
             _eventSheetEditor = new AreaEventEditor(this);
             _eventSheetEditor.hRangeMin = 0;
-            _splitterState = new SplitterState(new float[] { 300, 900, 300 }, new int[] { 300, 300, 300 }, null);
+            _splitterState = new SplitterState(new float[] { 200, 900, 300 }, new int[] { 300, 300, 300 }, null);
 
             InitTree();
         }
@@ -45,8 +45,8 @@ namespace TangzxInternal
             treeViewState = new TreeViewState();
             treeView = new TreeView(this, treeViewState);
 
-            EventTreeViewDataSource dataSource = new EventTreeViewDataSource(treeView);
-            EventTreeViewGUI gui = new EventTreeViewGUI(treeView);
+            EventTreeViewDataSource dataSource = new EventTreeViewDataSource(treeView, this);
+            EventTreeViewGUI gui = new EventTreeViewGUI(treeView, this);
 
             treeView.Init(new Rect(0, 0, 400, 500), dataSource, gui, null);
             treeView.ReloadData();
@@ -96,7 +96,7 @@ namespace TangzxInternal
                     }
                     GUILayout.EndVertical();
                     //右
-                    GUILayout.Button("R");
+                    OnRightGUI();
                     SplitterGUILayout.EndHorizontalSplit();
                 }
                 GUILayout.EndHorizontal();
@@ -192,7 +192,8 @@ namespace TangzxInternal
         void HandlerCreate(object typeData)
         {
             Type eventType = (Type)typeData;
-            Debug.Log(eventType);
+            Playable p = data.Add(eventType);
+            _eventSheetEditor.AddEvent(p);
         }
 
         void OnMainContentGUI()
@@ -230,6 +231,17 @@ namespace TangzxInternal
                 treeRect = rect;
 
             treeView.OnGUI(treeRect, controlID);
+        }
+
+        void OnRightGUI()
+        {
+            //if (e)
+            //{
+            //    GUILayout.BeginVertical();
+            //    e.DrawHeader();
+            //    e.OnInspectorGUI();
+            //    GUILayout.EndVertical();
+            //}
         }
     }
 }

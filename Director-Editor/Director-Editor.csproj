@@ -35,9 +35,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEditor">
       <HintPath>..\..\SSS_Client_Dev\Library\UnityAssemblies\UnityEditor.dll</HintPath>
@@ -48,7 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\AreaEventEditor.cs" />
+    <Compile Include="Classes\CustomPlayableDrawer.cs" />
+    <Compile Include="Classes\DirectorDataExtension.cs" />
     <Compile Include="Classes\DirectorWindow.cs" />
+    <Compile Include="Classes\EventDrawer.cs" />
     <Compile Include="Classes\EventTreeViewDataSource.cs" />
     <Compile Include="Classes\EventTreeViewGUI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

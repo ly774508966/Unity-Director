@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEditor;
+﻿using UnityEditor;
 
 namespace TangzxInternal
 {
     class EventTreeViewGUI : TreeViewGUI
     {
-        public EventTreeViewGUI(TreeView treeView) : base(treeView)
-        {
+        private DirectorWindow window;
 
+        public EventTreeViewGUI(TreeView treeView, DirectorWindow window) : base(treeView)
+        {
+            this.window = window;
         }
 
         public override bool BeginRename(TreeViewItem item, float delay)

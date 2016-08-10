@@ -1,21 +1,31 @@
-﻿using System;
+﻿using Tangzx.Director;
 using UnityEditor;
 
 namespace TangzxInternal
 {
     class EventTreeViewDataSource : TreeViewDataSource
     {
-        public EventTreeViewDataSource(TreeView tree) : base(tree)
-        {
 
+        private DirectorWindow window;
+
+        public EventTreeViewDataSource(TreeView tree, DirectorWindow window) : base(tree)
+        {
+            this.window = window;
         }
 
         public override void FetchData()
         {
-            m_RootItem = new TreeViewItem("Assets".GetHashCode(), 0, null, "test");
-            m_RootItem.AddChild(new TreeViewItem("AAA".GetHashCode(), 0, m_RootItem, "AA"));
-            m_RootItem.AddChild(new TreeViewItem("AAA".GetHashCode(), 0, m_RootItem, "AA"));
-            m_RootItem.AddChild(new TreeViewItem("AAA".GetHashCode(), 0, m_RootItem, "AA"));
+            m_RootItem = new TreeViewItem("Assets".GetHashCode(), 0, null, "Root");
+            DirectorData data = window.data;
+            if (data)
+            {
+                for (int i = 0; i < data.playableList.Count; i++)
+                {
+                    Playable p = data.playableList[i];
+                    TreeViewItem item = new TreeViewItem(p.GetInstanceID(), 1, m_RootItem, p.name);
+                    m_RootItem.AddChild(item);
+                }
+            }
         }
     }
 }
