@@ -41,9 +41,9 @@ namespace TangzxInternal
                 int draggingIndex = -1;
 
                 //先画完所有不拖动的事件
-                for (int i = 0; i < data.playableList.Count; i++)
+                for (int i = 0; i < data.eventList.Count; i++)
                 {
-                    TDEvent p = data.playableList[i];
+                    TDEvent p = data.eventList[i];
                     rowRect.y = i * 30;
                     rowRect.height = 30;
                     if (p == currentDraggingEvent)

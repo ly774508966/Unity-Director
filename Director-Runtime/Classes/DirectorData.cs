@@ -9,7 +9,7 @@ namespace Tangzx.Director
     /// </summary>
     public class DirectorData : ScriptableObject
     {
-        public List<TDEvent> playableList = new List<TDEvent>();
+        public List<TDEvent> eventList = new List<TDEvent>();
         /// <summary>
         /// 正在播放的
         /// </summary>
@@ -33,9 +33,9 @@ namespace Tangzx.Director
             if (dt > 0)
             {
                 //进入 playing list
-                for (int i = 0; i < playableList.Count; i++)
+                for (int i = 0; i < eventList.Count; i++)
                 {
-                    TDEvent p = playableList[i];
+                    TDEvent p = eventList[i];
                     if (p.time > oldTime && p.time <= newTime)
                     {
                         p.Fire();
@@ -73,7 +73,7 @@ namespace Tangzx.Director
 
         public void Add(TDEvent playable)
         {
-            playableList.Add(playable);
+            eventList.Add(playable);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Tangzx.Director
         /// </summary>
         public void Sort()
         {
-            playableList.Sort();
+            eventList.Sort();
         }
     }
 }

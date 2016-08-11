@@ -25,9 +25,9 @@ namespace TangzxInternal
             DirectorData data = window.data;
             if (data)
             {
-                for (int i = 0; i < data.playableList.Count; i++)
+                for (int i = 0; i < data.eventList.Count; i++)
                 {
-                    TDEvent p = data.playableList[i];
+                    TDEvent p = data.eventList[i];
 
                     EventTreeItem item = new EventTreeItem(p, 0, m_RootItem);
                     m_RootItem.AddChild(item);

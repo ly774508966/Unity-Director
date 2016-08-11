@@ -20,7 +20,7 @@ namespace TangzxInternal
 
         public static void Remove(this DirectorData data, TDEvent evt)
         {
-            data.playableList.Remove(evt);
+            data.eventList.Remove(evt);
             Object.DestroyImmediate(evt, true);
         }
     }

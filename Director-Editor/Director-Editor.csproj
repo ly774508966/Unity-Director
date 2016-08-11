@@ -57,6 +57,7 @@
     <Compile Include="Classes\EventTreeItem.cs" />
     <Compile Include="Classes\EventTreeViewDataSource.cs" />
     <Compile Include="Classes\EventTreeViewGUI.cs" />
+    <Compile Include="Classes\SequencerEditorWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
