@@ -37,6 +37,11 @@ namespace TangzxInternal
         private EventInspector _eventInspector;
         private SplitterState _splitterState;
 
+        //播放头位置
+        private float _playHeadTime;
+        //播放头
+        private PlayHeadDrawer _playHeadDrawer;
+
         public DirectorWindow()
         {
             _state = new DirectorWindowState(this);
@@ -53,6 +58,8 @@ namespace TangzxInternal
 
             _eventInspector = new EventInspector();
             _splitterState = new SplitterState(new float[] { 200, 900, 300 }, new int[] { 200, 300, 300 }, null);
+
+            _playHeadDrawer = new PlayHeadDrawer(this, _eventSheetEditor);
         }
 
         public DirectorData data
@@ -62,6 +69,16 @@ namespace TangzxInternal
         }
 
         public DirectorWindowState state { get { return _state; } }
+
+        public float playHeadTime
+        {
+            get { return _playHeadTime; }
+            set
+            {
+                if (value < 0) value = 0;
+                _playHeadTime = value;
+            }
+        }
         
         void OnInspectorUpdate()
         {
@@ -225,24 +242,28 @@ namespace TangzxInternal
             if (rect.width > 1)
                 _eventSheetRect = rect;
 
+            //画标尺
             OnTimeRulerGUI(rect);
 
             _eventSheetEditor.BeginViewGUI();
             {
-                rect = _eventSheetRect;
+                Rect areaRect = _eventSheetRect;
                 //排除垂直滚动条的宽
-                rect.width -= 15;
+                areaRect.width -= 15;
 
                 //画主体
-                _eventSheetEditor.OnGUI(rect, Vector2.zero);
+                _eventSheetEditor.OnGUI(areaRect, Vector2.zero);
 
                 //画最右边的垂直滚动条
                 {
-                    Rect scrollbarRect = new Rect(rect.xMax, rect.yMin, 15, rect.height - 15);
+                    Rect scrollbarRect = new Rect(areaRect.xMax, areaRect.yMin, 15, areaRect.height - 15);
                     GUI.VerticalScrollbar(scrollbarRect, 0, 1, 0, 0);
                 }
             }
             _eventSheetEditor.EndViewGUI();
+
+            //播放头
+            OnPlayHeadGUI(rect);
         }
 
         /// <summary>
@@ -257,6 +278,12 @@ namespace TangzxInternal
             timeRulerRect.height = 20;
 
             _eventSheetEditor.TimeRuler(timeRulerRect, _eventSheetEditor.frameRate);
+        }
+
+        void OnPlayHeadGUI(Rect rect)
+        {
+            rect.y -= 20;
+            _playHeadDrawer.OnGUI(rect, playHeadTime);
         }
 
         void OnHierarchyGUI()
@@ -274,6 +301,52 @@ namespace TangzxInternal
             {
                 _eventInspector.OnGUI(evt);
             }
+        }
+    }
+
+    class PlayHeadDrawer : Draggable
+    {
+        private DirectorWindow directorWindow;
+        private EventSheetEditor sheetEditor;
+        private GUIStyle stylePlayhead;
+
+        private float timeWhenDragStart;
+
+        public PlayHeadDrawer(DirectorWindow directorWindow, EventSheetEditor sheetEditor)
+        {
+            this.directorWindow = directorWindow;
+            this.sheetEditor = sheetEditor;
+        }
+
+        public void OnGUI(Rect rect, float time)
+        {
+            if (stylePlayhead == null)
+            {
+                stylePlayhead = "MeTransPlayhead";
+            }
+
+            Rect drawArea = rect;
+            drawArea.xMin += sheetEditor.TimeToPixel2(time) - stylePlayhead.fixedWidth * 0.5f;
+            drawArea.width = stylePlayhead.fixedWidth;
+            drawArea.height = stylePlayhead.fixedHeight;
+
+            //画竖线
+            sheetEditor.DrawVerticalLine(time, Color.blue);
+            //播放头标记
+            if (Event.current.type == EventType.Repaint)
+                stylePlayhead.Draw(drawArea, GUIContent.none, 0);
+
+            HandleDrag(drawArea, 0,
+                () =>
+                {
+                    timeWhenDragStart = directorWindow.playHeadTime;
+                },
+                () => { },
+                (float offset) =>
+                {
+                    directorWindow.playHeadTime = timeWhenDragStart + sheetEditor.PixelToTime2(offset);
+                },
+                () => { });
         }
     }
 }
