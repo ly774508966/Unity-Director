@@ -58,7 +58,7 @@ namespace TangzxInternal
         {
             if (isSelected)
             {
-                eventSheetEditor.DrawPlayhead(target.time, Color.red);
+                eventSheetEditor.DrawVerticalLine(target.time, Color.red);
             }
             HandleDrag(drawRect, 1,
                 () => {
@@ -68,7 +68,7 @@ namespace TangzxInternal
                 },
                 () => { eventSheetEditor.OnDragEnd(this); },
                 (float offset) => {
-                    float dt = eventSheetEditor.PixelToTime2(offset, totalRect);
+                    float dt = eventSheetEditor.PixelToTime2(offset);
                     UpdateTime(Mathf.Max(0, timeDragStart + dt));
                 },
                 () => {

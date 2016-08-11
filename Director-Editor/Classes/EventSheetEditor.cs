@@ -15,6 +15,8 @@ namespace TangzxInternal
         private TDEvent currentDraggingEvent;
         //当前选中的
         private EventDrawer currentSelectedDrawer;
+        //行与行的间隔
+        private int rowGap = 1;
 
         public EventSheetEditor(DirectorWindow owner) : base(false)
         {
@@ -27,9 +29,11 @@ namespace TangzxInternal
 
             //除去下面滚动条的高
             position.yMax -= 15;
-            OnGridGUI(position);
 
             GUI.BeginClip(position);
+            position.x = 0;
+            position.y = 0;
+            OnGridGUI(position);
             OnGUI(position);
             GUI.EndClip();
         }
@@ -71,17 +75,21 @@ namespace TangzxInternal
 
         void OnGridGUI(Rect rect)
         {
-            if (Event.current.type == EventType.Repaint)
-            {
-                TimeRuler(rect, frameRate, false, true, 0.2f);
-            }
+            TimeRuler(rect, frameRate, false, true, 0.2f);
         }
 
         void OnPlayableGUI(TDEvent p, Rect rect)
         {
+            rect.xMin += rowGap;
+            rect.width -= rowGap * 2;
+            rect.yMin += rowGap;
+            rect.height -= rowGap * 2;
+            //BG
+            GUI.Box(rect, GUIContent.none);
+
             Rect evtDrawRect = new Rect(rect);
-            evtDrawRect.xMin = TimeToPixel2(p.time, rect);
-            evtDrawRect.xMax = TimeToPixel2(p.time + p.duration, rect);
+            evtDrawRect.xMin = TimeToPixel2(p.time);
+            evtDrawRect.xMax = TimeToPixel2(p.time + p.duration);
 
             EventDrawer drawer = GetDrawer(p);
             drawer.Reset();
@@ -103,11 +111,16 @@ namespace TangzxInternal
             return drawer;
         }
 
-        public void DrawPlayhead(float time, Color color)
+        /// <summary>
+        /// 通过时间来垂直画线
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="color"></param>
+        public void DrawVerticalLine(float time, Color color)
         {
             Rect r = rect;
             color.a = 0.4f;
-            DrawVerticalLine(TimeToPixel2(time, r), r.yMin - 16, r.yMax, color);
+            DrawVerticalLine(TimeToPixel2(time), r.yMin - 16, r.yMax, color);
         }
         
         public void OnDragStart(EventDrawer drawer)
@@ -129,12 +142,12 @@ namespace TangzxInternal
             currentSelectedDrawer = drawer;
         }
 
-        public float TimeToPixel2(float time, Rect rect)
+        public float TimeToPixel2(float time)
         {
             return ((time - shownArea.x) / shownArea.width) * rect.width;
         }
 
-        public float PixelToTime2(float pixel, Rect rect)
+        public float PixelToTime2(float pixel)
         {
             return (pixel / rect.width) * shownArea.width;
         }

@@ -52,13 +52,13 @@ namespace TangzxInternal.Drawers
         {
             if (isSelected)
             {
-                eventSheetEditor.DrawPlayhead(target.time + target.duration, Color.red);
+                eventSheetEditor.DrawVerticalLine(target.time + target.duration, Color.red);
             }
             HandleDrag(drawRect, 999,
                 () => { dragDuration = target.duration; },
                 () => { },
                 (float offset) => {
-                    float dt = eventSheetEditor.PixelToTime2(offset, totalRect);
+                    float dt = eventSheetEditor.PixelToTime2(offset);
                     target.duration = Mathf.Max(0, dragDuration + dt);
                 },
                 () => { });

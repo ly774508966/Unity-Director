@@ -15,7 +15,26 @@ namespace TangzxInternal
 
         public override bool BeginRename(TreeViewItem item, float delay)
         {
-            return false;
+            if (!(item is EventTreeItem))
+            {
+                return false;
+            }
+
+            return base.BeginRename(item, delay);
+        }
+
+        protected override void RenameEnded()
+        {
+            RenameOverlay ro = GetRenameOverlay();
+            if (!string.IsNullOrEmpty(ro.name) && ro.name != ro.originalName && ro.userAcceptedRename)
+            {
+                EventTreeItem item = (EventTreeItem) m_TreeView.data.FindItem(ro.userData);
+                if (item != null)
+                {
+                    item.displayName = ro.name;
+                    item.target.name = ro.name;
+                }
+            }
         }
 
         protected override void DoNodeGUI(Rect rect, int row, TreeViewItem item, bool selected, bool focused, bool useBoldFont)
@@ -26,23 +45,22 @@ namespace TangzxInternal
             {
                 EventTreeItem evtItem = (EventTreeItem)item;
                 Event current = Event.current;
-                if (selected)
+                if (selected && current.type == EventType.ContextClick && rect.Contains(current.mousePosition))
                 {
-                    //del button
-                    Rect delRect = rect;
-                    rect.width = 20;
-                    if (GUI.Button(rect, "-"))
-                    {
-                        window.state.RemoveEvent(evtItem.target);
-                    }
+                    GenericMenu menu = CreateContextMenu(evtItem);
+                    menu.ShowAsContext();
                 }
             }
         }
 
-        GenericMenu CreateContextMenu()
+        GenericMenu CreateContextMenu(EventTreeItem item)
         {
+            GenericMenu menu = new GenericMenu();
 
-            return null;
+            //Remove
+            menu.AddItem(new GUIContent("Remove Event"), false, () => { window.state.RemoveEvent(item.target); });
+
+            return menu;
         }
     }
 }
