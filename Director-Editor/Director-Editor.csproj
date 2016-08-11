@@ -45,7 +45,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\AreaEventEditor.cs" />
+    <Compile Include="Classes\EventInspector.cs" />
+    <Compile Include="Classes\EventSheetEditor.cs" />
     <Compile Include="Classes\AttributeTool.cs" />
     <Compile Include="Classes\CustomPlayableDrawer.cs" />
     <Compile Include="Classes\DirectorDataExtension.cs" />

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TangzxInternal
 {
-    class AreaEventEditor : TimeArea
+    class EventSheetEditor : TimeArea
     {
         //owner
         private DirectorWindow owner;
@@ -16,7 +16,7 @@ namespace TangzxInternal
         //当前选中的
         private EventDrawer currentSelectedDrawer;
 
-        public AreaEventEditor(DirectorWindow owner) : base(false)
+        public EventSheetEditor(DirectorWindow owner) : base(false)
         {
             this.owner = owner;
         }
@@ -24,8 +24,11 @@ namespace TangzxInternal
         public void OnGUI(Rect position, Vector2 scrollPosition)
         {
             rect = position;
+
             //除去下面滚动条的高
-            position.height -= 15;
+            position.yMax -= 15;
+            OnGridGUI(position);
+
             GUI.BeginClip(position);
             OnGUI(position);
             GUI.EndClip();
@@ -66,6 +69,14 @@ namespace TangzxInternal
             }
         }
 
+        void OnGridGUI(Rect rect)
+        {
+            if (Event.current.type == EventType.Repaint)
+            {
+                TimeRuler(rect, frameRate, false, true, 0.2f);
+            }
+        }
+
         void OnPlayableGUI(TDEvent p, Rect rect)
         {
             Rect evtDrawRect = new Rect(rect);
@@ -75,7 +86,7 @@ namespace TangzxInternal
             EventDrawer drawer = GetDrawer(p);
             drawer.Reset();
             drawer.target = p;
-            drawer.areaEventEditor = this;
+            drawer.eventSheetEditor = this;
             drawer.OnGUI(evtDrawRect, rect);
         }
 
@@ -90,6 +101,13 @@ namespace TangzxInternal
             }
 
             return drawer;
+        }
+
+        public void DrawPlayhead(float time, Color color)
+        {
+            Rect r = rect;
+            color.a = 0.4f;
+            DrawVerticalLine(TimeToPixel2(time, r), r.yMin - 16, r.yMax, color);
         }
         
         public void OnDragStart(EventDrawer drawer)
@@ -141,5 +159,7 @@ namespace TangzxInternal
         {
             get { return currentSelectedDrawer; }
         }
+
+        public int frameRate { get; set; }
     }
 }

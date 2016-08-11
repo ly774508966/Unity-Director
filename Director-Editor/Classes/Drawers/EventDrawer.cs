@@ -1,4 +1,5 @@
-﻿using Tangzx.Director;
+﻿using System;
+using Tangzx.Director;
 using UnityEngine;
 
 namespace TangzxInternal
@@ -14,14 +15,16 @@ namespace TangzxInternal
         /// <summary>
         /// 是否被选中的
         /// </summary>
-        public bool isSelected { get { return areaEventEditor.selectedDrawer == this; } }
+        public bool isSelected { get { return eventSheetEditor.selectedDrawer == this; } }
 
-        internal AreaEventEditor areaEventEditor;
+        internal EventSheetEditor eventSheetEditor;
 
         // is current dragging ?
         private bool isDragging;
         // obj id
         protected int id;
+
+        private int dragId;
         //开始拖动时的时间纪录
         private float timeDragStart;
         //开始拖动时的鼠标位置纪录
@@ -46,7 +49,35 @@ namespace TangzxInternal
             }
         }
 
+        /// <summary>
+        /// 处理整体的拖动
+        /// </summary>
+        /// <param name="drawRect"></param>
+        /// <param name="totalRect"></param>
         protected void HandleDrag(Rect drawRect, Rect totalRect)
+        {
+            if (isSelected)
+            {
+                eventSheetEditor.DrawPlayhead(target.time, Color.red);
+            }
+            HandleDrag(drawRect, 1,
+                () => {
+                    timeDragStart = target.time;
+                    eventSheetEditor.SetSelected(this);
+                    eventSheetEditor.OnDragStart(this);
+                },
+                () => { eventSheetEditor.OnDragEnd(this); },
+                (float offset) => {
+                    float dt = eventSheetEditor.PixelToTime2(offset, totalRect);
+                    UpdateTime(Mathf.Max(0, timeDragStart + dt));
+                },
+                () => {
+                    if (isSelected)
+                        eventSheetEditor.SetSelected(null);
+                });
+        }
+
+        protected void HandleDrag(Rect drawRect, int id, Action onStart, Action onEnd, Action<float> onDrag, Action onMouseDownOutside)
         {
             Event evt = Event.current;
             if (evt.isMouse)
@@ -55,38 +86,37 @@ namespace TangzxInternal
                 {
                     if (drawRect.Contains(evt.mousePosition))
                     {
-                        timeDragStart = target.time;
                         positionDragStart = evt.mousePosition.x;
                         isDragging = true;
                         evt.Use();
-                        areaEventEditor.SetSelected(this);
-                        areaEventEditor.OnDragStart(this);
+                        dragId = id;
+                        if (onStart != null) onStart();
                     }
                     else
                     {
-                        //在我以外的区域点击了
-                        if (isSelected)
-                        {
-                            areaEventEditor.SetSelected(null);
-                        }
+                        if (onMouseDownOutside != null)
+                            onMouseDownOutside();
                     }
                 }
                 else if (evt.type == EventType.MouseUp)
                 {
-                    if (isDragging)
+                    if (isDragging && id == dragId)
                     {
                         isDragging = false;
-                        areaEventEditor.OnDragEnd(this);
+                        if (onEnd != null)
+                            onEnd();
                         evt.Use();
                     }
                 }
                 else if (evt.type == EventType.MouseDrag)
                 {
-                    if (isDragging)
+                    if (isDragging && id == dragId)
                     {
-                        float offset = evt.mousePosition.x - positionDragStart;
-                        float dt = areaEventEditor.PixelToTime2(offset, totalRect);
-                        target.time = Mathf.Max(0, timeDragStart + dt);
+                        if (onDrag != null)
+                        {
+                            float offset = evt.mousePosition.x - positionDragStart;
+                            onDrag(offset);
+                        }
                         evt.Use();
                         Repaint();
                     }
@@ -101,7 +131,12 @@ namespace TangzxInternal
 
         public void Repaint()
         {
-            areaEventEditor.Repaint();
+            eventSheetEditor.Repaint();
+        }
+
+        protected virtual void UpdateTime(float v)
+        {
+            target.time = v;
         }
     }
 }

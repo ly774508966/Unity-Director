@@ -31,25 +31,27 @@ namespace TangzxInternal
 
         private EventHierarchy _eventHierarchy;
         Rect _eventHierarchyRect;
-        private AreaEventEditor _eventSheetEditor;
+        private EventSheetEditor _eventSheetEditor;
         Rect _eventSheetRect;
 
+        private EventInspector _eventInspector;
         private SplitterState _splitterState;
-        private Editor _eventInspectorEditor;
 
         public DirectorWindow()
         {
             _state = new DirectorWindowState(this);
             _eventHierarchy = new EventHierarchy(this);
 
-            _eventSheetEditor = new AreaEventEditor(this);
+            _eventSheetEditor = new EventSheetEditor(this);
             _eventSheetEditor.hRangeMin = 0;
             _eventSheetEditor.SetShownHRange(0, 10);
             _eventSheetEditor.vRangeLocked = true;
             _eventSheetEditor.vSlider = false;
             _eventSheetEditor.scaleWithWindow = true;
             _eventSheetEditor.margin = 40;
+            _eventSheetEditor.frameRate = 30;
 
+            _eventInspector = new EventInspector();
             _splitterState = new SplitterState(new float[] { 200, 900, 300 }, new int[] { 200, 300, 300 }, null);
         }
 
@@ -253,7 +255,8 @@ namespace TangzxInternal
             timeRulerRect.y -= 20;
             timeRulerRect.width -= 15;
             timeRulerRect.height = 20;
-            _eventSheetEditor.TimeRuler(timeRulerRect, 60);
+
+            _eventSheetEditor.TimeRuler(timeRulerRect, _eventSheetEditor.frameRate);
         }
 
         void OnHierarchyGUI()
@@ -269,11 +272,7 @@ namespace TangzxInternal
             TDEvent evt = _eventSheetEditor.selected;
             if (evt)
             {
-                _eventInspectorEditor = Editor.CreateEditor(evt);
-                GUILayout.BeginVertical();
-                _eventInspectorEditor.DrawHeader();
-                _eventInspectorEditor.OnInspectorGUI();
-                GUILayout.EndVertical();
+                _eventInspector.OnGUI(evt);
             }
         }
     }
