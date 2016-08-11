@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [DirectorPlayable("Util/LogEvent")]
-public class LogEvent : Playable
+public class LogEvent : TDEvent
 {
     public override void Fire()
     {

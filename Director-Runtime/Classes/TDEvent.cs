@@ -6,7 +6,7 @@ namespace Tangzx.Director
     /// <summary>
     /// 可播放的基类
     /// </summary>
-    public abstract class Playable : ScriptableObject, IComparable<Playable>
+    public abstract class TDEvent : ScriptableObject, IComparable<TDEvent>
     {
         /// <summary>
         /// 起始时间
@@ -16,7 +16,7 @@ namespace Tangzx.Director
         /// <summary>
         /// 持续时长
         /// </summary>
-        public float duration { get { return 0; } }
+        public virtual float duration { get { return 0; } set { } }
 
         public virtual void Fire()
         {
@@ -28,7 +28,7 @@ namespace Tangzx.Director
 
         }
 
-        public int CompareTo(Playable other)
+        public int CompareTo(TDEvent other)
         {
             return time.CompareTo(other.time);
         }

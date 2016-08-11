@@ -46,8 +46,10 @@
     <Compile Include="Classes\DirectorData.cs" />
     <Compile Include="Classes\DirectorPlayable.cs" />
     <Compile Include="Classes\Events\LogEvent.cs" />
-    <Compile Include="Classes\Playable.cs" />
-    <Compile Include="Classes\RangePlayable.cs" />
+    <Compile Include="Classes\Events\TestRangeEvent.cs" />
+    <Compile Include="Classes\ITDEventContainer.cs" />
+    <Compile Include="Classes\TDEvent.cs" />
+    <Compile Include="Classes\TDRangeEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TangzxInternal
 {
-    public class DirectorWindow : EditorWindow
+    class DirectorWindow : EditorWindow
     {
         [MenuItem("Tools/Director/Open")]
         static void Open()
@@ -25,59 +25,66 @@ namespace TangzxInternal
 
         private GameObject _selectionGameObject;
         private DirectorData _data;
-        
+
+        //相当于上下文数据
+        private DirectorWindowState _state;
+
+        private EventHierarchy _eventHierarchy;
+        Rect _eventHierarchyRect;
         private AreaEventEditor _eventSheetEditor;
+        Rect _eventSheetRect;
+
         private SplitterState _splitterState;
+        private Editor _eventInspectorEditor;
 
         public DirectorWindow()
         {
+            _state = new DirectorWindowState(this);
+            _eventHierarchy = new EventHierarchy(this);
+
             _eventSheetEditor = new AreaEventEditor(this);
             _eventSheetEditor.hRangeMin = 0;
-            _splitterState = new SplitterState(new float[] { 200, 900, 300 }, new int[] { 300, 300, 300 }, null);
+            _eventSheetEditor.SetShownHRange(0, 10);
+            _eventSheetEditor.vRangeLocked = true;
+            _eventSheetEditor.vSlider = false;
+            _eventSheetEditor.scaleWithWindow = true;
+            _eventSheetEditor.margin = 40;
 
-            InitTree();
+            _splitterState = new SplitterState(new float[] { 200, 900, 300 }, new int[] { 200, 300, 300 }, null);
         }
 
-        public DirectorData data { get { return _data; } }
-
-        void InitTree()
+        public DirectorData data
         {
-            treeViewState = new TreeViewState();
-            treeView = new TreeView(this, treeViewState);
-
-            EventTreeViewDataSource dataSource = new EventTreeViewDataSource(treeView, this);
-            EventTreeViewGUI gui = new EventTreeViewGUI(treeView, this);
-
-            treeView.Init(new Rect(0, 0, 400, 500), dataSource, gui, null);
-            treeView.ReloadData();
+            set { _data = value; _state.refreshType = DirectorWindowState.RefreshType.All; }
+            get { return _data; }
         }
 
+        public DirectorWindowState state { get { return _state; } }
+        
         void OnInspectorUpdate()
         {
             Repaint();
         }
-
-        Rect dopeSheetRect;
-        TreeView treeView;
-        TreeViewState treeViewState;
 
         void OnGUI()
         {
             if (Selection.activeGameObject != _selectionGameObject)
             {
                 _selectionGameObject = null;
-                _data = null;
+                data = null;
             }
 
-            if (_data == null)
+            if (data == null)
             {
                 OnCreatorGUI();
             }
 
-            if (_data)
+            if (data)
             {
                 RemoveNotification();
                 UpdateStyles();
+
+                _state.OnGUI();
 
                 OnToolBarGUI();
                 GUILayout.BeginHorizontal();
@@ -86,18 +93,28 @@ namespace TangzxInternal
                     //左
                     GUILayout.BeginVertical();
                     {
-                        OnTreeGUI();
+                        OnHierarchyGUI();
                     }
                     GUILayout.EndVertical();
+                    Rect lRect = GUILayoutUtility.GetLastRect();
+
                     //中
                     GUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
                     {
                         OnMainContentGUI();
                     }
                     GUILayout.EndVertical();
+
                     //右
                     OnRightGUI();
                     SplitterGUILayout.EndHorizontalSplit();
+
+                    //在 [左与中] 中间画条黑线
+                    GUI.color = Color.black;
+                    lRect.x = lRect.xMax;
+                    lRect.width = 1;
+                    GUI.DrawTexture(lRect, EditorGUIUtility.whiteTexture);
+                    GUI.color = Color.white;
                 }
                 GUILayout.EndHorizontal();
             }
@@ -105,14 +122,17 @@ namespace TangzxInternal
 
         void UpdateStyles()
         {
-            Styles.box = new GUIStyle(GUI.skin.box);
-            Styles.box.margin = new RectOffset();
-            Styles.box.padding = new RectOffset();
-            Styles.toolbar = new GUIStyle(EditorStyles.toolbar);
-            Styles.toolbar.margin = new RectOffset();
-            Styles.toolbar.padding = new RectOffset();
-            Styles.toolbarButton = EditorStyles.toolbarButton;
-            Styles.tooltip = GUI.skin.GetStyle("AssetLabel");
+            if (Styles.box == null)
+            {
+                Styles.box = new GUIStyle(GUI.skin.box);
+                Styles.box.margin = new RectOffset();
+                Styles.box.padding = new RectOffset();
+                Styles.toolbar = new GUIStyle(EditorStyles.toolbar);
+                Styles.toolbar.margin = new RectOffset();
+                Styles.toolbar.padding = new RectOffset();
+                Styles.toolbarButton = EditorStyles.toolbarButton;
+                Styles.tooltip = GUI.skin.GetStyle("AssetLabel");
+            }
         }
 
         void OnCreatorGUI()
@@ -129,16 +149,16 @@ namespace TangzxInternal
                 if (director && director.data)
                 {
                     _selectionGameObject = go;
-                    _data = director.data;
+                    data = director.data;
                 }
                 else if (GUILayout.Button("Create"))
                 {
                     if (!director)
                         director = go.AddComponent<Director>();
-                    _data = CreateInstance<DirectorData>();
+                    data = CreateInstance<DirectorData>();
                     _selectionGameObject = go;
-                    director.data = _data;
-                    AssetDatabase.CreateAsset(_data, "Assets/Director.asset");
+                    director.data = data;
+                    AssetDatabase.CreateAsset(data, "Assets/Director.asset");
                 }
             }
             else
@@ -192,20 +212,34 @@ namespace TangzxInternal
         void HandlerCreate(object typeData)
         {
             Type eventType = (Type)typeData;
-            Playable p = data.Add(eventType);
-            _eventSheetEditor.AddEvent(p);
+            TDEvent p = data.Add(eventType);
+            // Refresh
+            _state.refreshType = DirectorWindowState.RefreshType.All;
         }
 
         void OnMainContentGUI()
         {
             Rect rect = GUILayoutUtility.GetRect(new GUIContent(""), GUIStyle.none, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
             if (rect.width > 1)
-                dopeSheetRect = rect;
+                _eventSheetRect = rect;
 
             OnTimeRulerGUI(rect);
 
             _eventSheetEditor.BeginViewGUI();
-            _eventSheetEditor.OnGUI(dopeSheetRect, Vector2.zero);
+            {
+                rect = _eventSheetRect;
+                //排除垂直滚动条的宽
+                rect.width -= 15;
+
+                //画主体
+                _eventSheetEditor.OnGUI(rect, Vector2.zero);
+
+                //画最右边的垂直滚动条
+                {
+                    Rect scrollbarRect = new Rect(rect.xMax, rect.yMin, 15, rect.height - 15);
+                    GUI.VerticalScrollbar(scrollbarRect, 0, 1, 0, 0);
+                }
+            }
             _eventSheetEditor.EndViewGUI();
         }
 
@@ -222,26 +256,25 @@ namespace TangzxInternal
             _eventSheetEditor.TimeRuler(timeRulerRect, 60);
         }
 
-        Rect treeRect;
-        void OnTreeGUI()
+        void OnHierarchyGUI()
         {
-            int controlID = GUIUtility.GetControlID(FocusType.Keyboard);
             Rect rect = GUILayoutUtility.GetRect(new GUIContent(""), GUIStyle.none, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
             if (rect.width > 1)
-                treeRect = rect;
-
-            treeView.OnGUI(treeRect, controlID);
+                _eventHierarchyRect = rect;
+            _eventHierarchy.OnGUI(_eventHierarchyRect);
         }
 
         void OnRightGUI()
         {
-            //if (e)
-            //{
-            //    GUILayout.BeginVertical();
-            //    e.DrawHeader();
-            //    e.OnInspectorGUI();
-            //    GUILayout.EndVertical();
-            //}
+            TDEvent evt = _eventSheetEditor.selected;
+            if (evt)
+            {
+                _eventInspectorEditor = Editor.CreateEditor(evt);
+                GUILayout.BeginVertical();
+                _eventInspectorEditor.DrawHeader();
+                _eventInspectorEditor.OnInspectorGUI();
+                GUILayout.EndVertical();
+            }
         }
     }
 }

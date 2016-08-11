@@ -7,7 +7,7 @@
     <ProjectGuid>{C8ED5A59-1AD2-4CEA-9891-BE14E4A6C3BE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Director_Editor</RootNamespace>
+    <RootNamespace>TangzxInternal</RootNamespace>
     <AssemblyName>UnityEditor.Tizen.Extensions</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -46,10 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\AreaEventEditor.cs" />
+    <Compile Include="Classes\AttributeTool.cs" />
     <Compile Include="Classes\CustomPlayableDrawer.cs" />
     <Compile Include="Classes\DirectorDataExtension.cs" />
     <Compile Include="Classes\DirectorWindow.cs" />
-    <Compile Include="Classes\EventDrawer.cs" />
+    <Compile Include="Classes\DirectorWindowState.cs" />
+    <Compile Include="Classes\Drawers\EventDrawer.cs" />
+    <Compile Include="Classes\Drawers\RangePlayableDrawer.cs" />
+    <Compile Include="Classes\EventHierarchy.cs" />
+    <Compile Include="Classes\EventTreeItem.cs" />
     <Compile Include="Classes\EventTreeViewDataSource.cs" />
     <Compile Include="Classes\EventTreeViewGUI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

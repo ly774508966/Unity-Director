@@ -9,12 +9,10 @@ namespace TangzxInternal
     class AttributeTool
     {
         static Dictionary<Type, Type> drawerTypeMap;
-        static Dictionary<Type, EventDrawer> drawerInstMap;
 
         [InitializeOnLoadMethod]
         static void ResetCache()
         {
-            drawerInstMap = null;
             drawerTypeMap = null;
         }
 
@@ -23,11 +21,10 @@ namespace TangzxInternal
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        public static EventDrawer GetDrawer(Playable p)
+        public static EventDrawer GetDrawer(TDEvent p)
         {
             if (drawerTypeMap == null)
             {
-                drawerInstMap = new Dictionary<Type, EventDrawer>();
                 drawerTypeMap = new Dictionary<Type, Type>();
 
                 Type attrType = typeof(CustomPlayableDrawer);
@@ -41,17 +38,18 @@ namespace TangzxInternal
                 }
             }
 
+            //循环查找
             Type drawerType = null;
-            drawerTypeMap.TryGetValue(p.GetType(), out drawerType);
+            Type evtType = p.GetType();
+            while ((evtType == typeof(TDEvent) || evtType.IsSubclassOf(typeof(TDEvent))) && drawerType == null)
+            {
+                drawerTypeMap.TryGetValue(evtType, out drawerType);
+                evtType = evtType.BaseType;
+            }
+
             if (drawerType == null)
                 drawerType = typeof(EventDrawer);
-            EventDrawer drawer = null;
-            drawerInstMap.TryGetValue(drawerType, out drawer);
-            if (drawer == null)
-            {
-                drawer = (EventDrawer)Activator.CreateInstance(drawerType);
-                drawerInstMap[drawerType] = drawer;
-            }
+            EventDrawer drawer = (EventDrawer)Activator.CreateInstance(drawerType);
 
             return drawer;
         }
