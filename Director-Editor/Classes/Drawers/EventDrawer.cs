@@ -14,7 +14,7 @@ namespace TangzxInternal
         /// <summary>
         /// 是否被选中的
         /// </summary>
-        public bool isSelected { get { return eventSheetEditor.selectedDrawer == this; } }
+        public bool isSelected { get { return eventSheetEditor.selected == target; } }
 
         internal EventSheetEditor eventSheetEditor;
 
@@ -31,10 +31,11 @@ namespace TangzxInternal
 
         public virtual void OnGUI(Rect drawRect, Rect totalRect)
         {
-            GUIStyle eventStyle = "Grad Up Swatch";
+            GUIStyle eventStyle = "Dopesheetkeyframe";
 
-            drawRect.width = eventStyle.fixedWidth;
-            drawRect.x -= drawRect.width / 2;
+            drawRect.width = 9;
+            drawRect.x -= drawRect.width / 2 + 0.5f;
+            drawRect.x = Mathf.CeilToInt(drawRect.x);
 
             HandleDrag(drawRect, totalRect);
             if (Event.current.type == EventType.repaint)
@@ -52,7 +53,7 @@ namespace TangzxInternal
         {
             if (isSelected)
             {
-                eventSheetEditor.DrawVerticalLine(target.time, Color.red);
+                eventSheetEditor.DrawVerticalLine(target.time, Color.yellow);
             }
             HandleDrag(drawRect, 1,
                 () =>

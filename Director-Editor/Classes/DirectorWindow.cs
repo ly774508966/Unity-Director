@@ -24,10 +24,6 @@ namespace TangzxInternal
             public static GUIStyle timeRulerBackground;
         }
 
-        private static int SCROLLBAR_WIDTH = 15;
-        private static int SCROLLBAR_HEIGHT = 15;
-        private static int TIMERULER_HEIGHT = 15;
-
         private GameObject _selectionGameObject;
         private DirectorData _data;
 
@@ -49,7 +45,7 @@ namespace TangzxInternal
         public DirectorWindow()
         {
             _state = new DirectorWindowState(this);
-            _eventHierarchy = new EventHierarchy(this);
+            _eventHierarchy = new EventHierarchy(_state);
 
             _eventSheetEditor = new EventSheetEditor(_state);
             _eventSheetEditor.hRangeMin = 0;
@@ -260,21 +256,21 @@ namespace TangzxInternal
             {
                 Rect areaRect = _eventSheetRect;
                 //排除垂直滚动条的宽
-                areaRect.width -= SCROLLBAR_WIDTH;
+                areaRect.width -= DirectorWindowState.SCROLLBAR_WIDTH;
 
                 //画最右边的垂直滚动条
                 {
                     Rect scrollbarRect = areaRect;
                     scrollbarRect.x = areaRect.xMax;
-                    scrollbarRect.width = SCROLLBAR_WIDTH;
+                    scrollbarRect.width = DirectorWindowState.SCROLLBAR_WIDTH;
 
-                    float bottomValue = Mathf.Max(_eventSheetEditor.contentHeight, scrollbarRect.height);
+                    float bottomValue = Mathf.Max(_eventHierarchy.contentHeight, scrollbarRect.height);
                     float scrollY = state.treeViewState.scrollPos.y;
                     scrollY = GUI.VerticalScrollbar(scrollbarRect, scrollY, scrollbarRect.height, 0, bottomValue);
                     state.treeViewState.scrollPos.y = scrollY;
                 }
 
-                areaRect.yMin += TIMERULER_HEIGHT;
+                areaRect.yMin += _state.timeRulerHeight;
                 //画主体
                 _eventSheetEditor.OnGUI(areaRect, -state.treeViewState.scrollPos.y);
             }
@@ -288,8 +284,8 @@ namespace TangzxInternal
         void OnTimeRulerGUI(Rect rect)
         {
             Rect timeRulerRect = rect;
-            timeRulerRect.width -= SCROLLBAR_WIDTH;
-            timeRulerRect.height = TIMERULER_HEIGHT;
+            timeRulerRect.width -= DirectorWindowState.SCROLLBAR_WIDTH;
+            timeRulerRect.height = _state.timeRulerHeight;
 
             if (Event.current.type == EventType.Repaint)
                 Styles.timeRulerBackground.Draw(timeRulerRect, GUIContent.none, 0);
@@ -299,7 +295,7 @@ namespace TangzxInternal
 
         void OnPlayHeadGUI(Rect rect)
         {
-            rect.width -= SCROLLBAR_WIDTH;
+            rect.width -= DirectorWindowState.SCROLLBAR_WIDTH;
             GUI.BeginGroup(rect);
             rect.y = rect.x = 0;
             _playHeadDrawer.OnGUI(rect, playHeadTime);

@@ -5,12 +5,14 @@ namespace TangzxInternal
 {
     class EventTreeViewGUI : TreeViewGUI
     {
-        private DirectorWindow window;
+        private DirectorWindowState windowState;
 
-        public EventTreeViewGUI(TreeView treeView, DirectorWindow window) : base(treeView)
+        public EventTreeViewGUI(TreeView treeView, DirectorWindowState windowState) : base(treeView)
         {
-            this.window = window;
-            this.k_LineHeight = 30;
+            this.windowState = windowState;
+            k_TopRowMargin = windowState.timeRulerHeight;
+            k_BottomRowMargin = windowState.hierarchyAddEventButtonHeight;
+            k_LineHeight = windowState.rowHeight;
         }
 
         public override bool BeginRename(TreeViewItem item, float delay)
@@ -53,6 +55,7 @@ namespace TangzxInternal
                     menu.ShowAsContext();
                 }
                 base.DoNodeGUI(rect, row, item, selected, focused, useBoldFont);
+                //OnNodeGUI(rect, row, evtItem, selected, focused, useBoldFont);
             }
             else if (item is BottomTreeItem)
             {
@@ -64,17 +67,67 @@ namespace TangzxInternal
             }
         }
 
+        /*
+        protected void OnNodeGUI(Rect rect, int row, EventTreeItem item, bool selected, bool focused, bool useBoldFont)
+        {
+            EditorGUIUtility.SetIconSize(new Vector2(k_IconWidth, k_IconWidth));
+            float foldoutIndent = this.GetFoldoutIndent(item);
+            int itemControlID = TreeView.GetItemControlID(item);
+            bool flag = false;
+            if (m_TreeView.dragging != null)
+            {
+                flag = (m_TreeView.dragging.GetDropTargetControlID() == itemControlID) && this.m_TreeView.data.CanBeParent(item);
+            }
+            bool flag2 = this.IsRenaming(item.id);
+            bool flag3 = this.m_TreeView.data.IsExpandable(item);
+            if (flag2 && (Event.current.type == EventType.Repaint))
+            {
+                float num3 = (item.icon != null) ? k_IconWidth : 0f;
+                float num4 = (((foldoutIndent + k_FoldoutWidth) + num3) + this.iconTotalPadding) - 1f;
+                this.GetRenameOverlay().editFieldRect = new Rect(rect.x + num4, rect.y, rect.width - num4, rect.height);
+            }
+            if (Event.current.type == EventType.Repaint)
+            {
+                string displayName = item.displayName;
+                if (flag2)
+                {
+                    selected = false;
+                    displayName = string.Empty;
+                }
+                if (selected)
+                {
+                    GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
+                    //s_Styles.selectionStyle.Draw(rect, false, false, true, focused);
+                }
+                if (flag)
+                {
+                    s_Styles.lineStyle.Draw(rect, GUIContent.none, true, true, false, false);
+                }
+                this.DrawIconAndLabel(rect, item, displayName, selected, focused, useBoldFont, false);
+                if ((this.m_TreeView.dragging != null) && (this.m_TreeView.dragging.GetRowMarkerControlID() == itemControlID))
+                {
+                    this.m_DraggingInsertionMarkerRect = new Rect((rect.x + foldoutIndent) + this.k_FoldoutWidth, rect.y, rect.width - foldoutIndent, rect.height);
+                }
+            }
+            if (flag3)
+            {
+                this.DoFoldout(rect, item, row);
+            }
+            EditorGUIUtility.SetIconSize(Vector2.zero);
+        }*/
+
         public override Rect GetRowRect(int row, float rowWidth)
         {
             Rect rect = base.GetRowRect(row, rowWidth);
             TreeViewItem item = m_TreeView.data.GetItem(row);
-            if (row == 0)
+
+            if (item is BottomTreeItem)
             {
-                rect.height = 15;
+                rect.height = windowState.hierarchyAddEventButtonHeight;
             }
             else
             {
-                rect.yMin -= 15;
+                rect.height = windowState.rowHeight;
             }
             return rect;
         }
@@ -84,7 +137,7 @@ namespace TangzxInternal
             GenericMenu menu = new GenericMenu();
 
             //Remove
-            menu.AddItem(new GUIContent("Remove Event"), false, () => { window.state.RemoveEvent(item.target); });
+            menu.AddItem(new GUIContent("Remove Event"), false, () => { windowState.RemoveEvent(item.target); });
 
             return menu;
         }

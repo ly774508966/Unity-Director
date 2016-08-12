@@ -6,11 +6,11 @@ namespace TangzxInternal
     class EventTreeViewDataSource : TreeViewDataSource
     {
 
-        private DirectorWindow window;
+        private DirectorWindowState windowState;
 
-        public EventTreeViewDataSource(TreeView tree, DirectorWindow window) : base(tree)
+        public EventTreeViewDataSource(TreeView tree, DirectorWindowState windowState) : base(tree)
         {
-            this.window = window;
+            this.windowState = windowState;
         }
 
         public override void FetchData()
@@ -22,9 +22,9 @@ namespace TangzxInternal
             rootIsCollapsable = false;
             SetExpanded(m_RootItem, true);
 
-            m_RootItem.AddChild(new TopTreeItem(m_RootItem));
+            //m_RootItem.AddChild(new TopTreeItem(m_RootItem));
 
-            DirectorData data = window.data;
+            DirectorData data = windowState.data;
             if (data)
             {
                 for (int i = 0; i < data.eventList.Count; i++)

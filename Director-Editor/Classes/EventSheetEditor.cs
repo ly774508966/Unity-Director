@@ -8,20 +8,21 @@ namespace TangzxInternal
     class EventSheetEditor : TimeArea
     {
         //owner
-        private DirectorWindowState state;
+        private DirectorWindowState windowState;
         //缓存
         private Dictionary<TDEvent, EventDrawer> drawerList = new Dictionary<TDEvent, EventDrawer>();
         //当前正在拖动的
         private TDEvent currentDraggingEvent;
         //当前选中的
-        private EventDrawer currentSelectedDrawer;
+        private TDEvent currentSelectedEvent;
         //行与行的间隔
-        private int rowGap = 1;
+        private float rowGap = 1f;
+
         private float scrollY;
 
         public EventSheetEditor(DirectorWindowState state) : base(false)
         {
-            this.state = state;
+            windowState = state;
         }
 
         public void OnGUI(Rect position, float scrollPositionY)
@@ -48,22 +49,22 @@ namespace TangzxInternal
 
         public void OnGUI(Rect rect)
         {
-            DirectorData data = state.data;
+            DirectorData data = windowState.data;
             if (data)
             {
                 Rect rowRect = rect;
                 //纪录拖动的对象所在的索引
-                int draggingIndex = -1;
+                int selectedIndex = -1;
 
                 //先画完所有不拖动的事件
                 for (int i = 0; i < data.eventList.Count; i++)
                 {
                     TDEvent p = data.eventList[i];
-                    rowRect.y = i * 30;
-                    rowRect.height = 30;
-                    if (p == currentDraggingEvent)
+                    rowRect.y = i * windowState.rowHeight;
+                    rowRect.height = windowState.rowHeight;
+                    if (p == currentSelectedEvent)
                     {
-                        draggingIndex = i;
+                        selectedIndex = i;
                     }
                     else
                     {
@@ -72,11 +73,11 @@ namespace TangzxInternal
                 }
 
                 //拖动的最后画
-                if (draggingIndex != -1)
+                if (selectedIndex != -1)
                 {
-                    rowRect.y = draggingIndex * 30;
-                    rowRect.height = 30;
-                    OnPlayableGUI(currentDraggingEvent, rowRect);
+                    rowRect.y = selectedIndex * windowState.rowHeight;
+                    rowRect.height = windowState.rowHeight;
+                    OnPlayableGUI(currentSelectedEvent, rowRect);
                 }
             }
         }
@@ -89,9 +90,9 @@ namespace TangzxInternal
         void OnPlayableGUI(TDEvent p, Rect rect)
         {
             rect.xMin += rowGap;
-            rect.width -= rowGap * 2;
-            rect.yMin += rowGap;
-            rect.height -= rowGap * 2;
+            rect.width -= rowGap;
+            rect.yMin += rowGap * 0.5f;
+            rect.height -= rowGap;
             //BG
             GUI.Box(rect, GUIContent.none);
 
@@ -127,8 +128,8 @@ namespace TangzxInternal
         public void DrawVerticalLine(float time, Color color)
         {
             Rect r = rect;
-            color.a = 0.4f;
-            DrawVerticalLine(TimeToPixel2(time), r.yMin - scrollY, r.yMax - scrollY, color);
+            r.yMin = 0;
+            DrawVerticalLine(TimeToPixel2(time), -scrollY, r.yMax - scrollY, color);
         }
         
         public void OnDragStart(EventDrawer drawer)
@@ -147,7 +148,10 @@ namespace TangzxInternal
         /// <param name="drawer"></param>
         public void SetSelected(EventDrawer drawer)
         {
-            currentSelectedDrawer = drawer;
+            if (drawer != null)
+                currentSelectedEvent = drawer.target;
+            else
+                currentSelectedEvent = null;
         }
 
         public float TimeToPixel2(float time)
@@ -162,40 +166,20 @@ namespace TangzxInternal
 
         public void Repaint()
         {
-            state.window.Repaint();
+            windowState.window.Repaint();
         }
 
         public TDEvent selected
         {
             get
             {
-                if (currentSelectedDrawer != null)
-                    return currentSelectedDrawer.target;
+                if (currentSelectedEvent != null)
+                    return currentSelectedEvent;
                 else
                     return null;
             }
         }
 
-        public EventDrawer selectedDrawer
-        {
-            get { return currentSelectedDrawer; }
-        }
-
         public int frameRate { get; set; }
-
-        public float contentHeight
-        {
-            get
-            {
-                float v = 0;
-                DirectorData data = state.data;
-                if (data)
-                {
-                    v = data.eventList.Count * 30;
-                    v += 30 + 30;
-                }
-                return v;
-            }
-        }
     }
 }

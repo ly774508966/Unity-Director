@@ -52,7 +52,7 @@ namespace TangzxInternal.Drawers
         {
             if (isSelected)
             {
-                eventSheetEditor.DrawVerticalLine(target.time + target.duration, Color.red);
+                eventSheetEditor.DrawVerticalLine(target.time + target.duration, Color.yellow);
             }
             HandleDrag(drawRect, 999,
                 () => { dragDuration = target.duration; },
