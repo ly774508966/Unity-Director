@@ -64,7 +64,7 @@ namespace TangzxInternal
                     eventSheetEditor.selected = target;
                     eventSheetEditor.OnDragStart(this);
                 },
-                () => { /*eventSheetEditor.OnDragEnd(this);*/ },
+                () => { eventSheetEditor.OnDragEnd(this); },
                 (float offset) =>
                 {
                     float dt = eventSheetEditor.PixelToTime2(offset);

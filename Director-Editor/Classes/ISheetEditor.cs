@@ -17,5 +17,7 @@ namespace TangzxInternal
         void Repaint();
         
         void OnDragStart(IRowDrawer eventDrawer);
+
+        void OnDragEnd(IRowDrawer eventDrawer);
     }
 }
