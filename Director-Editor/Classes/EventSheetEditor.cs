@@ -8,7 +8,7 @@ namespace TangzxInternal
     class EventSheetEditor : TimeArea
     {
         //owner
-        private DirectorWindow owner;
+        private DirectorWindowState state;
         //缓存
         private Dictionary<TDEvent, EventDrawer> drawerList = new Dictionary<TDEvent, EventDrawer>();
         //当前正在拖动的
@@ -17,30 +17,38 @@ namespace TangzxInternal
         private EventDrawer currentSelectedDrawer;
         //行与行的间隔
         private int rowGap = 1;
+        private float scrollY;
 
-        public EventSheetEditor(DirectorWindow owner) : base(false)
+        public EventSheetEditor(DirectorWindowState state) : base(false)
         {
-            this.owner = owner;
+            this.state = state;
         }
 
-        public void OnGUI(Rect position, Vector2 scrollPosition)
+        public void OnGUI(Rect position, float scrollPositionY)
         {
             rect = position;
+            scrollY = scrollPositionY;
 
             //除去下面滚动条的高
             position.yMax -= 15;
-
-            GUI.BeginClip(position);
+            
+            GUIClip.Push(position, new Vector2(0, scrollPositionY), Vector2.zero, false);
             position.x = 0;
-            position.y = 0;
+
+            //画格子，格子的Y坐标不随滚动而动
+            position.y = -scrollPositionY;
             OnGridGUI(position);
+
+            //画正式内容元素
+            position.y = 0;
             OnGUI(position);
-            GUI.EndClip();
+
+            GUIClip.Pop();
         }
 
         public void OnGUI(Rect rect)
         {
-            DirectorData data = owner.data;
+            DirectorData data = state.data;
             if (data)
             {
                 Rect rowRect = rect;
@@ -120,7 +128,7 @@ namespace TangzxInternal
         {
             Rect r = rect;
             color.a = 0.4f;
-            DrawVerticalLine(TimeToPixel2(time), r.yMin - 16, r.yMax, color);
+            DrawVerticalLine(TimeToPixel2(time), r.yMin - scrollY, r.yMax - scrollY, color);
         }
         
         public void OnDragStart(EventDrawer drawer)
@@ -154,7 +162,7 @@ namespace TangzxInternal
 
         public void Repaint()
         {
-            owner.Repaint();
+            state.window.Repaint();
         }
 
         public TDEvent selected
@@ -174,5 +182,20 @@ namespace TangzxInternal
         }
 
         public int frameRate { get; set; }
+
+        public float contentHeight
+        {
+            get
+            {
+                float v = 0;
+                DirectorData data = state.data;
+                if (data)
+                {
+                    v = data.eventList.Count * 30;
+                    v += 30 + 30;
+                }
+                return v;
+            }
+        }
     }
 }

@@ -39,9 +39,11 @@ namespace TangzxInternal
 
         protected override void DoNodeGUI(Rect rect, int row, TreeViewItem item, bool selected, bool focused, bool useBoldFont)
         {
-            base.DoNodeGUI(rect, row, item, selected, focused, useBoldFont);
+            if (item is TopTreeItem)
+            {
 
-            if (item is EventTreeItem)
+            }
+            else if (item is EventTreeItem)
             {
                 EventTreeItem evtItem = (EventTreeItem)item;
                 Event current = Event.current;
@@ -50,7 +52,31 @@ namespace TangzxInternal
                     GenericMenu menu = CreateContextMenu(evtItem);
                     menu.ShowAsContext();
                 }
+                base.DoNodeGUI(rect, row, item, selected, focused, useBoldFont);
             }
+            else if (item is BottomTreeItem)
+            {
+                rect.xMin += 15;
+                rect.xMax -= 15;
+                rect.yMin += 5;
+                rect.yMax -= 5;
+                GUI.Button(rect, "Add Event");
+            }
+        }
+
+        public override Rect GetRowRect(int row, float rowWidth)
+        {
+            Rect rect = base.GetRowRect(row, rowWidth);
+            TreeViewItem item = m_TreeView.data.GetItem(row);
+            if (row == 0)
+            {
+                rect.height = 15;
+            }
+            else
+            {
+                rect.yMin -= 15;
+            }
+            return rect;
         }
 
         GenericMenu CreateContextMenu(EventTreeItem item)

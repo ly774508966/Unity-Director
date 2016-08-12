@@ -14,4 +14,20 @@ namespace TangzxInternal
 
         public TDEvent target { get { return _evt; } }
     }
+
+    class BottomTreeItem : TreeViewItem
+    {
+        public BottomTreeItem(TreeViewItem parent) : base(0, 0, parent, null)
+        {
+
+        }
+    }
+
+    class TopTreeItem : TreeViewItem
+    {
+        public TopTreeItem(TreeViewItem parent) : base(0, 0, parent, null)
+        {
+
+        }
+    }
 }

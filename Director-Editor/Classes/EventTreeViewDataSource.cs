@@ -21,7 +21,9 @@ namespace TangzxInternal
             showRootNode = false;
             rootIsCollapsable = false;
             SetExpanded(m_RootItem, true);
-            
+
+            m_RootItem.AddChild(new TopTreeItem(m_RootItem));
+
             DirectorData data = window.data;
             if (data)
             {
@@ -33,6 +35,7 @@ namespace TangzxInternal
                     m_RootItem.AddChild(item);
                 }
             }
+            m_RootItem.AddChild(new BottomTreeItem(m_RootItem));
         }
 
         public void UpdateData()

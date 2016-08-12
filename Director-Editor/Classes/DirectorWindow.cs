@@ -21,7 +21,12 @@ namespace TangzxInternal
             public static GUIStyle toolbar;
             public static GUIStyle toolbarButton;
             public static GUIStyle tooltip;
+            public static GUIStyle timeRulerBackground;
         }
+
+        private static int SCROLLBAR_WIDTH = 15;
+        private static int SCROLLBAR_HEIGHT = 15;
+        private static int TIMERULER_HEIGHT = 15;
 
         private GameObject _selectionGameObject;
         private DirectorData _data;
@@ -30,7 +35,6 @@ namespace TangzxInternal
         private DirectorWindowState _state;
 
         private EventHierarchy _eventHierarchy;
-        Rect _eventHierarchyRect;
         private EventSheetEditor _eventSheetEditor;
         Rect _eventSheetRect;
 
@@ -47,14 +51,14 @@ namespace TangzxInternal
             _state = new DirectorWindowState(this);
             _eventHierarchy = new EventHierarchy(this);
 
-            _eventSheetEditor = new EventSheetEditor(this);
+            _eventSheetEditor = new EventSheetEditor(_state);
             _eventSheetEditor.hRangeMin = 0;
             _eventSheetEditor.SetShownHRange(0, 10);
             _eventSheetEditor.vRangeLocked = true;
             _eventSheetEditor.vSlider = false;
             _eventSheetEditor.scaleWithWindow = true;
             _eventSheetEditor.margin = 40;
-            _eventSheetEditor.frameRate = 30;
+            _eventSheetEditor.frameRate = 60;
 
             _eventInspector = new EventInspector();
             _splitterState = new SplitterState(new float[] { 200, 900, 300 }, new int[] { 200, 300, 300 }, null);
@@ -110,12 +114,12 @@ namespace TangzxInternal
                 {
                     SplitterGUILayout.BeginHorizontalSplit(_splitterState);
                     //左
+                    Rect lRect;
                     GUILayout.BeginVertical();
                     {
-                        OnHierarchyGUI();
+                        lRect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
                     }
                     GUILayout.EndVertical();
-                    Rect lRect = GUILayoutUtility.GetLastRect();
 
                     //中
                     GUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
@@ -128,6 +132,10 @@ namespace TangzxInternal
                     OnRightGUI();
                     SplitterGUILayout.EndHorizontalSplit();
 
+                    //重新画左:
+                    //这里有一个奇怪的问题：如果先画左再画中间会出现中间的滚动条失灵的BUG
+                    OnHierarchyGUI(lRect);
+                    
                     //在 [左与中] 中间画条黑线
                     GUI.color = Color.black;
                     lRect.x = lRect.xMax;
@@ -151,6 +159,7 @@ namespace TangzxInternal
                 Styles.toolbar.padding = new RectOffset();
                 Styles.toolbarButton = EditorStyles.toolbarButton;
                 Styles.tooltip = GUI.skin.GetStyle("AssetLabel");
+                Styles.timeRulerBackground = "AnimationEventBackground";
             }
         }
 
@@ -235,7 +244,7 @@ namespace TangzxInternal
             // Refresh
             _state.refreshType = DirectorWindowState.RefreshType.All;
         }
-
+        
         void OnMainContentGUI()
         {
             Rect rect = GUILayoutUtility.GetRect(new GUIContent(""), GUIStyle.none, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
@@ -244,26 +253,32 @@ namespace TangzxInternal
 
             //画标尺
             OnTimeRulerGUI(rect);
+            //播放头
+            OnPlayHeadGUI(rect);
 
             _eventSheetEditor.BeginViewGUI();
             {
                 Rect areaRect = _eventSheetRect;
                 //排除垂直滚动条的宽
-                areaRect.width -= 15;
-
-                //画主体
-                _eventSheetEditor.OnGUI(areaRect, Vector2.zero);
+                areaRect.width -= SCROLLBAR_WIDTH;
 
                 //画最右边的垂直滚动条
                 {
-                    Rect scrollbarRect = new Rect(areaRect.xMax, areaRect.yMin, 15, areaRect.height - 15);
-                    GUI.VerticalScrollbar(scrollbarRect, 0, 1, 0, 0);
+                    Rect scrollbarRect = areaRect;
+                    scrollbarRect.x = areaRect.xMax;
+                    scrollbarRect.width = SCROLLBAR_WIDTH;
+
+                    float bottomValue = Mathf.Max(_eventSheetEditor.contentHeight, scrollbarRect.height);
+                    float scrollY = state.treeViewState.scrollPos.y;
+                    scrollY = GUI.VerticalScrollbar(scrollbarRect, scrollY, scrollbarRect.height, 0, bottomValue);
+                    state.treeViewState.scrollPos.y = scrollY;
                 }
+
+                areaRect.yMin += TIMERULER_HEIGHT;
+                //画主体
+                _eventSheetEditor.OnGUI(areaRect, -state.treeViewState.scrollPos.y);
             }
             _eventSheetEditor.EndViewGUI();
-
-            //播放头
-            OnPlayHeadGUI(rect);
         }
 
         /// <summary>
@@ -273,25 +288,27 @@ namespace TangzxInternal
         void OnTimeRulerGUI(Rect rect)
         {
             Rect timeRulerRect = rect;
-            timeRulerRect.y -= 20;
-            timeRulerRect.width -= 15;
-            timeRulerRect.height = 20;
+            timeRulerRect.width -= SCROLLBAR_WIDTH;
+            timeRulerRect.height = TIMERULER_HEIGHT;
+
+            if (Event.current.type == EventType.Repaint)
+                Styles.timeRulerBackground.Draw(timeRulerRect, GUIContent.none, 0);
 
             _eventSheetEditor.TimeRuler(timeRulerRect, _eventSheetEditor.frameRate);
         }
 
         void OnPlayHeadGUI(Rect rect)
         {
-            rect.y -= 20;
+            rect.width -= SCROLLBAR_WIDTH;
+            GUI.BeginGroup(rect);
+            rect.y = rect.x = 0;
             _playHeadDrawer.OnGUI(rect, playHeadTime);
+            GUI.EndGroup();
         }
 
-        void OnHierarchyGUI()
+        void OnHierarchyGUI(Rect rect)
         {
-            Rect rect = GUILayoutUtility.GetRect(new GUIContent(""), GUIStyle.none, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-            if (rect.width > 1)
-                _eventHierarchyRect = rect;
-            _eventHierarchy.OnGUI(_eventHierarchyRect);
+            _eventHierarchy.OnGUI(rect);
         }
 
         void OnRightGUI()
@@ -326,27 +343,32 @@ namespace TangzxInternal
             }
 
             Rect drawArea = rect;
-            drawArea.xMin += sheetEditor.TimeToPixel2(time) - stylePlayhead.fixedWidth * 0.5f;
+            drawArea.xMin = sheetEditor.TimeToPixel2(time) - stylePlayhead.fixedWidth * 0.5f - 0.5f;
             drawArea.width = stylePlayhead.fixedWidth;
             drawArea.height = stylePlayhead.fixedHeight;
 
             //画竖线
-            sheetEditor.DrawVerticalLine(time, Color.blue);
+            float lineYMin = isDragging ? drawArea.yMax : rect.yMin;
+            TimeArea.DrawVerticalLine(sheetEditor.TimeToPixel2(time), lineYMin, rect.yMax, Color.red);
+            
             //播放头标记
-            if (Event.current.type == EventType.Repaint)
+            if (Event.current.type == EventType.Repaint && isDragging)
                 stylePlayhead.Draw(drawArea, GUIContent.none, 0);
 
-            HandleDrag(drawArea, 0,
+            //拖动处理
+            Rect dragArea = rect;
+            dragArea.height = 15;
+            HandleDrag(dragArea, 0,
                 () =>
                 {
                     timeWhenDragStart = directorWindow.playHeadTime;
                 },
-                () => { },
+                null,
                 (float offset) =>
                 {
                     directorWindow.playHeadTime = timeWhenDragStart + sheetEditor.PixelToTime2(offset);
                 },
-                () => { });
+                null);
         }
     }
 }

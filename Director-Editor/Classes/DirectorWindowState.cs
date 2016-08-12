@@ -1,4 +1,5 @@
 ﻿using Tangzx.Director;
+using UnityEditor;
 
 namespace TangzxInternal
 {
@@ -13,7 +14,9 @@ namespace TangzxInternal
             All,
         }
 
-        private DirectorWindow window;
+        public DirectorWindow window;
+
+        public TreeViewState treeViewState;
 
         /// <summary>
         /// 下次刷新的类型
@@ -21,7 +24,7 @@ namespace TangzxInternal
         public RefreshType refreshType;
 
         public EventTreeViewDataSource dataSource;
-
+        
         public DirectorWindowState(DirectorWindow window)
         {
             this.window = window;
@@ -51,5 +54,6 @@ namespace TangzxInternal
             data.Remove(evt);
             refreshType = RefreshType.All;
         }
+
     }
 }

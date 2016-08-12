@@ -13,6 +13,7 @@ namespace TangzxInternal
             treeViewState = new TreeViewState();
             treeView = new TreeView(window, treeViewState);
 
+            window.state.treeViewState = treeViewState;
             window.state.dataSource = new EventTreeViewDataSource(treeView, window);
             EventTreeViewGUI gui = new EventTreeViewGUI(treeView, window);
 
