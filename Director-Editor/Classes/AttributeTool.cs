@@ -29,7 +29,7 @@ namespace TangzxInternal
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        public static EventDrawer GetDrawer(TDEvent p)
+        public static EventDrawer GetEventDrawer(TDEvent p)
         {
             if (drawerTypeMap == null)
             {

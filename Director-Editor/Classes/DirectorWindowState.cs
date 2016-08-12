@@ -1,4 +1,5 @@
 ﻿using Tangzx.Director;
+using TangzxInternal.Data;
 using UnityEditor;
 using UnityEngine;
 
@@ -50,6 +51,14 @@ namespace TangzxInternal
         public DirectorData data
         {
             get { return window.data; }
+        }
+
+        public VOTreeData treeData
+        {
+            get
+            {
+                return window.treeData;
+            }
         }
 
         public void OnGUI()

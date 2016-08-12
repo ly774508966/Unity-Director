@@ -1,4 +1,5 @@
 ﻿using Tangzx.Director;
+using TangzxInternal.Data;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,6 +24,8 @@ namespace TangzxInternal
 
         private GameObject _selectionGameObject;
         private DirectorData _data;
+
+        private VOTreeData _treeData;
 
         //相当于上下文数据
         private DirectorWindowState _state;
@@ -62,10 +65,22 @@ namespace TangzxInternal
             set
             {
                 _data = value;
-                _state.refreshType = DirectorWindowState.RefreshType.All;
-                //_eventSheetEditor.SetShownHRange(0, 10);
+                if (_data)
+                    treeData = new SimpleTreeData(value);
+                else
+                    treeData = null;
             }
             get { return _data; }
+        }
+
+        public VOTreeData treeData
+        {
+            set
+            {
+                _treeData = value;
+                _state.refreshType = DirectorWindowState.RefreshType.All;
+            }
+            get { return _treeData; }
         }
 
         public DirectorWindowState state { get { return _state; } }
@@ -94,20 +109,20 @@ namespace TangzxInternal
             Repaint();
         }
 
-        void OnGUI()
+        protected virtual void OnGUI()
         {
             if (Selection.activeGameObject != _selectionGameObject)
             {
                 _selectionGameObject = null;
-                data = null;
+                treeData = null;
             }
 
-            if (data == null)
+            if (treeData == null)
             {
                 OnCreatorGUI();
             }
 
-            if (data)
+            if (treeData != null)
             {
                 RemoveNotification();
                 UpdateStyles();

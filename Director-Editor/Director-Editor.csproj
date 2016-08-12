@@ -45,6 +45,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Data\VORowItem.cs" />
+    <Compile Include="Classes\Data\VOTreeData.cs" />
     <Compile Include="Classes\Draggable.cs" />
     <Compile Include="Classes\EventInspector.cs" />
     <Compile Include="Classes\EventSheetEditor.cs" />
@@ -59,7 +61,9 @@
     <Compile Include="Classes\EventTreeItem.cs" />
     <Compile Include="Classes\EventTreeViewDataSource.cs" />
     <Compile Include="Classes\EventTreeViewGUI.cs" />
-    <Compile Include="Classes\SequencerEditorWindow.cs" />
+    <Compile Include="Classes\ISheetEditor.cs" />
+    <Compile Include="Classes\RowDrawers\IRowDrawer.cs" />
+    <Compile Include="Classes\Sequencer\SequencerEditorWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

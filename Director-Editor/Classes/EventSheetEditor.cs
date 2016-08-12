@@ -1,18 +1,17 @@
-﻿using System.Collections.Generic;
-using Tangzx.Director;
+﻿using Tangzx.Director;
+using TangzxInternal.Data;
+using TangzxInternal.RowDrawers;
 using UnityEditor;
 using UnityEngine;
 
 namespace TangzxInternal
 {
-    class EventSheetEditor : TimeArea
+    class EventSheetEditor : TimeArea, ISheetEditor
     {
         //owner
         private DirectorWindowState windowState;
-        //缓存
-        private Dictionary<TDEvent, EventDrawer> drawerList = new Dictionary<TDEvent, EventDrawer>();
         //当前正在拖动的
-        private TDEvent currentDraggingEvent;
+        private IRowDrawer currentDraggingEvent;
         //当前选中的
         private TDEvent currentSelectedEvent;
         //行与行的间隔
@@ -49,37 +48,44 @@ namespace TangzxInternal
 
         public void OnGUI(Rect rect)
         {
-            DirectorData data = windowState.data;
-            if (data)
-            {
-                Rect rowRect = rect;
-                //纪录拖动的对象所在的索引
-                int selectedIndex = -1;
+            VOTreeData treeData = windowState.treeData;
 
-                //先画完所有不拖动的事件
-                for (int i = 0; i < data.eventList.Count; i++)
-                {
-                    TDEvent p = data.eventList[i];
-                    rowRect.y = i * windowState.rowHeight;
-                    rowRect.height = windowState.rowHeight;
-                    if (p == currentSelectedEvent)
-                    {
-                        selectedIndex = i;
-                    }
-                    else
-                    {
-                        OnPlayableGUI(p, rowRect);
-                    }
-                }
+            if (treeData != null)
+            {
+                //Rect rowRect = rect;
+                //纪录拖动的对象所在的索引
+                //int selectedIndex = -1;
+                
+                OnItemGUI(rect, treeData.root, 0, false, true);
 
                 //拖动的最后画
-                if (selectedIndex != -1)
-                {
-                    rowRect.y = selectedIndex * windowState.rowHeight;
-                    rowRect.height = windowState.rowHeight;
-                    OnPlayableGUI(currentSelectedEvent, rowRect);
-                }
+                //if (selectedIndex != -1)
+                //{
+                //    rowRect.y = selectedIndex * windowState.rowHeight;
+                //    rowRect.height = windowState.rowHeight;
+                //    OnPlayableGUI(currentSelectedEvent, rowRect);
+                //}
             }
+        }
+
+        protected virtual int OnItemGUI(Rect rect, VORowItem item, int row, bool show, bool showChildren)
+        {
+            Rect rowRect = rect;
+            if (show)
+            {
+                rowRect.y = row * windowState.rowHeight;
+                rowRect.height = windowState.rowHeight;
+                OnPlayableGUI(item, rowRect);
+                row++;
+            }
+            //先画完所有不拖动的事件
+            for (int i = 0; i < item.children.Count; i++)
+            {
+                VORowItem subItem = item.children[i];
+                row = OnItemGUI(rect, subItem, row, true, true);
+            }
+
+            return row;
         }
 
         void OnGridGUI(Rect rect)
@@ -87,7 +93,7 @@ namespace TangzxInternal
             TimeRuler(rect, frameRate, false, true, 0.2f);
         }
 
-        void OnPlayableGUI(TDEvent p, Rect rect)
+        protected virtual void OnPlayableGUI(VORowItem item, Rect rect)
         {
             rect.xMin += rowGap;
             rect.width -= rowGap;
@@ -96,28 +102,11 @@ namespace TangzxInternal
             //BG
             GUI.Box(rect, GUIContent.none);
 
-            Rect evtDrawRect = new Rect(rect);
-            evtDrawRect.xMin = TimeToPixel2(p.time);
-            evtDrawRect.xMax = TimeToPixel2(p.time + p.duration);
-
-            EventDrawer drawer = GetDrawer(p);
-            drawer.Reset();
-            drawer.target = p;
-            drawer.eventSheetEditor = this;
-            drawer.OnGUI(evtDrawRect, rect);
-        }
-
-        EventDrawer GetDrawer(TDEvent p)
-        {
-            EventDrawer drawer = null;
-            drawerList.TryGetValue(p, out drawer);
-            if (drawer == null)
+            IRowDrawer rowDrawer = item.GetDrawer();
+            if (rowDrawer != null)
             {
-                drawer = AttributeTool.GetDrawer(p);
-                drawerList[p] = drawer;
+                rowDrawer.OnGUI(this, rect, item);
             }
-
-            return drawer;
         }
 
         /// <summary>
@@ -132,26 +121,14 @@ namespace TangzxInternal
             DrawVerticalLine(TimeToPixel2(time), -scrollY, r.yMax - scrollY, color);
         }
         
-        public void OnDragStart(EventDrawer drawer)
+        public void OnDragStart(IRowDrawer drawer)
         {
-            currentDraggingEvent = drawer.target;
+            currentDraggingEvent = drawer;
         }
 
-        public void OnDragEnd(EventDrawer drawer)
+        public void OnDragEnd(IRowDrawer drawer)
         {
             currentDraggingEvent = null;
-        }
-
-        /// <summary>
-        /// 设置当前选中
-        /// </summary>
-        /// <param name="drawer"></param>
-        public void SetSelected(EventDrawer drawer)
-        {
-            if (drawer != null)
-                currentSelectedEvent = drawer.target;
-            else
-                currentSelectedEvent = null;
         }
 
         public float TimeToPixel2(float time)
@@ -178,6 +155,7 @@ namespace TangzxInternal
                 else
                     return null;
             }
+            set { currentSelectedEvent = value; }
         }
 
         public int frameRate { get; set; }

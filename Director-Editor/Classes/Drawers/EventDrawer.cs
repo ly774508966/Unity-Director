@@ -1,10 +1,12 @@
 ﻿using Tangzx.Director;
+using TangzxInternal.Data;
+using TangzxInternal.RowDrawers;
 using UnityEngine;
 
 namespace TangzxInternal
 {
     [CustomPlayableDrawer(typeof(TDEvent))]
-    public class EventDrawer : Draggable
+    public class EventDrawer : Draggable, IRowDrawer
     {
         static int count = 0;
         /// <summary>
@@ -16,7 +18,7 @@ namespace TangzxInternal
         /// </summary>
         public bool isSelected { get { return eventSheetEditor.selected == target; } }
 
-        internal EventSheetEditor eventSheetEditor;
+        internal ISheetEditor eventSheetEditor;
 
         // obj id
         protected int id;
@@ -59,10 +61,10 @@ namespace TangzxInternal
                 () =>
                 {
                     timeDragStart = target.time;
-                    eventSheetEditor.SetSelected(this);
+                    eventSheetEditor.selected = target;
                     eventSheetEditor.OnDragStart(this);
                 },
-                () => { eventSheetEditor.OnDragEnd(this); },
+                () => { /*eventSheetEditor.OnDragEnd(this);*/ },
                 (float offset) =>
                 {
                     float dt = eventSheetEditor.PixelToTime2(offset);
@@ -71,7 +73,7 @@ namespace TangzxInternal
                 () =>
                 {
                     if (isSelected)
-                        eventSheetEditor.SetSelected(null);
+                        eventSheetEditor.selected = null;
                 });
         }
 
@@ -88,6 +90,18 @@ namespace TangzxInternal
         protected virtual void UpdateTime(float v)
         {
             target.time = v;
+        }
+
+        public void OnGUI(ISheetEditor sheetEditor, Rect rect, VORowItem item)
+        {
+            TDEvent p = target;
+            Rect evtDrawRect = new Rect(rect);
+            evtDrawRect.xMin = sheetEditor.TimeToPixel2(p.time);
+            evtDrawRect.xMax = sheetEditor.TimeToPixel2(p.time + p.duration);
+
+            eventSheetEditor = sheetEditor;
+
+            OnGUI(evtDrawRect, rect);
         }
     }
 }
