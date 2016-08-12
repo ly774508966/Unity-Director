@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using Tangzx.Director;
+﻿using Tangzx.Director;
 using UnityEditor;
 using UnityEngine;
 
@@ -86,18 +84,11 @@ namespace TangzxInternal
         {
             GenericMenu menu = new GenericMenu();
 
-            Type attType = typeof(DirectorPlayable);
-            Assembly assembly = attType.Assembly;
-            Type[] types = assembly.GetTypes();
+            AttributeTool.EventInfo[] types = AttributeTool.GetAllEventTypes();
             for (int i = 0; i < types.Length; i++)
             {
-                Type t = types[i];
-                object[] arr = t.GetCustomAttributes(attType, false);
-                if (arr.Length > 0)
-                {
-                    DirectorPlayable att = (DirectorPlayable)arr[0];
-                    menu.AddItem(new GUIContent(att.category), false, HandlerCreate, t);
-                }
+                AttributeTool.EventInfo evtInfo = types[i];
+                menu.AddItem(new GUIContent(evtInfo.eventAttri.category), false, HandlerCreate, evtInfo);
             }
 
             menu.ShowAsContext();
@@ -109,8 +100,8 @@ namespace TangzxInternal
         /// <param name="typeData"></param>
         void HandlerCreate(object typeData)
         {
-            Type eventType = (Type)typeData;
-            TDEvent p = data.Add(eventType);
+            AttributeTool.EventInfo evtInfo = (AttributeTool.EventInfo)typeData;
+            TDEvent p = data.Add(evtInfo.eventType);
             // Refresh
             refreshType = RefreshType.All;
         }

@@ -9,11 +9,19 @@ namespace TangzxInternal
     class AttributeTool
     {
         static Dictionary<Type, Type> drawerTypeMap;
+        static EventInfo[] allEventTypes;
 
         [InitializeOnLoadMethod]
         static void ResetCache()
         {
             drawerTypeMap = null;
+            allEventTypes = null;
+        }
+
+        public struct EventInfo
+        {
+            public DirectorPlayable eventAttri;
+            public Type eventType;
         }
 
         /// <summary>
@@ -52,6 +60,27 @@ namespace TangzxInternal
             EventDrawer drawer = (EventDrawer)Activator.CreateInstance(drawerType);
 
             return drawer;
+        }
+
+        public static EventInfo[] GetAllEventTypes()
+        {
+            if (allEventTypes == null)
+            {
+                Type attrType = typeof(DirectorPlayable);
+                ArrayList al = AttributeHelper.FindEditorClassesWithAttribute(attrType);
+                allEventTypes = new EventInfo[al.Count];
+                for (int i = 0; i < al.Count; i++)
+                {
+                    Type t = al[i] as Type;
+                    object[] arr = t.GetCustomAttributes(attrType, false);
+
+                    EventInfo ei = new EventInfo();
+                    ei.eventAttri = arr[0] as DirectorPlayable;
+                    ei.eventType = t;
+                    allEventTypes[i] = ei;
+                }
+            }
+            return allEventTypes;
         }
     }
 }

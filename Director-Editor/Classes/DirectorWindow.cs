@@ -1,6 +1,4 @@
-﻿
-using System;
-using Tangzx.Director;
+﻿using Tangzx.Director;
 using UnityEditor;
 using UnityEngine;
 
@@ -48,10 +46,8 @@ namespace TangzxInternal
 
             _eventSheetEditor = new EventSheetEditor(_state);
             _eventSheetEditor.hRangeMin = 0;
-            _eventSheetEditor.SetShownHRange(0, 10);
             _eventSheetEditor.vRangeLocked = true;
             _eventSheetEditor.vSlider = false;
-            _eventSheetEditor.scaleWithWindow = true;
             _eventSheetEditor.margin = 40;
             _eventSheetEditor.frameRate = 60;
 
@@ -63,7 +59,12 @@ namespace TangzxInternal
 
         public DirectorData data
         {
-            set { _data = value; _state.refreshType = DirectorWindowState.RefreshType.All; }
+            set
+            {
+                _data = value;
+                _state.refreshType = DirectorWindowState.RefreshType.All;
+                //_eventSheetEditor.SetShownHRange(0, 10);
+            }
             get { return _data; }
         }
 
@@ -199,7 +200,7 @@ namespace TangzxInternal
             }
         }
 
-        void OnToolBarGUI()
+        protected virtual void OnToolBarGUI()
         {
             GUILayout.BeginHorizontal(Styles.toolbar);
             {

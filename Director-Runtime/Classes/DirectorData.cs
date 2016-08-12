@@ -10,67 +10,7 @@ namespace Tangzx.Director
     public class DirectorData : ScriptableObject
     {
         public List<TDEvent> eventList = new List<TDEvent>();
-        /// <summary>
-        /// 正在播放的
-        /// </summary>
-        private List<TDEvent> _playingList = new List<TDEvent>();
-
-        /// <summary>
-        /// 当前播放头时间
-        /// </summary>
-        private float _currentTime;
-
-        public void Process(float time)
-        {
-            Tick(time - _currentTime);
-        }
-
-        public void Tick(float dt)
-        {
-            float newTime = _currentTime + dt;
-            float oldTime = _currentTime;
-            //正播
-            if (dt > 0)
-            {
-                //进入 playing list
-                for (int i = 0; i < eventList.Count; i++)
-                {
-                    TDEvent p = eventList[i];
-                    if (p.time > oldTime && p.time <= newTime)
-                    {
-                        p.Fire();
-                        _playingList.Add(p);
-                    }
-                }
-
-                //处理 playing list
-                for (int i = 0; i < _playingList.Count; i++)
-                {
-                    TDEvent p = _playingList[i];
-                    if (p is TDRangeEvent)
-                    {
-                        TDRangeEvent rp = (TDRangeEvent)p;
-                        float endTime = p.time + p.duration;
-                        endTime = endTime < newTime ? endTime : newTime;
-
-                        rp.Process(endTime);
-                    }
-                    // exit
-                    if (p.time + p.duration > 0)
-                    {
-                        p.End();
-                        _playingList.RemoveAt(i);
-                        i--;
-                    }
-                }
-            }
-            else //反播
-            {
-
-            }
-            _currentTime = newTime;
-        }
-
+        
         public void Add(TDEvent playable)
         {
             eventList.Add(playable);
