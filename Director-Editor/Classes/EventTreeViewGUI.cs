@@ -63,7 +63,8 @@ namespace TangzxInternal
                 rect.xMax -= 15;
                 rect.yMin += 5;
                 rect.yMax -= 5;
-                GUI.Button(rect, "Add Event");
+                if (GUI.Button(rect, "Add Event"))
+                    windowState.ShowCreateEventMenu();
             }
         }
 

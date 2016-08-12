@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Reflection;
 using Tangzx.Director;
 using UnityEditor;
 using UnityEngine;
@@ -80,6 +79,15 @@ namespace TangzxInternal
             }
         }
         
+        /// <summary>
+        /// 设置播放头时间
+        /// </summary>
+        /// <param name="value"></param>
+        public virtual void SetPlayHead(float value)
+        {
+            playHeadTime = value;
+        }
+
         void OnInspectorUpdate()
         {
             Repaint();
@@ -196,49 +204,13 @@ namespace TangzxInternal
             GUILayout.BeginHorizontal(Styles.toolbar);
             {
                 //添加新项
-                if (GUILayout.Button("Add New Event", Styles.toolbarButton))
+                if (GUILayout.Button("Add Event", Styles.toolbarButton))
                 {
-                    ShowCreateEventMenu();
+                    _state.ShowCreateEventMenu();
                 }
                 GUILayout.FlexibleSpace();
             }
             GUILayout.EndHorizontal();
-        }
-
-        /// <summary>
-        /// 显示创建事件菜单
-        /// </summary>
-        void ShowCreateEventMenu()
-        {
-            GenericMenu menu = new GenericMenu();
-
-            Type attType = typeof(DirectorPlayable);
-            Assembly assembly = attType.Assembly;
-            Type[] types = assembly.GetTypes();
-            for (int i = 0; i < types.Length; i++)
-            {
-                Type t = types[i];
-                object[] arr = t.GetCustomAttributes(attType, false);
-                if (arr.Length > 0)
-                {
-                    DirectorPlayable att = (DirectorPlayable)arr[0];
-                    menu.AddItem(new GUIContent(att.category), false, HandlerCreate, t);
-                }
-            }
-
-            menu.ShowAsContext();
-        }
-
-        /// <summary>
-        /// 处理点击创建事件菜单项
-        /// </summary>
-        /// <param name="typeData"></param>
-        void HandlerCreate(object typeData)
-        {
-            Type eventType = (Type)typeData;
-            TDEvent p = data.Add(eventType);
-            // Refresh
-            _state.refreshType = DirectorWindowState.RefreshType.All;
         }
         
         void OnMainContentGUI()
@@ -362,7 +334,7 @@ namespace TangzxInternal
                 null,
                 (float offset) =>
                 {
-                    directorWindow.playHeadTime = timeWhenDragStart + sheetEditor.PixelToTime2(offset);
+                    directorWindow.SetPlayHead(timeWhenDragStart + sheetEditor.PixelToTime2(offset));
                 },
                 null);
         }
