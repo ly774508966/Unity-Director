@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -38,10 +38,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEditor">
-      <HintPath>..\..\SSS_Client_Dev\Library\UnityAssemblies\UnityEditor.dll</HintPath>
+      <HintPath>..\Unity\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\SSS_Client_Dev\Library\UnityAssemblies\UnityEngine.dll</HintPath>
+      <HintPath>..\Unity\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Director-Runtime\Director-Runtime.csproj">
-      <Project>{b3f10934-b4ad-47e2-9ebf-fbca06c75477}</Project>
+      <Project>{B3F10934-B4AD-47E2-9EBF-FBCA06C75477}</Project>
       <Name>Director-Runtime</Name>
     </ProjectReference>
   </ItemGroup>
