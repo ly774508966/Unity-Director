@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TangzxInternal
 {
-    [CustomPlayableDrawer(typeof(TDEvent))]
+    [CustomEventDrawer(typeof(TDEvent))]
     public class EventDrawer : Draggable, IRowDrawer
     {
         static int count = 0;
@@ -92,7 +92,7 @@ namespace TangzxInternal
             target.time = v;
         }
 
-        public void OnGUI(ISheetEditor sheetEditor, Rect rect, VORowItem item)
+        public void OnGUI(ISheetEditor sheetEditor, Rect rect, VOTreeItem item)
         {
             TDEvent p = target;
             Rect evtDrawRect = new Rect(rect);

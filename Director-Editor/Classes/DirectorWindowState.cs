@@ -48,12 +48,7 @@ namespace TangzxInternal
             this.window = window;
         }
 
-        public DirectorData data
-        {
-            get { return window.data; }
-        }
-
-        public VOTreeData treeData
+        public VOTree treeData
         {
             get
             {
@@ -77,7 +72,7 @@ namespace TangzxInternal
 
         public void RemoveEvent(TDEvent evt)
         {
-            data.Remove(evt);
+            //data.Remove(evt);
             refreshType = RefreshType.All;
         }
 
@@ -109,10 +104,10 @@ namespace TangzxInternal
         /// <param name="typeData"></param>
         void HandlerCreate(object typeData)
         {
-            AttributeTool.EventInfo evtInfo = (AttributeTool.EventInfo)typeData;
-            TDEvent p = data.Add(evtInfo.eventType);
+            //AttributeTool.EventInfo evtInfo = (AttributeTool.EventInfo)typeData;
+            //TDEvent p = data.Add(evtInfo.eventType);
             // Refresh
-            refreshType = RefreshType.All;
+            //refreshType = RefreshType.All;
         }
     }
 }

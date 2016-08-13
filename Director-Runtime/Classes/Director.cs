@@ -77,13 +77,11 @@ namespace Tangzx.Director
                 for (int i = 0; i < _playingList.Count; i++)
                 {
                     TDEvent p = _playingList[i];
-                    if (p is TDRangeEvent)
+                    if (p.isRangeEvent)
                     {
-                        TDRangeEvent rp = (TDRangeEvent)p;
                         float endTime = p.time + p.duration;
                         endTime = endTime < newTime ? endTime : newTime;
-
-                        rp.Process(endTime - p.time);
+                        p.Process(endTime - p.time);
                     }
                     // exit
                     if (p.time + p.duration <= newTime)

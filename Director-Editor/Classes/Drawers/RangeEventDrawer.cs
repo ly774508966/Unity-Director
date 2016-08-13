@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace TangzxInternal.Drawers
 {
-    [CustomPlayableDrawer(typeof(TDRangeEvent))]
-    public class RangePlayableDrawer : EventDrawer
+    [CustomEventDrawer(typeof(IRangeEvent))]
+    public class RangeEventDrawer : EventDrawer
     {
         static GUIStyle styleResizer;
         static GUIStyle styleBg;

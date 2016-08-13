@@ -45,18 +45,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Data\VORowItem.cs" />
-    <Compile Include="Classes\Data\VOTreeData.cs" />
     <Compile Include="Classes\Draggable.cs" />
     <Compile Include="Classes\EventInspector.cs" />
     <Compile Include="Classes\EventSheetEditor.cs" />
     <Compile Include="Classes\AttributeTool.cs" />
-    <Compile Include="Classes\CustomPlayableDrawer.cs" />
     <Compile Include="Classes\DirectorDataExtension.cs" />
     <Compile Include="Classes\DirectorWindow.cs" />
     <Compile Include="Classes\DirectorWindowState.cs" />
     <Compile Include="Classes\Drawers\EventDrawer.cs" />
-    <Compile Include="Classes\Drawers\RangePlayableDrawer.cs" />
     <Compile Include="Classes\EventHierarchy.cs" />
     <Compile Include="Classes\EventTreeItem.cs" />
     <Compile Include="Classes\EventTreeViewDataSource.cs" />
@@ -65,6 +61,10 @@
     <Compile Include="Classes\RowDrawers\IRowDrawer.cs" />
     <Compile Include="Classes\Sequencer\SequencerEditorWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Classes\Drawers\RangeEventDrawer.cs" />
+    <Compile Include="Classes\CustomEventDrawer.cs" />
+    <Compile Include="Classes\Data\VOTreeItem.cs" />
+    <Compile Include="Classes\Data\VOTree.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Director-Runtime\Director-Runtime.csproj">

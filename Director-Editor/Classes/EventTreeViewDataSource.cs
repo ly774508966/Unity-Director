@@ -1,5 +1,6 @@
 ﻿using Tangzx.Director;
 using UnityEditor;
+using TangzxInternal.Data;
 
 namespace TangzxInternal
 {
@@ -22,18 +23,17 @@ namespace TangzxInternal
             rootIsCollapsable = false;
             SetExpanded(m_RootItem, true);
 
-            //m_RootItem.AddChild(new TopTreeItem(m_RootItem));
-
-            DirectorData data = windowState.data;
-            if (data)
+            VOTree data = windowState.treeData;
+            if (data != null)
             {
+                /*
                 for (int i = 0; i < data.eventList.Count; i++)
                 {
                     TDEvent p = data.eventList[i];
 
                     EventTreeItem item = new EventTreeItem(p, 0, m_RootItem);
                     m_RootItem.AddChild(item);
-                }
+                }*/
             }
             m_RootItem.AddChild(new BottomTreeItem(m_RootItem));
         }

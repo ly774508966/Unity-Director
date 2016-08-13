@@ -48,7 +48,7 @@ namespace TangzxInternal
 
         public void OnGUI(Rect rect)
         {
-            VOTreeData treeData = windowState.treeData;
+            VOTree treeData = windowState.treeData;
 
             if (treeData != null)
             {
@@ -56,7 +56,7 @@ namespace TangzxInternal
                 //纪录拖动的对象所在的索引
                 //int selectedIndex = -1;
                 
-                OnItemGUI(rect, treeData.root, 0, false, true);
+                OnItemGUI(rect, treeData, 0, false, true);
 
                 //拖动的最后画
                 //if (selectedIndex != -1)
@@ -68,7 +68,7 @@ namespace TangzxInternal
             }
         }
 
-        protected virtual int OnItemGUI(Rect rect, VORowItem item, int row, bool show, bool showChildren)
+        protected virtual int OnItemGUI(Rect rect, VOTreeItem item, int row, bool show, bool showChildren)
         {
             Rect rowRect = rect;
             if (show)
@@ -81,7 +81,7 @@ namespace TangzxInternal
             //先画完所有不拖动的事件
             for (int i = 0; i < item.children.Count; i++)
             {
-                VORowItem subItem = item.children[i];
+                VOTreeItem subItem = item.children[i];
                 row = OnItemGUI(rect, subItem, row, true, true);
             }
 
@@ -93,7 +93,7 @@ namespace TangzxInternal
             TimeRuler(rect, frameRate, false, true, 0.2f);
         }
 
-        protected virtual void OnPlayableGUI(VORowItem item, Rect rect)
+        protected virtual void OnPlayableGUI(VOTreeItem item, Rect rect)
         {
             rect.xMin += rowGap;
             rect.width -= rowGap;

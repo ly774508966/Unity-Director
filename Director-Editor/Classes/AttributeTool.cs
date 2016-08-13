@@ -35,13 +35,13 @@ namespace TangzxInternal
             {
                 drawerTypeMap = new Dictionary<Type, Type>();
 
-                Type attrType = typeof(CustomPlayableDrawer);
+                Type attrType = typeof(CustomEventDrawer);
                 ArrayList al = AttributeHelper.FindEditorClassesWithAttribute(attrType);
                 for (int i = 0; i < al.Count; i++)
                 {
                     Type t = al[i] as Type;
                     object[] arr = t.GetCustomAttributes(attrType, false);
-                    CustomPlayableDrawer customDrawer = (CustomPlayableDrawer)arr[0];
+                    CustomEventDrawer customDrawer = (CustomEventDrawer)arr[0];
                     drawerTypeMap[customDrawer.targetType] = t;
                 }
             }
@@ -52,6 +52,14 @@ namespace TangzxInternal
             while ((evtType == typeof(TDEvent) || evtType.IsSubclassOf(typeof(TDEvent))) && drawerType == null)
             {
                 drawerTypeMap.TryGetValue(evtType, out drawerType);
+                if (drawerType == null)
+                {
+                    Type[] interfaces = evtType.GetInterfaces();
+                    for (int i = 0; i < interfaces.Length && drawerType == null; i++)
+                    {
+                        drawerTypeMap.TryGetValue(interfaces[i], out drawerType);
+                    }
+                }
                 evtType = evtType.BaseType;
             }
 

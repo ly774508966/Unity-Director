@@ -5,14 +5,8 @@ using UnityEngine;
 
 namespace TangzxInternal
 {
-    class DirectorWindow : EditorWindow
+    abstract class DirectorWindow : EditorWindow
     {
-        [MenuItem("Tools/Director/Open")]
-        static void Open()
-        {
-            GetWindow<DirectorWindow>("Director");
-        }
-
         class Styles
         {
             public static GUIStyle box;
@@ -22,10 +16,7 @@ namespace TangzxInternal
             public static GUIStyle timeRulerBackground;
         }
 
-        private GameObject _selectionGameObject;
-        private DirectorData _data;
-
-        private VOTreeData _treeData;
+        private VOTree _treeData;
 
         //相当于上下文数据
         private DirectorWindowState _state;
@@ -60,20 +51,7 @@ namespace TangzxInternal
             _playHeadDrawer = new PlayHeadDrawer(this, _eventSheetEditor);
         }
 
-        public DirectorData data
-        {
-            set
-            {
-                _data = value;
-                if (_data)
-                    treeData = new SimpleTreeData(value);
-                else
-                    treeData = null;
-            }
-            get { return _data; }
-        }
-
-        public VOTreeData treeData
+        public VOTree treeData
         {
             set
             {
@@ -111,16 +89,7 @@ namespace TangzxInternal
 
         protected virtual void OnGUI()
         {
-            if (Selection.activeGameObject != _selectionGameObject)
-            {
-                _selectionGameObject = null;
-                treeData = null;
-            }
-
-            if (treeData == null)
-            {
-                OnCreatorGUI();
-            }
+            OnCheckDataGUI();
 
             if (treeData != null)
             {
@@ -183,37 +152,7 @@ namespace TangzxInternal
             }
         }
 
-        void OnCreatorGUI()
-        {
-            GameObject go = Selection.activeGameObject;
-            Director director = null;
-            if (go)
-            {
-                director = go.GetComponent<Director>();
-            }
-
-            if (go)
-            {
-                if (director && director.data)
-                {
-                    _selectionGameObject = go;
-                    data = director.data;
-                }
-                else if (GUILayout.Button("Create"))
-                {
-                    if (!director)
-                        director = go.AddComponent<Director>();
-                    data = CreateInstance<DirectorData>();
-                    _selectionGameObject = go;
-                    director.data = data;
-                    AssetDatabase.CreateAsset(data, "Assets/Director.asset");
-                }
-            }
-            else
-            {
-                ShowNotification(new GUIContent("选择一个GameObject"));
-            }
-        }
+        protected abstract void OnCheckDataGUI();
 
         protected virtual void OnToolBarGUI()
         {

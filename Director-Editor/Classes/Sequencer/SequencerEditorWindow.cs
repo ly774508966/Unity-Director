@@ -13,5 +13,9 @@ namespace TangzxInternal
             GetWindow<SequencerEditorWindow>("Sequencer");
         }
 
+        protected override void OnCheckDataGUI()
+        {
+            
+        }
     }
 }

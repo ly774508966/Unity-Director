@@ -2,11 +2,11 @@
 
 namespace TangzxInternal
 {
-    public class CustomPlayableDrawer : Attribute
+    public class CustomEventDrawer : Attribute
     {
         private Type _targetType;
 
-        public CustomPlayableDrawer(Type targetType)
+        public CustomEventDrawer(Type targetType)
         {
             _targetType = targetType;
         }

@@ -7,7 +7,7 @@ namespace Tangzx.Director
     /// <summary>
     /// 
     /// </summary>
-    public class DirectorData : ScriptableObject
+    public class DirectorData : DirectorObject
     {
         public List<TDEvent> eventList = new List<TDEvent>();
         

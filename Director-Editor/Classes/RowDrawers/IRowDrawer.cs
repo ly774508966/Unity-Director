@@ -5,6 +5,6 @@ namespace TangzxInternal.RowDrawers
 {
     public interface IRowDrawer
     {
-        void OnGUI(ISheetEditor sheetEditor, Rect rect, VORowItem item);
+        void OnGUI(ISheetEditor sheetEditor, Rect rect, VOTreeItem item);
     }
 }
