@@ -1,6 +1,5 @@
 ﻿using Tangzx.Director;
 using TangzxInternal.Data;
-using TangzxInternal.RowDrawers;
 using UnityEditor;
 using UnityEngine;
 
@@ -48,7 +47,7 @@ namespace TangzxInternal
 
         public void OnGUI(Rect rect)
         {
-            VOTree treeData = windowState.treeData;
+            TreeRootItem treeData = windowState.treeData;
 
             if (treeData != null)
             {
@@ -68,7 +67,7 @@ namespace TangzxInternal
             }
         }
 
-        protected virtual int OnItemGUI(Rect rect, VOTreeItem item, int row, bool show, bool showChildren)
+        protected virtual int OnItemGUI(Rect rect, TreeItem item, int row, bool show, bool showChildren)
         {
             Rect rowRect = rect;
             if (show)
@@ -78,10 +77,12 @@ namespace TangzxInternal
                 OnPlayableGUI(item, rowRect);
                 row++;
             }
+
+            if (windowState.treeViewState.expandedIDs.Contains(item.id))
             //先画完所有不拖动的事件
-            for (int i = 0; i < item.children.Count; i++)
+            for (int i = 0; i < item.list.Count; i++)
             {
-                VOTreeItem subItem = item.children[i];
+                TreeItem subItem = item.list[i];
                 row = OnItemGUI(rect, subItem, row, true, true);
             }
 
@@ -93,7 +94,7 @@ namespace TangzxInternal
             TimeRuler(rect, frameRate, false, true, 0.2f);
         }
 
-        protected virtual void OnPlayableGUI(VOTreeItem item, Rect rect)
+        protected virtual void OnPlayableGUI(TreeItem item, Rect rect)
         {
             rect.xMin += rowGap;
             rect.width -= rowGap;
@@ -105,7 +106,7 @@ namespace TangzxInternal
             IRowDrawer rowDrawer = item.GetDrawer();
             if (rowDrawer != null)
             {
-                rowDrawer.OnGUI(this, rect, item);
+                rowDrawer.OnSheetRowGUI(this, rect);
             }
         }
 

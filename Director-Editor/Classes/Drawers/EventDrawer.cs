@@ -1,6 +1,5 @@
 ﻿using Tangzx.Director;
 using TangzxInternal.Data;
-using TangzxInternal.RowDrawers;
 using UnityEngine;
 
 namespace TangzxInternal
@@ -92,7 +91,7 @@ namespace TangzxInternal
             target.time = v;
         }
 
-        public void OnGUI(ISheetEditor sheetEditor, Rect rect, VOTreeItem item)
+        public void OnSheetRowGUI(ISheetEditor sheetEditor, Rect rect)
         {
             TDEvent p = target;
             Rect evtDrawRect = new Rect(rect);

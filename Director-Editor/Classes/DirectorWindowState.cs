@@ -48,7 +48,7 @@ namespace TangzxInternal
             this.window = window;
         }
 
-        public VOTree treeData
+        public TreeRootItem treeData
         {
             get
             {
@@ -61,7 +61,7 @@ namespace TangzxInternal
             Refresh();
         }
 
-        public void Refresh()
+        void Refresh()
         {
             if (refreshType == RefreshType.All)
             {

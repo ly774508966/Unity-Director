@@ -5,7 +5,7 @@ namespace TangzxInternal
 {
     class EventHierarchy
     {
-        TreeView treeView;
+        public TreeView treeView;
         TreeViewState treeViewState;
 
         public EventHierarchy(DirectorWindowState state)

@@ -58,13 +58,15 @@
     <Compile Include="Classes\EventTreeViewDataSource.cs" />
     <Compile Include="Classes\EventTreeViewGUI.cs" />
     <Compile Include="Classes\ISheetEditor.cs" />
-    <Compile Include="Classes\RowDrawers\IRowDrawer.cs" />
     <Compile Include="Classes\Sequencer\SequencerEditorWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\Drawers\RangeEventDrawer.cs" />
     <Compile Include="Classes\CustomEventDrawer.cs" />
-    <Compile Include="Classes\Data\VOTreeItem.cs" />
-    <Compile Include="Classes\Data\VOTree.cs" />
+    <Compile Include="Classes\Sequencer\EventTreeViewDragging.cs" />
+    <Compile Include="Classes\IRowDrawer.cs" />
+    <Compile Include="Classes\Data\TreeRootItem.cs" />
+    <Compile Include="Classes\Data\TreeItem.cs" />
+    <Compile Include="Classes\Sequencer\SequencerRootItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Director-Runtime\Director-Runtime.csproj">

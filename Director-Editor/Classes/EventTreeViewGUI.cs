@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using TangzxInternal.Data;
 
 namespace TangzxInternal
 {
@@ -41,23 +42,7 @@ namespace TangzxInternal
 
         protected override void DoNodeGUI(Rect rect, int row, TreeViewItem item, bool selected, bool focused, bool useBoldFont)
         {
-            if (item is TopTreeItem)
-            {
-
-            }
-            else if (item is EventTreeItem)
-            {
-                EventTreeItem evtItem = (EventTreeItem)item;
-                Event current = Event.current;
-                if (selected && current.type == EventType.ContextClick && rect.Contains(current.mousePosition))
-                {
-                    GenericMenu menu = CreateContextMenu(evtItem);
-                    menu.ShowAsContext();
-                }
-                base.DoNodeGUI(rect, row, item, selected, focused, useBoldFont);
-                //OnNodeGUI(rect, row, evtItem, selected, focused, useBoldFont);
-            }
-            else if (item is BottomTreeItem)
+            if (item is BottomTreeItem)
             {
                 rect.xMin += 15;
                 rect.xMax -= 15;
@@ -66,56 +51,22 @@ namespace TangzxInternal
                 if (GUI.Button(rect, "Add Event"))
                     windowState.ShowCreateEventMenu();
             }
+            else if (item is TreeItem)
+            {
+                TreeItem ti = item as TreeItem;
+                ti.state = windowState;
+                ti.OnTreeRowGUI(this, rect, row, selected, focused, useBoldFont);
+            }
+            else
+            {
+                base.DoNodeGUI(rect, row, item, selected, focused, useBoldFont);
+            }
         }
 
-        /*
-        protected void OnNodeGUI(Rect rect, int row, EventTreeItem item, bool selected, bool focused, bool useBoldFont)
+        public void OnNodeGUI(Rect rect, int row, TreeViewItem item, bool selected, bool focused, bool useBoldFont)
         {
-            EditorGUIUtility.SetIconSize(new Vector2(k_IconWidth, k_IconWidth));
-            float foldoutIndent = this.GetFoldoutIndent(item);
-            int itemControlID = TreeView.GetItemControlID(item);
-            bool flag = false;
-            if (m_TreeView.dragging != null)
-            {
-                flag = (m_TreeView.dragging.GetDropTargetControlID() == itemControlID) && this.m_TreeView.data.CanBeParent(item);
-            }
-            bool flag2 = this.IsRenaming(item.id);
-            bool flag3 = this.m_TreeView.data.IsExpandable(item);
-            if (flag2 && (Event.current.type == EventType.Repaint))
-            {
-                float num3 = (item.icon != null) ? k_IconWidth : 0f;
-                float num4 = (((foldoutIndent + k_FoldoutWidth) + num3) + this.iconTotalPadding) - 1f;
-                this.GetRenameOverlay().editFieldRect = new Rect(rect.x + num4, rect.y, rect.width - num4, rect.height);
-            }
-            if (Event.current.type == EventType.Repaint)
-            {
-                string displayName = item.displayName;
-                if (flag2)
-                {
-                    selected = false;
-                    displayName = string.Empty;
-                }
-                if (selected)
-                {
-                    GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
-                    //s_Styles.selectionStyle.Draw(rect, false, false, true, focused);
-                }
-                if (flag)
-                {
-                    s_Styles.lineStyle.Draw(rect, GUIContent.none, true, true, false, false);
-                }
-                this.DrawIconAndLabel(rect, item, displayName, selected, focused, useBoldFont, false);
-                if ((this.m_TreeView.dragging != null) && (this.m_TreeView.dragging.GetRowMarkerControlID() == itemControlID))
-                {
-                    this.m_DraggingInsertionMarkerRect = new Rect((rect.x + foldoutIndent) + this.k_FoldoutWidth, rect.y, rect.width - foldoutIndent, rect.height);
-                }
-            }
-            if (flag3)
-            {
-                this.DoFoldout(rect, item, row);
-            }
-            EditorGUIUtility.SetIconSize(Vector2.zero);
-        }*/
+            base.DoNodeGUI(rect, row, item, selected, focused, useBoldFont);
+        }
 
         public override Rect GetRowRect(int row, float rowWidth)
         {

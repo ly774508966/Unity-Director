@@ -7,7 +7,7 @@ namespace TangzxInternal
 {
     abstract class DirectorWindow : EditorWindow
     {
-        class Styles
+        protected class Styles
         {
             public static GUIStyle box;
             public static GUIStyle toolbar;
@@ -16,13 +16,13 @@ namespace TangzxInternal
             public static GUIStyle timeRulerBackground;
         }
 
-        private VOTree _treeData;
+        private TreeRootItem _treeData;
 
         //相当于上下文数据
         private DirectorWindowState _state;
 
-        private EventHierarchy _eventHierarchy;
-        private EventSheetEditor _eventSheetEditor;
+        protected EventHierarchy eventHierarchy;
+        protected EventSheetEditor eventSheetEditor;
         Rect _eventSheetRect;
 
         private EventInspector _eventInspector;
@@ -35,23 +35,16 @@ namespace TangzxInternal
 
         public DirectorWindow()
         {
-            _state = new DirectorWindowState(this);
-            _eventHierarchy = new EventHierarchy(_state);
+            InitState();
+            InitHierarchy();
+            InitSheetEditor();
+            InitEventInspector();
 
-            _eventSheetEditor = new EventSheetEditor(_state);
-            _eventSheetEditor.hRangeMin = 0;
-            _eventSheetEditor.vRangeLocked = true;
-            _eventSheetEditor.vSlider = false;
-            _eventSheetEditor.margin = 40;
-            _eventSheetEditor.frameRate = 60;
-
-            _eventInspector = new EventInspector();
             _splitterState = new SplitterState(new float[] { 200, 900, 300 }, new int[] { 200, 300, 300 }, null);
-
-            _playHeadDrawer = new PlayHeadDrawer(this, _eventSheetEditor);
+            _playHeadDrawer = new PlayHeadDrawer(this, eventSheetEditor);
         }
 
-        public VOTree treeData
+        public TreeRootItem treeData
         {
             set
             {
@@ -71,6 +64,31 @@ namespace TangzxInternal
                 if (value < 0) value = 0;
                 _playHeadTime = value;
             }
+        }
+
+        protected virtual void InitState()
+        {
+            _state = new DirectorWindowState(this);
+        }
+
+        protected virtual void InitHierarchy()
+        {
+            eventHierarchy = new EventHierarchy(_state);
+        }
+
+        protected virtual void InitSheetEditor()
+        {
+            eventSheetEditor = new EventSheetEditor(_state);
+            eventSheetEditor.hRangeMin = 0;
+            eventSheetEditor.vRangeLocked = true;
+            eventSheetEditor.vSlider = false;
+            eventSheetEditor.margin = 40;
+            eventSheetEditor.frameRate = 60;
+        }
+
+        protected virtual void InitEventInspector()
+        {
+            _eventInspector = new EventInspector();
         }
         
         /// <summary>
@@ -98,7 +116,7 @@ namespace TangzxInternal
 
                 _state.OnGUI();
 
-                OnToolBarGUI();
+                OnToolbarGUI();
                 GUILayout.BeginHorizontal();
                 {
                     SplitterGUILayout.BeginHorizontalSplit(_splitterState);
@@ -154,16 +172,11 @@ namespace TangzxInternal
 
         protected abstract void OnCheckDataGUI();
 
-        protected virtual void OnToolBarGUI()
+        protected virtual void OnToolbarGUI()
         {
             GUILayout.BeginHorizontal(Styles.toolbar);
             {
-                //添加新项
-                if (GUILayout.Button("Add Event", Styles.toolbarButton))
-                {
-                    _state.ShowCreateEventMenu();
-                }
-                GUILayout.FlexibleSpace();
+                //TODO
             }
             GUILayout.EndHorizontal();
         }
@@ -179,7 +192,7 @@ namespace TangzxInternal
             //播放头
             OnPlayHeadGUI(rect);
 
-            _eventSheetEditor.BeginViewGUI();
+            eventSheetEditor.BeginViewGUI();
             {
                 Rect areaRect = _eventSheetRect;
                 //排除垂直滚动条的宽
@@ -191,7 +204,7 @@ namespace TangzxInternal
                     scrollbarRect.x = areaRect.xMax;
                     scrollbarRect.width = DirectorWindowState.SCROLLBAR_WIDTH;
 
-                    float bottomValue = Mathf.Max(_eventHierarchy.contentHeight, scrollbarRect.height);
+                    float bottomValue = Mathf.Max(eventHierarchy.contentHeight, scrollbarRect.height);
                     float scrollY = state.treeViewState.scrollPos.y;
                     scrollY = GUI.VerticalScrollbar(scrollbarRect, scrollY, scrollbarRect.height, 0, bottomValue);
                     state.treeViewState.scrollPos.y = scrollY;
@@ -199,9 +212,9 @@ namespace TangzxInternal
 
                 areaRect.yMin += _state.timeRulerHeight;
                 //画主体
-                _eventSheetEditor.OnGUI(areaRect, -state.treeViewState.scrollPos.y);
+                eventSheetEditor.OnGUI(areaRect, -state.treeViewState.scrollPos.y);
             }
-            _eventSheetEditor.EndViewGUI();
+            eventSheetEditor.EndViewGUI();
         }
 
         /// <summary>
@@ -217,7 +230,7 @@ namespace TangzxInternal
             if (Event.current.type == EventType.Repaint)
                 Styles.timeRulerBackground.Draw(timeRulerRect, GUIContent.none, 0);
 
-            _eventSheetEditor.TimeRuler(timeRulerRect, _eventSheetEditor.frameRate);
+            eventSheetEditor.TimeRuler(timeRulerRect, eventSheetEditor.frameRate);
         }
 
         void OnPlayHeadGUI(Rect rect)
@@ -231,12 +244,12 @@ namespace TangzxInternal
 
         void OnHierarchyGUI(Rect rect)
         {
-            _eventHierarchy.OnGUI(rect);
+            eventHierarchy.OnGUI(rect);
         }
 
         void OnRightGUI()
         {
-            TDEvent evt = _eventSheetEditor.selected;
+            TDEvent evt = eventSheetEditor.selected;
             if (evt)
             {
                 _eventInspector.OnGUI(evt);
