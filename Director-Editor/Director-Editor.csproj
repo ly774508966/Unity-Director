@@ -63,10 +63,10 @@
     <Compile Include="Classes\Drawers\RangeEventDrawer.cs" />
     <Compile Include="Classes\CustomEventDrawer.cs" />
     <Compile Include="Classes\Sequencer\EventTreeViewDragging.cs" />
-    <Compile Include="Classes\IRowDrawer.cs" />
     <Compile Include="Classes\Data\TreeRootItem.cs" />
     <Compile Include="Classes\Data\TreeItem.cs" />
     <Compile Include="Classes\Sequencer\SequencerRootItem.cs" />
+    <Compile Include="Classes\ISheetRowDrawer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Director-Runtime\Director-Runtime.csproj">

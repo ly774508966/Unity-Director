@@ -20,7 +20,8 @@ namespace TangzxInternal
                 m_RootItem = new TreeViewItem(0, -1, null, "Root");
             else
             {
-                data.FetchData();
+                data.state = windowState;
+                data.BuildTree(windowState);
                 m_RootItem = data;
             }
 

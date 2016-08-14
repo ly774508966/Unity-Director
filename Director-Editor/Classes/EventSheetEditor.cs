@@ -10,7 +10,7 @@ namespace TangzxInternal
         //owner
         private DirectorWindowState windowState;
         //当前正在拖动的
-        private IRowDrawer currentDraggingEvent;
+        private ISheetRowDrawer currentDraggingEvent;
         //当前选中的
         private TDEvent currentSelectedEvent;
         //行与行的间隔
@@ -100,10 +100,8 @@ namespace TangzxInternal
             rect.width -= rowGap;
             rect.yMin += rowGap * 0.5f;
             rect.height -= rowGap;
-            //BG
-            GUI.Box(rect, GUIContent.none);
 
-            IRowDrawer rowDrawer = item.GetDrawer();
+            ISheetRowDrawer rowDrawer = item.GetDrawer();
             if (rowDrawer != null)
             {
                 rowDrawer.OnSheetRowGUI(this, rect);
@@ -122,12 +120,12 @@ namespace TangzxInternal
             DrawVerticalLine(TimeToPixel2(time), -scrollY, r.yMax - scrollY, color);
         }
         
-        public void OnDragStart(IRowDrawer drawer)
+        public void OnDragStart(ISheetRowDrawer drawer)
         {
             currentDraggingEvent = drawer;
         }
 
-        public void OnDragEnd(IRowDrawer drawer)
+        public void OnDragEnd(ISheetRowDrawer drawer)
         {
             currentDraggingEvent = null;
         }

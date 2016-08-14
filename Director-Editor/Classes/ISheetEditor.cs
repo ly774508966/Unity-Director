@@ -15,8 +15,8 @@ namespace TangzxInternal
 
         void Repaint();
         
-        void OnDragStart(IRowDrawer eventDrawer);
+        void OnDragStart(ISheetRowDrawer eventDrawer);
 
-        void OnDragEnd(IRowDrawer eventDrawer);
+        void OnDragEnd(ISheetRowDrawer eventDrawer);
     }
 }

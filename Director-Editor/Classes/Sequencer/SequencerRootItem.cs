@@ -15,7 +15,7 @@ namespace TangzxInternal
             _data = data;
         }
 
-        public override void FetchData()
+        public override void BuildTree(DirectorWindowState windowState)
         {
             children = null;
             list.Clear();
@@ -25,23 +25,32 @@ namespace TangzxInternal
                 SequencerEventContainer ec = _data.containers[i];
                 SequencerEventContainerTreeItem ecTreeItem = new SequencerEventContainerTreeItem(ec);
                 Add(ecTreeItem, ec.GetInstanceID(), ec.attach.name);
-
-                for (int j = 0; j < ec.evtList.Count; j++)
-                {
-                    TDEvent evt = ec.evtList[j];
-                    ecTreeItem.Add(new EventTreeItem(evt), evt.GetInstanceID(), evt.name);
-                }
+                ecTreeItem.BuildTree(windowState);
+                //默认展开
+                windowState.dataSource.SetExpanded(ecTreeItem, true);
             }
         }
     }
 
-    class SequencerEventContainerTreeItem : TreeItem, IRowDrawer
+    class SequencerEventContainerTreeItem : TreeItem, ISheetRowDrawer
     {
         public SequencerEventContainer target;
 
         public SequencerEventContainerTreeItem(SequencerEventContainer ec)
         {
             target = ec;
+            icon = AssetPreview.GetAssetPreview(ec.attach);
+        }
+
+        public override void BuildTree(DirectorWindowState windowState)
+        {
+            for (int j = 0; j < target.evtList.Count; j++)
+            {
+                TDEvent evt = target.evtList[j];
+                EventTreeItem item = new EventTreeItem(evt);
+                Add(item, evt.GetInstanceID(), evt.name);
+                item.BuildTree(windowState);
+            }
         }
 
         public void OnSheetRowGUI(ISheetEditor sheetEditor, Rect rect)
@@ -49,7 +58,7 @@ namespace TangzxInternal
             
         }
 
-        public override IRowDrawer GetDrawer()
+        public override ISheetRowDrawer GetDrawer()
         {
             return this;
         }
@@ -66,6 +75,8 @@ namespace TangzxInternal
             evt.name = evtInfo.eventType.Name;
             target.evtList.Add(evt);
             AssetDatabase.AddObjectToAsset(evt, target);
+
+            state.dataSource.SetExpanded(this, true);
 
             state.refreshType = DirectorWindowState.RefreshType.All;
         }

@@ -20,7 +20,7 @@ namespace TangzxInternal.Data
             
         }
 
-        public virtual IRowDrawer GetDrawer()
+        public virtual ISheetRowDrawer GetDrawer()
         {
             return null;
         }
@@ -48,6 +48,11 @@ namespace TangzxInternal.Data
         {
             
         }
+
+        public virtual void BuildTree(DirectorWindowState windowState)
+        {
+
+        }
     }
 
     class EventTreeItem : TreeItem
@@ -61,7 +66,7 @@ namespace TangzxInternal.Data
             target = evt;
         }
 
-        public override IRowDrawer GetDrawer()
+        public override ISheetRowDrawer GetDrawer()
         {
             if (drawer == null)
                 drawer = AttributeTool.GetEventDrawer(target);

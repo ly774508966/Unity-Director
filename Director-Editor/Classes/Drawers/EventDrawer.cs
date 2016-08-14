@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TangzxInternal
 {
     [CustomEventDrawer(typeof(TDEvent))]
-    public class EventDrawer : Draggable, IRowDrawer
+    public class EventDrawer : Draggable, ISheetRowDrawer
     {
         static int count = 0;
         /// <summary>
@@ -91,16 +91,32 @@ namespace TangzxInternal
             target.time = v;
         }
 
+        /// <summary>
+        /// 画事件的行
+        /// </summary>
+        /// <param name="sheetEditor">Sheet editor.</param>
+        /// <param name="rect">Rect.</param>
         public void OnSheetRowGUI(ISheetEditor sheetEditor, Rect rect)
         {
-            TDEvent p = target;
-            Rect evtDrawRect = new Rect(rect);
-            evtDrawRect.xMin = sheetEditor.TimeToPixel2(p.time);
-            evtDrawRect.xMax = sheetEditor.TimeToPixel2(p.time + p.duration);
-
             eventSheetEditor = sheetEditor;
 
+            OnSheetRowBackgroundGUI(sheetEditor, rect);
+
+            Rect evtDrawRect = new Rect(rect);
+            evtDrawRect.xMin = sheetEditor.TimeToPixel2(target.time);
+            evtDrawRect.xMax = sheetEditor.TimeToPixel2(target.time + target.duration);
+
             OnGUI(evtDrawRect, rect);
+        }
+
+        /// <summary>
+        /// 画背景
+        /// </summary>
+        /// <param name="sheetEditor">Sheet editor.</param>
+        /// <param name="rect">Rect.</param>
+        protected virtual void OnSheetRowBackgroundGUI(ISheetEditor sheetEditor, Rect rect)
+        {
+            GUI.Box(rect, GUIContent.none);
         }
     }
 }

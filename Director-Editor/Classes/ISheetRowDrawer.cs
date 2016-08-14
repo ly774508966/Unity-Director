@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TangzxInternal
 {
-    public interface IRowDrawer
+    public interface ISheetRowDrawer
     {
         void OnSheetRowGUI(ISheetEditor sheetEditor, Rect rect);
     }

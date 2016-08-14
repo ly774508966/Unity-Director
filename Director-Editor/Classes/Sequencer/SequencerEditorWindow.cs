@@ -29,9 +29,10 @@ namespace TangzxInternal
             GameObject selectGO = Selection.activeGameObject;
             if (_dataGO != selectGO)
             {
+                SequencerDataHolder holder = null;
                 if (selectGO)
                 {
-                    SequencerDataHolder holder = selectGO.GetComponent<SequencerDataHolder>();
+                    holder = selectGO.GetComponent<SequencerDataHolder>();
                     if (holder == null && GUILayout.Button("Create"))
                     {
                         holder = selectGO.AddComponent<SequencerDataHolder>();
@@ -39,12 +40,12 @@ namespace TangzxInternal
                         AssetDatabase.CreateAsset(data, string.Format("Assets/{0}.asset", holder.name));
                         holder.data = data;
                     }
+                }
 
-                    if (holder)
-                    {
-                        _dataGO = selectGO;
-                        SetData(holder.data);
-                    }
+                _dataGO = selectGO;
+                if (holder)
+                {
+                    SetData(holder.data);
                 }
                 else
                 {
