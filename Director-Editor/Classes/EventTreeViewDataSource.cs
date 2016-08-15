@@ -29,7 +29,7 @@ namespace TangzxInternal
             rootIsCollapsable = false;
             SetExpanded(m_RootItem, true);
 
-            m_RootItem.AddChild(new BottomTreeItem(m_RootItem));
+            m_RootItem.AddChild(windowState.window.CreateBottomTreeItem(m_RootItem));
         }
 
         public void UpdateData()

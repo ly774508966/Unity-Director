@@ -102,6 +102,15 @@ namespace TangzxInternal
                     {
                         HandleRemoveCategroy();
                     }
+
+                    //is preview
+                    EditorGUI.BeginChangeCheck();
+                    _isPreview = EditorGUILayout.Toggle("Preview", _isPreview);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        UpdatePreview(true);
+                    }
+
                     GUILayout.FlexibleSpace();
                 }
                 EditorGUI.EndDisabledGroup();
@@ -138,14 +147,6 @@ namespace TangzxInternal
                             _category.totalDuration = Mathf.Max(1, duration);
                             ClampRange();
                         }
-
-                        //is preview
-                        EditorGUI.BeginChangeCheck();
-                        _isPreview = EditorGUILayout.Toggle("Preview", _isPreview);
-                        if (EditorGUI.EndChangeCheck())
-                        {
-                            UpdatePreview(true);
-                        }
                     }
                     GUILayout.FlexibleSpace();
                 }
@@ -154,13 +155,13 @@ namespace TangzxInternal
             GUILayout.EndArea();
 
             //Menu
-            if (Event.current.type == EventType.ContextClick && treeRect.Contains(Event.current.mousePosition))
+            /*if (Event.current.type == EventType.ContextClick && treeRect.Contains(Event.current.mousePosition))
             {
                 GenericMenu menu = new GenericMenu();
                 menu.AddItem(new GUIContent("Create Category"), false, HandleCreateCategory);
                 menu.AddItem(new GUIContent("Remove Category"), false, HandleRemoveCategroy);
                 menu.ShowAsContext();
-            }
+            }*/
         }
 
         void HandleCreateCategory()
@@ -254,7 +255,7 @@ namespace TangzxInternal
 
         void UpdatePreview(bool init = false)
         {
-            if (_data == null || _data.categories.Count == 0)
+            if (_data == null || _category == null)
                 return;
             
             if (_isPreview)

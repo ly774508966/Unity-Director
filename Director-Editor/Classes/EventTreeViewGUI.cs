@@ -39,14 +39,8 @@ namespace TangzxInternal
         {
             if (item is BottomTreeItem)
             {
-                rect.xMin += 15;
-                rect.xMax -= 15;
-                rect.yMin += 5;
-                rect.yMax -= 5;
-                if (GUI.Button(rect, "Add"))
-                {
-                    //windowState.ShowCreateEventMenu();
-                }
+                BottomTreeItem bottomItem = item as BottomTreeItem;
+                bottomItem.OnTreeRowGUI(this, rect, row, selected, focused, useBoldFont);
             }
             else if (item is TreeItem)
             {

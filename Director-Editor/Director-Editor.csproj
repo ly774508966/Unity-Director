@@ -55,7 +55,6 @@
     <Compile Include="Classes\DirectorWindowState.cs" />
     <Compile Include="Classes\Drawers\EventDrawer.cs" />
     <Compile Include="Classes\EventHierarchy.cs" />
-    <Compile Include="Classes\EventTreeItem.cs" />
     <Compile Include="Classes\EventTreeViewDataSource.cs" />
     <Compile Include="Classes\EventTreeViewGUI.cs" />
     <Compile Include="Classes\ISheetEditor.cs" />
@@ -69,6 +68,7 @@
     <Compile Include="Classes\Sequencer\SequencerRootItem.cs" />
     <Compile Include="Classes\ISheetRowDrawer.cs" />
     <Compile Include="Classes\Sequencer\CreateCategoryWindow.cs" />
+    <Compile Include="Classes\PlayHeadDrawer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Director-Runtime\Director-Runtime.csproj">
