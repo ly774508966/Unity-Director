@@ -34,18 +34,26 @@ namespace TangzxInternal.Data
             list.Add(item);
         }
 
+        public void Remove(TreeItem item)
+        {
+            if (state != null)
+                state.ReloadData();
+        }
+
         public virtual void OnTreeRowGUI(EventTreeViewGUI gui, Rect rect, int row, bool selected, bool focused, bool useBoldFont)
         {
             gui.OnNodeGUI(rect, row, this, selected, focused, useBoldFont);
             if (Event.current.type == EventType.ContextClick && rect.Contains(Event.current.mousePosition))
             {
-                OnContextMenu();
+                GenericMenu menu = OnContextMenu();
+                if (menu != null)
+                    menu.ShowAsContext();
             }
         }
 
-        protected virtual void OnContextMenu()
+        protected virtual GenericMenu OnContextMenu()
         {
-            
+            return null;
         }
 
         public virtual void BuildTree(DirectorWindowState windowState)
@@ -78,7 +86,7 @@ namespace TangzxInternal.Data
             return drawer;
         }
 
-        protected override void OnContextMenu()
+        protected override GenericMenu OnContextMenu()
         {
             GenericMenu menu = new GenericMenu();
             menu.AddItem(new GUIContent("Remove"), false, () =>
@@ -86,7 +94,7 @@ namespace TangzxInternal.Data
                 TreeItem p = parent as TreeItem;
                 p.RemoveChild(this);
             });
-            menu.ShowAsContext();
+            return menu;
         }
     }
 }

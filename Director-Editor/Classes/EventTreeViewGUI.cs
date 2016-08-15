@@ -49,7 +49,9 @@ namespace TangzxInternal
                 rect.yMin += 5;
                 rect.yMax -= 5;
                 if (GUI.Button(rect, "Add Event"))
-                    windowState.ShowCreateEventMenu();
+                {
+                    //windowState.ShowCreateEventMenu();
+                }
             }
             else if (item is TreeItem)
             {

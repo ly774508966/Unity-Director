@@ -54,7 +54,6 @@
     <Compile Include="Classes\Sequencer\SequencerEvent.cs" />
     <Compile Include="Classes\Events\IRangeEvent.cs" />
     <Compile Include="Classes\Events\TDEvent.cs" />
-    <Compile Include="Classes\Sequencer\SequencerDataHolder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -64,7 +63,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="Classes\Sequencer\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

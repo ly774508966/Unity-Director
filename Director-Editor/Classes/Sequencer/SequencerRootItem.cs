@@ -30,6 +30,17 @@ namespace TangzxInternal
                 windowState.dataSource.SetExpanded(ecTreeItem, true);
             }
         }
+
+        public override void RemoveChild(TreeItem child)
+        {
+            if (child is SequencerEventContainerTreeItem)
+            {
+                SequencerEventContainerTreeItem item = child as SequencerEventContainerTreeItem;
+                _data.RemoveContainer(item.target);
+
+                state.ReloadData();
+            }
+        }
     }
 
     class SequencerEventContainerTreeItem : TreeItem, ISheetRowDrawer
@@ -51,7 +62,7 @@ namespace TangzxInternal
             {
                 TDEvent evt = e.Current;
                 EventTreeItem item = new EventTreeItem(evt);
-                Add(item, evt.GetInstanceID(), evt.name);
+                Add(item, evt.GetInstanceID(), evt.displayName);
                 item.BuildTree(windowState);
             }
         }
@@ -66,9 +77,15 @@ namespace TangzxInternal
             return this;
         }
 
-        protected override void OnContextMenu()
+        protected override GenericMenu OnContextMenu()
         {
-            state.ShowCreateEventMenu(HandleCreate);
+            GenericMenu menu = state.ShowCreateEventMenu(HandleCreate);
+            menu.AddItem(new GUIContent("Remove"), false, () =>
+            {
+                TreeItem p = parent as TreeItem;
+                p.RemoveChild(this);
+            });
+            return menu;
         }
 
         void HandleCreate(object data)
@@ -86,7 +103,7 @@ namespace TangzxInternal
             if (child is EventTreeItem)
             {
                 EventTreeItem eti = child as EventTreeItem;
-                target.Remove(eti.target);
+                target.RemoveEvent(eti.target);
 
                 state.ReloadData();
             }

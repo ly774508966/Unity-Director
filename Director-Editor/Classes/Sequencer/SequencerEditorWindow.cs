@@ -30,23 +30,20 @@ namespace TangzxInternal
 
             if (_dataGO != selectGO)
             {
-                SequencerDataHolder holder = null;
+                SequencerData data = null;
                 if (selectGO)
                 {
-                    holder = selectGO.GetComponent<SequencerDataHolder>();
-                    if (holder == null && GUILayout.Button("Create"))
+                    data = selectGO.GetComponent<SequencerData>();
+                    if (data == null && GUILayout.Button("Create"))
                     {
-                        holder = selectGO.AddComponent<SequencerDataHolder>();
-                        SequencerData data = CreateInstance<SequencerData>();
-                        AssetDatabase.CreateAsset(data, string.Format("Assets/{0}.asset", holder.name));
-                        holder.data = data;
+                        data = selectGO.AddComponent<SequencerData>();
                     }
                 }
 
-                if (holder)
+                if (data)
                 {
                     _dataGO = selectGO;
-                    SetData(holder.data);
+                    SetData(data);
                 }
                 else
                 {

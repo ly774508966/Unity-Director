@@ -1,5 +1,4 @@
-﻿using Tangzx.Director;
-using TangzxInternal.Data;
+﻿using TangzxInternal.Data;
 using UnityEditor;
 using UnityEngine;
 
@@ -75,15 +74,10 @@ namespace TangzxInternal
             refreshType = RefreshType.All;
         }
 
-        public void ShowCreateEventMenu()
-        {
-            ShowCreateEventMenu(HandlerCreate);
-        }
-
         /// <summary>
         /// 显示创建事件菜单
         /// </summary>
-        public void ShowCreateEventMenu(GenericMenu.MenuFunction2 HandlerCreate)
+        public GenericMenu ShowCreateEventMenu(GenericMenu.MenuFunction2 HandlerCreate)
         {
             GenericMenu menu = new GenericMenu();
 
@@ -94,7 +88,7 @@ namespace TangzxInternal
                 menu.AddItem(new GUIContent(evtInfo.eventAttri.category), false, HandlerCreate, evtInfo);
             }
 
-            menu.ShowAsContext();
+            return menu;
         }
 
         /// <summary>
