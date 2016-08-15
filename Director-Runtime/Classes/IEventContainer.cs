@@ -4,6 +4,8 @@ namespace Tangzx.Director
 {
     public interface IEventContainer
     {
-        List<SequencerEventContainer>.Enumerator GetEnumerator();
+        List<TDEvent>.Enumerator GetEnumerator();
+
+        void Sort();
     }
 }

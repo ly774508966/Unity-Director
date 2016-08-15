@@ -1,3 +1,7 @@
 /.vs
 bin
 obj
+/Director-Unity/Temp
+/Director-Unity/Library
+/Director-Unity/*.csproj
+/Director-Unity/*.sln

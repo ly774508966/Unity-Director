@@ -65,6 +65,16 @@ namespace TangzxInternal
                 treeData = new SequencerRootItem(sd);
             else
                 treeData = null;
+            ClampRange();
+        }
+
+        void ClampRange()
+        {
+            if (_data)
+            {
+                eventSheetEditor.hRangeMax = _data.totalDuration;
+                eventSheetEditor.SetShownHRangeInsideMargins(0, _data.totalDuration);
+            }
         }
 
         protected override void OnToolbarGUI()
@@ -79,6 +89,16 @@ namespace TangzxInternal
                 if (GUILayout.Button("Remove", Styles.toolbarButton))
                 {
 
+                }
+
+                //total duration
+                EditorGUI.BeginChangeCheck();
+                string totalDuration = _data.totalDuration.ToString();
+                totalDuration = GUILayout.TextField(totalDuration, EditorStyles.toolbarTextField, GUILayout.Width(20));
+                if (EditorGUI.EndChangeCheck())
+                {
+                    _data.totalDuration = Mathf.Max(1, int.Parse(totalDuration));
+                    ClampRange();
                 }
 
                 GUILayout.FlexibleSpace();

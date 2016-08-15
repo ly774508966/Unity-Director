@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Tangzx.Director
 {
-    public class SequencerCategory : DirectorObject, IEventContainer
+    public class SequencerCategory : DirectorObject
     {
         public string categoryName;
 

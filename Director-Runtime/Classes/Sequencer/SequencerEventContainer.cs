@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace Tangzx.Director
 {
-    public class SequencerEventContainer : DirectorObject
+    public class SequencerEventContainer : DirectorObject, IEventContainer
     {
         public Transform attach;
 
         [SerializeField]
-        internal List<TDEvent> evtList = new List<TDEvent>();
+        internal List<TDEvent> events = new List<TDEvent>();
 
         public SequencerEventContainer()
         {
@@ -16,8 +16,12 @@ namespace Tangzx.Director
 
         public List<TDEvent>.Enumerator GetEnumerator()
         {
-            return evtList.GetEnumerator();
+            return events.GetEnumerator();
+        }
+
+        public void Sort()
+        {
+            events.Sort();
         }
     }
 }
-
