@@ -1,6 +1,4 @@
-﻿using Tangzx.Director;
-using UnityEditor;
-using TangzxInternal.Data;
+﻿using UnityEditor;
 
 namespace TangzxInternal
 {

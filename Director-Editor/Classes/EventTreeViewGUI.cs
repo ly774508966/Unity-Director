@@ -1,5 +1,4 @@
-﻿using TangzxInternal.Data;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace TangzxInternal
@@ -18,7 +17,7 @@ namespace TangzxInternal
 
         public override bool BeginRename(TreeViewItem item, float delay)
         {
-            if (!(item is EventTreeItem))
+            if (!(item is IRenameableTreeItem))
             {
                 return false;
             }
@@ -31,12 +30,9 @@ namespace TangzxInternal
             RenameOverlay ro = GetRenameOverlay();
             if (!string.IsNullOrEmpty(ro.name) && ro.name != ro.originalName && ro.userAcceptedRename)
             {
-                EventTreeItem item = (EventTreeItem) m_TreeView.data.FindItem(ro.userData);
+                IRenameableTreeItem item = (IRenameableTreeItem) m_TreeView.data.FindItem(ro.userData);
                 if (item != null)
-                {
-                    item.displayName = ro.name;
-                    item.target.name = ro.name;
-                }
+                    item.RenameEnded(ro.name);
             }
         }
 

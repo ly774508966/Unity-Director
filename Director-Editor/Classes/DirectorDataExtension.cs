@@ -25,24 +25,47 @@ namespace TangzxInternal
             EditorUtility.SetDirty(obj);
         }
 
-        public static void AddContainer(this SequencerData dd, SequencerEventContainer ec)
+        #region Sequencer Data
+        public static void AddCategory(this SequencerData data, SequencerCategory sc)
+        {
+            data.categories.Add(sc);
+        }
+
+        public static void RemoveCategory(this SequencerData data, SequencerCategory sc)
+        {
+            sc.RemoveAllContainers();
+            data.categories.Remove(sc);
+            data.RemoveSubAsset(sc);
+        }
+        #endregion Sequencer Data
+
+
+        #region Category
+        public static void AddContainer(this SequencerCategory dd, SequencerEventContainer ec)
         {
             dd.containers.Add(ec);
             EditorUtility.SetDirty(dd);
         }
 
-        public static void RemoveContainer(this SequencerData dd, SequencerEventContainer ec)
+        public static void RemoveContainer(this SequencerCategory dd, SequencerEventContainer ec)
         {
+            ec.RemoveAllEvents();
             dd.containers.Remove(ec);
-
-            //remove events
-            var e = ec.GetEnumerator();
-            while (e.MoveNext())
-                ec.RemoveSubAsset(e.Current);
-
             dd.RemoveSubAsset(ec);
         }
 
+        public static void RemoveAllContainers(this SequencerCategory dd)
+        {
+            SequencerEventContainer[] list = dd.containers.ToArray();
+            for (int i = 0; i < list.Length; i++)
+            {
+                dd.RemoveContainer(list[i]);
+            }
+            dd.containers.Clear();
+        }
+        #endregion Category
+
+        #region Event Container
         public static void AddEvent(this SequencerEventContainer ec, TDEvent evt)
         {
             ec.evtList.Add(evt);
@@ -54,5 +77,16 @@ namespace TangzxInternal
             ec.evtList.Remove(evt);
             ec.RemoveSubAsset(evt);
         }
+
+        public static void RemoveAllEvents(this SequencerEventContainer ec)
+        {
+            TDEvent[] events = ec.evtList.ToArray();
+            for (int i = 0; i < events.Length; i++)
+            {
+                ec.RemoveEvent(events[i]);
+            }
+            ec.evtList.Clear();
+        }
+        #endregion Event Container
     }
 }

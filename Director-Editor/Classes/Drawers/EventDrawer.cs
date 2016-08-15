@@ -1,5 +1,4 @@
 ﻿using Tangzx.Director;
-using TangzxInternal.Data;
 using UnityEngine;
 
 namespace TangzxInternal

@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Data\EventTreeItem.cs" />
     <Compile Include="Classes\Draggable.cs" />
     <Compile Include="Classes\EventInspector.cs" />
     <Compile Include="Classes\EventSheetEditor.cs" />

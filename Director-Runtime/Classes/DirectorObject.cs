@@ -9,7 +9,7 @@ namespace Tangzx.Director
 
         public DirectorObject()
         {
-            hideFlags = HideFlags.HideInInspector;
+            //hideFlags = HideFlags.HideInInspector;
         }
     }
 }

@@ -47,6 +47,8 @@
     <Compile Include="Classes\DirectorPlayable.cs" />
     <Compile Include="Classes\Events\LogEvent.cs" />
     <Compile Include="Classes\Events\TestRangeEvent.cs" />
+    <Compile Include="Classes\IEventContainer.cs" />
+    <Compile Include="Classes\Sequencer\SequencerCategory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\DirectorObject.cs" />
     <Compile Include="Classes\Sequencer\SequencerEventContainer.cs" />

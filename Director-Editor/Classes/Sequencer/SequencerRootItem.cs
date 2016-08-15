@@ -1,5 +1,4 @@
 ﻿using Tangzx.Director;
-using TangzxInternal.Data;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,11 +6,11 @@ namespace TangzxInternal
 {
     class SequencerRootItem : TreeRootItem
     {
-        SequencerData _data;
+        SequencerData target;
 
         public SequencerRootItem(SequencerData data)
         {
-            _data = data;
+            target = data;
         }
 
         public override void BuildTree(DirectorWindowState windowState)
@@ -19,7 +18,47 @@ namespace TangzxInternal
             children = null;
             list.Clear();
 
-            var e = _data.GetEnumerator();
+            var e = target.GetEnumerator();
+            while (e.MoveNext())
+            {
+                SequencerCategory ec = e.Current;
+                SequencerCategoryTreeItem ecTreeItem = new SequencerCategoryTreeItem(ec);
+                Add(ecTreeItem, ec.GetInstanceID(), ec.categoryName);
+                ecTreeItem.BuildTree(windowState);
+                //默认展开
+                windowState.dataSource.SetExpanded(ecTreeItem, true);
+            }
+        }
+
+        public override void RemoveChild(TreeItem child)
+        {
+            if (child is SequencerCategoryTreeItem)
+            {
+                SequencerCategoryTreeItem item = child as SequencerCategoryTreeItem;
+                target.RemoveCategory(item.target);
+
+                state.ReloadData();
+            }
+        }
+    }
+
+    class SequencerCategoryTreeItem : TreeItem, ISheetRowDrawer, IRenameableTreeItem
+    {
+        public SequencerCategory target;
+
+        public SequencerCategoryTreeItem(SequencerCategory sc)
+        {
+            target = sc;
+        }
+
+        public void OnSheetRowGUI(ISheetEditor sheetEditor, Rect rect) { }
+        
+        public override void BuildTree(DirectorWindowState windowState)
+        {
+            children = null;
+            list.Clear();
+
+            var e = target.GetEnumerator();
             while (e.MoveNext())
             {
                 SequencerEventContainer ec = e.Current;
@@ -36,10 +75,30 @@ namespace TangzxInternal
             if (child is SequencerEventContainerTreeItem)
             {
                 SequencerEventContainerTreeItem item = child as SequencerEventContainerTreeItem;
-                _data.RemoveContainer(item.target);
+                target.RemoveContainer(item.target);
 
                 state.ReloadData();
             }
+        }
+
+        protected override GenericMenu OnContextMenu()
+        {
+            GenericMenu menu = new GenericMenu();
+            menu.AddItem(new GUIContent("Remove"), false, () =>
+            {
+                if (EditorUtility.DisplayDialog("警告", "确认删除分类：[" + target.categoryName + "] ?", "确定", "取消"))
+                {
+                    TreeItem p = parent as TreeItem;
+                    p.RemoveChild(this);
+                }
+            });
+            return menu;
+        }
+
+        public void RenameEnded(string name)
+        {
+            displayName = name;
+            target.categoryName = name;
         }
     }
 
@@ -82,8 +141,11 @@ namespace TangzxInternal
             GenericMenu menu = state.ShowCreateEventMenu(HandleCreate);
             menu.AddItem(new GUIContent("Remove"), false, () =>
             {
-                TreeItem p = parent as TreeItem;
-                p.RemoveChild(this);
+                if (EditorUtility.DisplayDialog("警告", "确认删除分类：[" + target.attach.name + "] ?", "确定", "取消"))
+                {
+                    TreeItem p = parent as TreeItem;
+                    p.RemoveChild(this);
+                }
             });
             return menu;
         }

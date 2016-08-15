@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using Tangzx.Director;
 using UnityEditor;
 using UnityEngine;
 
-namespace TangzxInternal.Data
+namespace TangzxInternal
 {
     /// <summary>
     /// 每一行的数据基类
@@ -64,37 +63,6 @@ namespace TangzxInternal.Data
         public virtual void RemoveChild(TreeItem child)
         {
             Debug.Log("Remove : " + child);
-        }
-    }
-
-    class EventTreeItem : TreeItem
-    {
-        public TDEvent target;
-
-        private EventDrawer drawer;
-
-        public EventTreeItem(TDEvent evt)
-        {
-            target = evt;
-        }
-
-        public override ISheetRowDrawer GetDrawer()
-        {
-            if (drawer == null)
-                drawer = AttributeTool.GetEventDrawer(target);
-            drawer.target = target;
-            return drawer;
-        }
-
-        protected override GenericMenu OnContextMenu()
-        {
-            GenericMenu menu = new GenericMenu();
-            menu.AddItem(new GUIContent("Remove"), false, () =>
-            {
-                TreeItem p = parent as TreeItem;
-                p.RemoveChild(this);
-            });
-            return menu;
         }
     }
 }

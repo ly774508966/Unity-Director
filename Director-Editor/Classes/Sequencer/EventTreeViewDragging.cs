@@ -22,7 +22,7 @@ namespace TangzxInternal
 
         public override DragAndDropVisualMode DoDrag(TreeViewItem parentItem, TreeViewItem targetItem, bool perform, DropPosition dropPosition)
         {
-            if (targetItem is BottomTreeItem && perform)
+            if (targetItem is SequencerCategoryTreeItem && perform)
             {
                 dragObjects.Clear();
 
@@ -37,7 +37,8 @@ namespace TangzxInternal
 
                 if (dragObjects.Count > 0)
                 {
-                    return window.DoDrag(dragObjects.ToArray());
+                    var treeItem = targetItem as SequencerCategoryTreeItem;
+                    return window.DoDrag(dragObjects.ToArray(), treeItem.target);
                 }
             }
             return DragAndDropVisualMode.Move;
