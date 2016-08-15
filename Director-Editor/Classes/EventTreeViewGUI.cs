@@ -10,7 +10,6 @@ namespace TangzxInternal
         public EventTreeViewGUI(TreeView treeView, DirectorWindowState windowState) : base(treeView)
         {
             this.windowState = windowState;
-            k_TopRowMargin = windowState.timeRulerHeight;
             k_BottomRowMargin = windowState.hierarchyAddEventButtonHeight;
             k_LineHeight = windowState.rowHeight;
         }
@@ -44,7 +43,7 @@ namespace TangzxInternal
                 rect.xMax -= 15;
                 rect.yMin += 5;
                 rect.yMax -= 5;
-                if (GUI.Button(rect, "Add Event"))
+                if (GUI.Button(rect, "Add"))
                 {
                     //windowState.ShowCreateEventMenu();
                 }

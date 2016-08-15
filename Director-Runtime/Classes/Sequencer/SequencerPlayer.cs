@@ -23,7 +23,7 @@ public class SequencerPlayer : DirectorPlayer
         List<IEventContainer> list = new List<IEventContainer>();
         var e = sc.GetEnumerator();
         while (e.MoveNext()) list.Add(e.Current);
-        Play(list.ToArray(), data.totalDuration);
+        Play(list.ToArray(), sc.totalDuration);
     }
 
     public override void ReadyToPlay()

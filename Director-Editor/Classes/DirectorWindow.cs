@@ -21,6 +21,7 @@ namespace TangzxInternal
         private DirectorWindowState _state;
 
         protected EventHierarchy eventHierarchy;
+        Rect _hierarchyRect;
         protected EventSheetEditor eventSheetEditor;
         Rect _eventSheetRect;
 
@@ -106,16 +107,16 @@ namespace TangzxInternal
 
         protected virtual void OnGUI()
         {
+            UpdateStyles();
+            OnToolbarGUI();
             OnCheckDataGUI();
 
             if (treeData != null)
             {
                 RemoveNotification();
-                UpdateStyles();
 
                 _state.OnGUI();
 
-                OnToolbarGUI();
                 GUILayout.BeginHorizontal();
                 {
                     SplitterGUILayout.BeginHorizontalSplit(_splitterState);
@@ -124,6 +125,9 @@ namespace TangzxInternal
                     GUILayout.BeginVertical();
                     {
                         lRect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+
+                        if (lRect.width > 1)
+                            _hierarchyRect = lRect;
                     }
                     GUILayout.EndVertical();
 
@@ -140,7 +144,7 @@ namespace TangzxInternal
 
                     //重新画左:
                     //这里有一个奇怪的问题：如果先画左再画中间会出现中间的滚动条失灵的BUG
-                    OnHierarchyGUI(lRect);
+                    OnHierarchyGUI(_hierarchyRect);
                     
                     //在 [左与中] 中间画条黑线
                     GUI.color = Color.black;
@@ -241,7 +245,7 @@ namespace TangzxInternal
             GUI.EndGroup();
         }
 
-        void OnHierarchyGUI(Rect rect)
+        protected virtual void OnHierarchyGUI(Rect rect)
         {
             eventHierarchy.OnGUI(rect);
         }

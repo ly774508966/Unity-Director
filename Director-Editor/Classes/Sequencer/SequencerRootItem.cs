@@ -42,7 +42,7 @@ namespace TangzxInternal
         }
     }
 
-    class SequencerCategoryTreeItem : TreeItem, ISheetRowDrawer, IRenameableTreeItem
+    class SequencerCategoryTreeItem : TreeRootItem, ISheetRowDrawer, IRenameableTreeItem
     {
         public SequencerCategory target;
 

@@ -9,6 +9,9 @@ namespace Tangzx.Director
 
         [SerializeField, HideInInspector]
         internal List<SequencerEventContainer> containers = new List<SequencerEventContainer>();
+
+        [SerializeField, HideInInspector]
+        private float _totalDuration = 5;
         
         public List<SequencerEventContainer>.Enumerator GetEnumerator()
         {
@@ -20,6 +23,18 @@ namespace Tangzx.Director
             for (int i = 0; i < containers.Count; i++)
             {
                 containers[i].ReadyToPlay();
+            }
+        }
+
+        public float totalDuration
+        {
+            get
+            {
+                return _totalDuration;
+            }
+            set
+            {
+                _totalDuration = value;
             }
         }
     }

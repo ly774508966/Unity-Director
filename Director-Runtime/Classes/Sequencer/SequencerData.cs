@@ -11,10 +11,6 @@ namespace Tangzx.Director
         [SerializeField, HideInInspector]
         private SequencerCategory _defaultCategory;
 
-        [SerializeField, HideInInspector]
-        private float _totalDuration = 5;
-
-
         public SequencerCategory defaultCategory
         {
             set { _defaultCategory = value; }
@@ -30,18 +26,6 @@ namespace Tangzx.Director
         public List<SequencerCategory>.Enumerator GetEnumerator()
         {
             return categories.GetEnumerator();
-        }
-
-        public float totalDuration
-        {
-            get
-            {
-                return _totalDuration;
-            }
-            set
-            {
-                _totalDuration = value;
-            }
         }
     }
 }

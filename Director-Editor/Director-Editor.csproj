@@ -68,6 +68,7 @@
     <Compile Include="Classes\Data\TreeItem.cs" />
     <Compile Include="Classes\Sequencer\SequencerRootItem.cs" />
     <Compile Include="Classes\ISheetRowDrawer.cs" />
+    <Compile Include="Classes\Sequencer\CreateCategoryWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Director-Runtime\Director-Runtime.csproj">

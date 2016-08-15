@@ -16,6 +16,7 @@ namespace TangzxInternal
 
         public static int SCROLLBAR_WIDTH = 15;
         public static int SCROLLBAR_HEIGHT = 15;
+        public static int TOOLBAR_HEIGHT = 18;
 
         public DirectorWindow window;
 
@@ -31,7 +32,7 @@ namespace TangzxInternal
         /// <summary>
         /// 时间轴的高度
         /// </summary>
-        public float timeRulerHeight = 15;
+        public float timeRulerHeight = TOOLBAR_HEIGHT;
         /// <summary>
         /// 每行的高度
         /// </summary>
