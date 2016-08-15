@@ -6,11 +6,11 @@ namespace TangzxInternal
 {
     class EventTreeItem : TreeItem, IRenameableTreeItem
     {
-        public TDEvent target;
+        public DirectorEvent target;
 
         private EventDrawer drawer;
 
-        public EventTreeItem(TDEvent evt)
+        public EventTreeItem(DirectorEvent evt)
         {
             target = evt;
         }

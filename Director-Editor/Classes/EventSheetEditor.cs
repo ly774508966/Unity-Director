@@ -11,7 +11,7 @@ namespace TangzxInternal
         //当前正在拖动的
         private ISheetRowDrawer currentDraggingEvent;
         //当前选中的
-        private TDEvent currentSelectedEvent;
+        private DirectorEvent currentSelectedEvent;
         //行与行的间隔
         private float rowGap = 1f;
 
@@ -144,7 +144,7 @@ namespace TangzxInternal
             windowState.window.Repaint();
         }
 
-        public TDEvent selected
+        public DirectorEvent selected
         {
             get
             {

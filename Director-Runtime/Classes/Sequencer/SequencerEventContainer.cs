@@ -8,14 +8,14 @@ namespace Tangzx.Director
         public Transform attach;
 
         [SerializeField]
-        internal List<TDEvent> events = new List<TDEvent>();
+        internal List<DirectorEvent> events = new List<DirectorEvent>();
 
 
         void Awake()
         {
             for (int i = 0; i < events.Count; i++)
             {
-                TDEvent e = events[i];
+                DirectorEvent e = events[i];
                 if (e is ISequencerEvent)
                 {
                     ISequencerEvent se = e as ISequencerEvent;
@@ -24,7 +24,7 @@ namespace Tangzx.Director
             }
         }
 
-        public List<TDEvent>.Enumerator GetEnumerator()
+        public List<DirectorEvent>.Enumerator GetEnumerator()
         {
             return events.GetEnumerator();
         }

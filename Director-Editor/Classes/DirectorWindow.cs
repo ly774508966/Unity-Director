@@ -248,7 +248,7 @@ namespace TangzxInternal
 
         void OnRightGUI()
         {
-            TDEvent evt = eventSheetEditor.selected;
+            DirectorEvent evt = eventSheetEditor.selected;
             if (evt)
             {
                 _eventInspector.OnGUI(evt);

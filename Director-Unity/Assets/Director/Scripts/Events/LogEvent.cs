@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 [DirectorPlayable("Util/LogEvent")]
-public class LogEvent : TDEvent
+public class LogEvent : DirectorEvent
 {
     public string content;
 

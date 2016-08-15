@@ -66,13 +66,13 @@ namespace TangzxInternal
         #endregion Category
 
         #region Event Container
-        public static void AddEvent(this SequencerEventContainer ec, TDEvent evt)
+        public static void AddEvent(this SequencerEventContainer ec, DirectorEvent evt)
         {
             ec.events.Add(evt);
             EditorUtility.SetDirty(ec);
         }
 
-        public static void RemoveEvent(this SequencerEventContainer ec, TDEvent evt)
+        public static void RemoveEvent(this SequencerEventContainer ec, DirectorEvent evt)
         {
             ec.events.Remove(evt);
             ec.RemoveSubAsset(evt);
@@ -80,7 +80,7 @@ namespace TangzxInternal
 
         public static void RemoveAllEvents(this SequencerEventContainer ec)
         {
-            TDEvent[] events = ec.events.ToArray();
+            DirectorEvent[] events = ec.events.ToArray();
             for (int i = 0; i < events.Length; i++)
             {
                 ec.RemoveEvent(events[i]);

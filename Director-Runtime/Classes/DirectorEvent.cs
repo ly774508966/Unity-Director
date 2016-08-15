@@ -7,7 +7,7 @@ namespace Tangzx.Director
     /// <summary>
     /// 可播放的基类
     /// </summary>
-    public abstract class TDEvent : DirectorObject, IComparable<TDEvent>
+    public abstract class DirectorEvent : DirectorObject, IComparable<DirectorEvent>
     {
         /// <summary>
         /// 起始时间
@@ -47,7 +47,7 @@ namespace Tangzx.Director
 
         }
 
-        public int CompareTo(TDEvent other)
+        public int CompareTo(DirectorEvent other)
         {
             return time.CompareTo(other.time);
         }

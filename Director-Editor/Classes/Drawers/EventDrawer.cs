@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace TangzxInternal
 {
-    [CustomEventDrawer(typeof(TDEvent))]
+    [CustomEventDrawer(typeof(DirectorEvent))]
     public class EventDrawer : Draggable, ISheetRowDrawer
     {
         static int count = 0;
         /// <summary>
         /// event
         /// </summary>
-        public TDEvent target;
+        public DirectorEvent target;
         /// <summary>
         /// 是否被选中的
         /// </summary>

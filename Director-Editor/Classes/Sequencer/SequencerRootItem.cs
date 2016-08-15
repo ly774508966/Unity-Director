@@ -119,7 +119,7 @@ namespace TangzxInternal
             var e = target.GetEnumerator();
             while (e.MoveNext())
             {
-                TDEvent evt = e.Current;
+                DirectorEvent evt = e.Current;
                 EventTreeItem item = new EventTreeItem(evt);
                 Add(item, evt.GetInstanceID(), evt.displayName);
                 item.BuildTree(windowState);
@@ -153,7 +153,7 @@ namespace TangzxInternal
         void HandleCreate(object data)
         {
             AttributeTool.EventInfo evtInfo = (AttributeTool.EventInfo)data;
-            TDEvent evt = (TDEvent)target.CreateSubAsset(evtInfo.eventType);
+            DirectorEvent evt = (DirectorEvent)target.CreateSubAsset(evtInfo.eventType);
             target.AddEvent(evt);
 
             state.dataSource.SetExpanded(this, true);

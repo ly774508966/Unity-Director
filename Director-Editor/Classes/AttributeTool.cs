@@ -20,7 +20,7 @@ namespace TangzxInternal
 
         public struct EventInfo
         {
-            public DirectorPlayable eventAttri;
+            public DirectorPlayableAttribute eventAttri;
             public Type eventType;
         }
 
@@ -29,7 +29,7 @@ namespace TangzxInternal
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        public static EventDrawer GetEventDrawer(TDEvent p)
+        public static EventDrawer GetEventDrawer(DirectorEvent p)
         {
             if (drawerTypeMap == null)
             {
@@ -49,7 +49,7 @@ namespace TangzxInternal
             //循环查找
             Type drawerType = null;
             Type evtType = p.GetType();
-            while ((evtType == typeof(TDEvent) || evtType.IsSubclassOf(typeof(TDEvent))) && drawerType == null)
+            while ((evtType == typeof(DirectorEvent) || evtType.IsSubclassOf(typeof(DirectorEvent))) && drawerType == null)
             {
                 drawerTypeMap.TryGetValue(evtType, out drawerType);
                 if (drawerType == null)
@@ -74,7 +74,7 @@ namespace TangzxInternal
         {
             if (allEventTypes == null)
             {
-                Type attrType = typeof(DirectorPlayable);
+                Type attrType = typeof(DirectorPlayableAttribute);
                 ArrayList al = AttributeHelper.FindEditorClassesWithAttribute(attrType);
                 allEventTypes = new EventInfo[al.Count];
                 for (int i = 0; i < al.Count; i++)
@@ -83,7 +83,7 @@ namespace TangzxInternal
                     object[] arr = t.GetCustomAttributes(attrType, false);
 
                     EventInfo ei = new EventInfo();
-                    ei.eventAttri = arr[0] as DirectorPlayable;
+                    ei.eventAttri = arr[0] as DirectorPlayableAttribute;
                     ei.eventType = t;
                     allEventTypes[i] = ei;
                 }

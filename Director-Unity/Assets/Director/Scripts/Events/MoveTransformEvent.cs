@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [DirectorPlayable("Transform/MoveTransformEvent")]
-class MoveTransformEvent : TDEvent, IRangeEvent, ISequencerEvent
+class MoveTransformEvent : DirectorEvent, IRangeEvent, ISequencerEvent
 {
     private Vector3 from;
 

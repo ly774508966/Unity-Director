@@ -42,18 +42,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Director.cs" />
-    <Compile Include="Classes\DirectorData.cs" />
-    <Compile Include="Classes\DirectorPlayable.cs" />
+    <Compile Include="Classes\DirectorEvent.cs" />
+    <Compile Include="Classes\DirectorPlayableAttribute.cs" />
     <Compile Include="Classes\IEventContainer.cs" />
-    <Compile Include="Classes\ISequencerEvent.cs" />
+    <Compile Include="Classes\Sequencer\ISequencerEvent.cs" />
     <Compile Include="Classes\Sequencer\SequencerCategory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\DirectorObject.cs" />
     <Compile Include="Classes\Sequencer\SequencerEventContainer.cs" />
     <Compile Include="Classes\Sequencer\SequencerData.cs" />
-    <Compile Include="Classes\Events\IRangeEvent.cs" />
-    <Compile Include="Classes\Events\TDEvent.cs" />
+    <Compile Include="Classes\IRangeEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

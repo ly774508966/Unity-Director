@@ -17,7 +17,7 @@ public class DirectorPlayer : MonoBehaviour
     /// <summary>
     /// 正在播放的
     /// </summary>
-    private List<TDEvent> _playingList = new List<TDEvent>();
+    private List<DirectorEvent> _playingList = new List<DirectorEvent>();
 
     private IEventContainer[] _eventContainers;
     private float _totalTime;
@@ -82,7 +82,7 @@ public class DirectorPlayer : MonoBehaviour
                 var e = ec.GetEnumerator();
                 while (e.MoveNext())
                 {
-                    TDEvent p = e.Current;
+                    DirectorEvent p = e.Current;
                     if (p.time >= oldTime && p.time <= newTime)
                     {
                         p.Fire();
@@ -94,7 +94,7 @@ public class DirectorPlayer : MonoBehaviour
             //处理 playing list
             for (int i = 0; i < _playingList.Count; i++)
             {
-                TDEvent p = _playingList[i];
+                DirectorEvent p = _playingList[i];
                 if (p.isRangeEvent)
                 {
                     float endTime = p.time + p.duration;

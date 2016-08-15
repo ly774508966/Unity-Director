@@ -1,10 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.Serialization;
-
-namespace Tangzx.Director
+﻿namespace Tangzx.Director
 {
     /// <summary>
-    /// 有长度的
+    /// 有长度的事件
     /// </summary>
     public interface IRangeEvent
     {

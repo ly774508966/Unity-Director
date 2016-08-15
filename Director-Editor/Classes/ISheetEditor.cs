@@ -5,7 +5,7 @@ namespace TangzxInternal
 {
     public interface ISheetEditor
     {
-        TDEvent selected { get; set; }
+        DirectorEvent selected { get; set; }
 
         float PixelToTime2(float pixel);
 
