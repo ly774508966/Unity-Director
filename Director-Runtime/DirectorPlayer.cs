@@ -26,6 +26,7 @@ public class DirectorPlayer : MonoBehaviour
     {
         if (_isPlaying == false)
         {
+            _playTime = 0;
             _totalTime = totalTime;
             _playingList.Clear();
             _eventContainers = containers;

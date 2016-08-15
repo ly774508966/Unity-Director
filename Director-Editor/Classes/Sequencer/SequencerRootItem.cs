@@ -106,6 +106,8 @@ namespace TangzxInternal
     {
         public SequencerEventContainer target;
 
+        private bool _isSelected;
+
         public SequencerEventContainerTreeItem(SequencerEventContainer ec)
         {
             target = ec;
@@ -169,6 +171,14 @@ namespace TangzxInternal
 
                 state.ReloadData();
             }
+        }
+
+        public override void OnTreeRowGUI(EventTreeViewGUI gui, Rect rect, int row, bool selected, bool focused, bool useBoldFont)
+        {
+            base.OnTreeRowGUI(gui, rect, row, selected, focused, useBoldFont);
+            if (_isSelected != selected && selected)
+                EditorGUIUtility.PingObject(target.attach);
+            _isSelected = selected;
         }
     }
 }

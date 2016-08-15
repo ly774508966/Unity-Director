@@ -9,19 +9,10 @@ namespace Tangzx.Director
 
         [SerializeField]
         internal List<DirectorEvent> events = new List<DirectorEvent>();
-
-
+        
         void Awake()
         {
-            for (int i = 0; i < events.Count; i++)
-            {
-                DirectorEvent e = events[i];
-                if (e is ISequencerEvent)
-                {
-                    ISequencerEvent se = e as ISequencerEvent;
-                    se.container = this;
-                }
-            }
+            ReadyToPlay();
         }
 
         public List<DirectorEvent>.Enumerator GetEnumerator()
@@ -32,6 +23,19 @@ namespace Tangzx.Director
         public void Sort()
         {
             events.Sort();
+        }
+
+        public void ReadyToPlay()
+        {
+            for (int i = 0; i < events.Count; i++)
+            {
+                DirectorEvent e = events[i];
+                if (e is ISequencerEvent)
+                {
+                    ISequencerEvent se = e as ISequencerEvent;
+                    se.container = this;
+                }
+            }
         }
     }
 }

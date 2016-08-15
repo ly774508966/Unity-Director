@@ -16,7 +16,7 @@ class MoveTransformEvent : DirectorEvent, IRangeEvent, ISequencerEvent
         from = container.attach.position;
     }
 
-    public override void Process(float time)
+    public override void Process(float time, bool isReverse = false)
     {
         base.Process(time);
         Vector3 p = Vector3.Lerp(from, to, time / duration);

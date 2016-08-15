@@ -17,6 +17,8 @@ namespace TangzxInternal
 
         private GameObject _dataGO;
         private SequencerData _data;
+        private SequencerPlayer _player;
+        private bool _isPreview;
 
         protected override void InitHierarchy()
         {
@@ -60,6 +62,7 @@ namespace TangzxInternal
 
         void SetData(SequencerData sd)
         {
+            _player = null;
             _data = sd;
             if (sd)
                 treeData = new SequencerRootItem(sd);
@@ -99,6 +102,14 @@ namespace TangzxInternal
                 {
                     _data.totalDuration = Mathf.Max(1, int.Parse(totalDuration));
                     ClampRange();
+                }
+
+                //is preview
+                EditorGUI.BeginChangeCheck();
+                _isPreview = EditorGUILayout.Toggle("Preview", _isPreview);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    UpdatePreview();
                 }
 
                 GUILayout.FlexibleSpace();
@@ -151,6 +162,33 @@ namespace TangzxInternal
                 _data.AddCategory(sc);
                 state.ReloadData();
             }
+        }
+
+        void UpdatePreview()
+        {
+            if (_isPreview)
+            {
+                if (_player == null)
+                    _player = _data.GetComponent<SequencerPlayer>();
+                if (_player)
+                {
+                    if (!_player.isPlaying)
+                        _player.Play();
+
+                    _player.Process(playHeadTime);
+                }
+            }
+            else
+            {
+                if (_player)
+                    _player.Stop();
+            }
+        }
+
+        public override void SetPlayHead(float value)
+        {
+            base.SetPlayHead(value);
+            UpdatePreview();
         }
     }
     

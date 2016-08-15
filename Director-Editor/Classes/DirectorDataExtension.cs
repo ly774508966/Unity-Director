@@ -11,6 +11,7 @@ namespace TangzxInternal
         public static DirectorObject CreateSubAsset(this DirectorObject obj, Type subAssetType, HideFlags hideFlags)
         {
             DirectorObject so = (DirectorObject)obj.gameObject.AddComponent(subAssetType);
+            so.enabled = false;
             so.hideFlags = hideFlags;
             so.displayName = subAssetType.Name;
             return so;

@@ -9,6 +9,8 @@ namespace Tangzx.Director
     {
         List<DirectorEvent>.Enumerator GetEnumerator();
 
+        void ReadyToPlay();
+
         void Sort();
     }
 }

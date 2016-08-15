@@ -44,9 +44,11 @@
   <ItemGroup>
     <Compile Include="Classes\DirectorEvent.cs" />
     <Compile Include="Classes\DirectorPlayableAttribute.cs" />
+    <Compile Include="Classes\DirectorPlayer.cs" />
     <Compile Include="Classes\IEventContainer.cs" />
     <Compile Include="Classes\Sequencer\ISequencerEvent.cs" />
     <Compile Include="Classes\Sequencer\SequencerCategory.cs" />
+    <Compile Include="Classes\Sequencer\SequencerPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\DirectorObject.cs" />
     <Compile Include="Classes\Sequencer\SequencerEventContainer.cs" />

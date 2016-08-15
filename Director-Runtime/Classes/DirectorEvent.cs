@@ -37,12 +37,22 @@ namespace Tangzx.Director
 
         }
 
-        public virtual void Process(float time)
+        public virtual void FireReverse()
+        {
+
+        }
+
+        public virtual void Process(float time, bool isReverse = false)
         {
             
         }
 
         public virtual void End()
+        {
+
+        }
+
+        public virtual void EndReverse()
         {
 
         }
