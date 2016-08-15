@@ -153,7 +153,7 @@ namespace TangzxInternal
         void HandleCreate(object data)
         {
             AttributeTool.EventInfo evtInfo = (AttributeTool.EventInfo)data;
-            DirectorEvent evt = (DirectorEvent)target.CreateSubAsset(evtInfo.eventType);
+            DirectorEvent evt = (DirectorEvent)target.CreateSubAsset(evtInfo.eventType, HideFlags.HideInInspector);
             target.AddEvent(evt);
 
             state.dataSource.SetExpanded(this, true);

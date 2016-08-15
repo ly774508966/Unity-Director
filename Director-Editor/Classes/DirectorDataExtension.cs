@@ -1,5 +1,6 @@
 ﻿using System;
 using Tangzx.Director;
+using UnityEngine;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
@@ -7,16 +8,17 @@ namespace TangzxInternal
 {
     static class DirectorDataExtension
     {
-        public static DirectorObject CreateSubAsset(this DirectorObject obj, Type subAssetType)
+        public static DirectorObject CreateSubAsset(this DirectorObject obj, Type subAssetType, HideFlags hideFlags)
         {
             DirectorObject so = (DirectorObject)obj.gameObject.AddComponent(subAssetType);
+            so.hideFlags = hideFlags;
             so.displayName = subAssetType.Name;
             return so;
         }
 
-        public static T CreateSubAsset<T>(this DirectorObject obj) where T : DirectorObject
+        public static T CreateSubAsset<T>(this DirectorObject obj, HideFlags hideFlags) where T : DirectorObject
         {
-            return (T)obj.CreateSubAsset(typeof(T));
+            return (T)obj.CreateSubAsset(typeof(T), hideFlags);
         }
 
         public static void RemoveSubAsset(this DirectorObject obj, DirectorObject subAsset)

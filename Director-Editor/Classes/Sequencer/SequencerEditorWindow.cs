@@ -124,7 +124,7 @@ namespace TangzxInternal
 
                 if (ec == null)
                 {
-                    ec = _data.CreateSubAsset<SequencerEventContainer>();
+                    ec = _data.CreateSubAsset<SequencerEventContainer>(HideFlags.HideInInspector);
                     ec.attach = go.transform;
                     sc.AddContainer(ec);
                 }
@@ -146,7 +146,7 @@ namespace TangzxInternal
                         return;
                 }
 
-                SequencerCategory sc = _data.CreateSubAsset<SequencerCategory>();
+                SequencerCategory sc = _data.CreateSubAsset<SequencerCategory>(HideFlags.HideInInspector);
                 sc.categoryName = name;
                 _data.AddCategory(sc);
                 state.ReloadData();

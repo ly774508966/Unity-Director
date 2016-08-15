@@ -6,11 +6,6 @@ namespace Tangzx.Director
     {
         [HideInInspector]
         public string displayName;
-
-        public DirectorObject()
-        {
-            //hideFlags = HideFlags.HideInInspector;
-        }
     }
 }
 

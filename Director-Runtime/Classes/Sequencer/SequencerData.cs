@@ -8,16 +8,12 @@ namespace Tangzx.Director
         [SerializeField, HideInInspector]
         internal List<SequencerCategory> categories = new List<SequencerCategory>();
 
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private SequencerCategory _defaultCategory;
 
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private float _totalDuration = 5;
 
-        public SequencerData()
-        {
-            //hideFlags = HideFlags.None;
-        }
 
         public SequencerCategory defaultCategory
         {
