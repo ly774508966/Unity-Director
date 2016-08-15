@@ -181,7 +181,10 @@ namespace TangzxInternal
             else
             {
                 if (_player)
+                {
+                    _player.Process(0);
                     _player.Stop();
+                }
             }
         }
 
