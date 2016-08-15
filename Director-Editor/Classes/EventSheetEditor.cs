@@ -10,8 +10,6 @@ namespace TangzxInternal
         private DirectorWindowState windowState;
         //当前正在拖动的
         private ISheetRowDrawer currentDraggingEvent;
-        //当前选中的
-        private DirectorEvent currentSelectedEvent;
         //行与行的间隔
         private float rowGap = 1f;
 
@@ -50,19 +48,7 @@ namespace TangzxInternal
 
             if (treeData != null)
             {
-                //Rect rowRect = rect;
-                //纪录拖动的对象所在的索引
-                //int selectedIndex = -1;
-                
                 OnItemGUI(rect, treeData, 0, false, true);
-
-                //拖动的最后画
-                //if (selectedIndex != -1)
-                //{
-                //    rowRect.y = selectedIndex * windowState.rowHeight;
-                //    rowRect.height = windowState.rowHeight;
-                //    OnPlayableGUI(currentSelectedEvent, rowRect);
-                //}
             }
         }
 

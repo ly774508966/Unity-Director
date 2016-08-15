@@ -166,6 +166,9 @@ namespace TangzxInternal
 
         void UpdatePreview(bool init = false)
         {
+            if (_data == null || _data.categories.Count == 0)
+                return;
+            
             if (_isPreview)
             {
                 if (_player == null)
@@ -175,7 +178,7 @@ namespace TangzxInternal
                     if (init)
                         _player.ReadyToPlay();
                     if (!_player.isPlaying)
-                        _player.Play();
+                        _player.Play(GetActiveCategory());
 
                     _player.Process(playHeadTime);
                 }
@@ -188,6 +191,21 @@ namespace TangzxInternal
                     _player.Stop();
                 }
             }
+        }
+
+        public SequencerCategory GetActiveCategory()
+        {
+            TreeViewItem item = state.dataSource.FindItem(state.treeViewState.lastClickedID);
+            while (item != null)
+            {
+                if (item is SequencerCategoryTreeItem)
+                {
+                    var cti = item as SequencerCategoryTreeItem;
+                    return cti.target;
+                }
+                item = item.parent;
+            }
+            return _data.defaultCategory;
         }
 
         public override void SetPlayHead(float value)
