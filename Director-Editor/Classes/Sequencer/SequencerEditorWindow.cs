@@ -109,7 +109,7 @@ namespace TangzxInternal
                 _isPreview = EditorGUILayout.Toggle("Preview", _isPreview);
                 if (EditorGUI.EndChangeCheck())
                 {
-                    UpdatePreview();
+                    UpdatePreview(true);
                 }
 
                 GUILayout.FlexibleSpace();
@@ -164,7 +164,7 @@ namespace TangzxInternal
             }
         }
 
-        void UpdatePreview()
+        void UpdatePreview(bool init = false)
         {
             if (_isPreview)
             {
@@ -172,6 +172,8 @@ namespace TangzxInternal
                     _player = _data.GetComponent<SequencerPlayer>();
                 if (_player)
                 {
+                    if (init)
+                        _player.ReadyToPlay();
                     if (!_player.isPlaying)
                         _player.Play();
 
@@ -192,6 +194,17 @@ namespace TangzxInternal
         {
             base.SetPlayHead(value);
             UpdatePreview();
+        }
+
+        public override void OnDragPlayHeadStart()
+        {
+            if (_isPreview)
+                UpdatePreview(true);
+        }
+
+        public override void OnDragPlayHeadEnd()
+        {
+            
         }
     }
     

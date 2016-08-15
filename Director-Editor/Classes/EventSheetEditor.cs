@@ -46,7 +46,7 @@ namespace TangzxInternal
 
         public void OnGUI(Rect rect)
         {
-            TreeRootItem treeData = windowState.treeData;
+            TreeRootItem treeData = windowState.treeRootItem;
 
             if (treeData != null)
             {
@@ -144,18 +144,23 @@ namespace TangzxInternal
             windowState.window.Repaint();
         }
 
-        public DirectorEvent selected
+        public int frameRate { get; set; }
+
+        public bool IsSelected(DirectorEvent evt)
         {
-            get
-            {
-                if (currentSelectedEvent != null)
-                    return currentSelectedEvent;
-                else
-                    return null;
-            }
-            set { currentSelectedEvent = value; }
+            if (evt == null)
+                return false;
+            return windowState.treeViewState.selectedIDs.Contains(evt.GetInstanceID());
         }
 
-        public int frameRate { get; set; }
+        public void SetSelected(DirectorEvent evt)
+        {
+            windowState.treeViewState.selectedIDs.Clear();
+            if (evt)
+            {
+                windowState.treeViewState.selectedIDs.Add(evt.GetInstanceID());
+                windowState.treeViewState.lastClickedID = evt.GetInstanceID();
+            }
+        }
     }
 }

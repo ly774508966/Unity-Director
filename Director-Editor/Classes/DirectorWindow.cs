@@ -135,7 +135,7 @@ namespace TangzxInternal
                     GUILayout.EndVertical();
 
                     //右
-                    OnRightGUI();
+                    OnInspectorGUI();
                     SplitterGUILayout.EndHorizontalSplit();
 
                     //重新画左:
@@ -246,13 +246,27 @@ namespace TangzxInternal
             eventHierarchy.OnGUI(rect);
         }
 
-        void OnRightGUI()
+        void OnInspectorGUI()
         {
-            DirectorEvent evt = eventSheetEditor.selected;
-            if (evt)
+            int lastClicked = state.treeViewState.lastClickedID;
+            TreeViewItem item = state.dataSource.FindItem(lastClicked);
+            if (item != null && item is IInspectorItem)
             {
-                _eventInspector.OnGUI(evt);
+                IInspectorItem iii = item as IInspectorItem;
+                Object obj = iii.GetInspectorObject();
+                if (obj)
+                    _eventInspector.OnGUI(obj);
             }
+        }
+
+        public virtual void OnDragPlayHeadStart()
+        {
+            
+        }
+
+        public virtual void OnDragPlayHeadEnd()
+        {
+            
         }
     }
 
@@ -297,8 +311,12 @@ namespace TangzxInternal
                 () =>
                 {
                     timeWhenDragStart = directorWindow.playHeadTime;
+                    directorWindow.OnDragPlayHeadStart();
                 },
-                null,
+                () =>
+                {
+                    directorWindow.OnDragPlayHeadEnd();
+                },
                 (float offset) =>
                 {
                     directorWindow.SetPlayHead(timeWhenDragStart + sheetEditor.PixelToTime2(offset));

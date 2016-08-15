@@ -13,7 +13,7 @@ namespace TangzxInternal
 
         public override void FetchData()
         {
-            TreeRootItem data = windowState.treeData;
+            TreeRootItem data = windowState.treeRootItem;
             if (data == null)
                 m_RootItem = new TreeViewItem(0, -1, null, "Root");
             else

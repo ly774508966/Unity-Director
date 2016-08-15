@@ -5,11 +5,9 @@ public class SequencerPlayer : DirectorPlayer
 {
     public SequencerData data;
 
-
     void Awake()
     {
-        if (data == null)
-            data = GetComponent<SequencerData>();
+        ReadyToPlay();
         Play();
     }
 
@@ -20,9 +18,18 @@ public class SequencerPlayer : DirectorPlayer
 
     public void Play(SequencerCategory sc)
     {
+        sc.ReadyToPlay();
+
         List<IEventContainer> list = new List<IEventContainer>();
         var e = sc.GetEnumerator();
         while (e.MoveNext()) list.Add(e.Current);
         Play(list.ToArray(), data.totalDuration);
+    }
+
+    public override void ReadyToPlay()
+    {
+        base.ReadyToPlay();
+        if (data == null)
+            data = GetComponent<SequencerData>();
     }
 }

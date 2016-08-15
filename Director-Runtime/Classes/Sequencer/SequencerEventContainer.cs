@@ -7,7 +7,7 @@ namespace Tangzx.Director
     {
         public Transform attach;
 
-        [SerializeField]
+        [SerializeField, HideInInspector]
         internal List<DirectorEvent> events = new List<DirectorEvent>();
         
         void Awake()
@@ -27,6 +27,7 @@ namespace Tangzx.Director
 
         public void ReadyToPlay()
         {
+            Sort();
             for (int i = 0; i < events.Count; i++)
             {
                 DirectorEvent e = events[i];

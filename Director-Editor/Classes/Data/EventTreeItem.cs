@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TangzxInternal
 {
-    class EventTreeItem : TreeItem, IRenameableTreeItem
+    class EventTreeItem : TreeItem, IRenameableTreeItem, IInspectorItem
     {
         public DirectorEvent target;
 
@@ -38,6 +38,11 @@ namespace TangzxInternal
                 p.RemoveChild(this);
             });
             return menu;
+        }
+
+        public Object GetInspectorObject()
+        {
+            return target;
         }
     }
 }

@@ -23,6 +23,11 @@ namespace Tangzx.Director
         private IEventContainer[] _eventContainers;
         private float _totalTime;
 
+        public virtual void ReadyToPlay()
+        {
+            
+        }
+
         public void Play(IEventContainer[] containers, float totalTime)
         {
             if (_isPlaying == false)
@@ -30,11 +35,6 @@ namespace Tangzx.Director
                 _totalTime = totalTime;
                 _playingList.Clear();
                 _eventContainers = containers;
-                for (int i = 0; i < _eventContainers.Length; i++)
-                {
-                    _eventContainers[i].Sort();
-                    _eventContainers[i].ReadyToPlay();
-                }
                 _isPlaying = true;
             }
         }

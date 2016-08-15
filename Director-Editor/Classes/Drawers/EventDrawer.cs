@@ -14,7 +14,7 @@ namespace TangzxInternal
         /// <summary>
         /// 是否被选中的
         /// </summary>
-        public bool isSelected { get { return eventSheetEditor.selected == target; } }
+        public bool isSelected { get { return eventSheetEditor.IsSelected(target); } }
 
         internal ISheetEditor eventSheetEditor;
 
@@ -59,7 +59,7 @@ namespace TangzxInternal
                 () =>
                 {
                     timeDragStart = target.time;
-                    eventSheetEditor.selected = target;
+                    eventSheetEditor.SetSelected(target);
                     eventSheetEditor.OnDragStart(this);
                 },
                 () => { eventSheetEditor.OnDragEnd(this); },
@@ -71,7 +71,7 @@ namespace TangzxInternal
                 () =>
                 {
                     if (isSelected)
-                        eventSheetEditor.selected = null;
+                        eventSheetEditor.SetSelected(null);
                 });
         }
 

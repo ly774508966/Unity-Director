@@ -14,5 +14,13 @@ namespace Tangzx.Director
         {
             return containers.GetEnumerator();
         }
+
+        public void ReadyToPlay()
+        {
+            for (int i = 0; i < containers.Count; i++)
+            {
+                containers[i].ReadyToPlay();
+            }
+        }
     }
 }

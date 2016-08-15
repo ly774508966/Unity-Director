@@ -46,7 +46,7 @@ namespace TangzxInternal
             this.window = window;
         }
 
-        public TreeRootItem treeData
+        public TreeRootItem treeRootItem
         {
             get
             {
@@ -88,18 +88,6 @@ namespace TangzxInternal
             }
 
             return menu;
-        }
-
-        /// <summary>
-        /// 处理点击创建事件菜单项
-        /// </summary>
-        /// <param name="typeData"></param>
-        void HandlerCreate(object typeData)
-        {
-            //AttributeTool.EventInfo evtInfo = (AttributeTool.EventInfo)typeData;
-            //TDEvent p = data.Add(evtInfo.eventType);
-            // Refresh
-            //refreshType = RefreshType.All;
         }
     }
 }

@@ -102,7 +102,7 @@ namespace TangzxInternal
         }
     }
 
-    class SequencerEventContainerTreeItem : TreeItem, ISheetRowDrawer
+    class SequencerEventContainerTreeItem : TreeItem, ISheetRowDrawer, IInspectorItem
     {
         public SequencerEventContainer target;
 
@@ -179,6 +179,11 @@ namespace TangzxInternal
             if (_isSelected != selected && selected)
                 EditorGUIUtility.PingObject(target.attach);
             _isSelected = selected;
+        }
+
+        public Object GetInspectorObject()
+        {
+            return target;
         }
     }
 }

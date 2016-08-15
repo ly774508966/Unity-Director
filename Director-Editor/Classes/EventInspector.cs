@@ -7,9 +7,9 @@ namespace TangzxInternal
     class EventInspector
     {
         private Editor _eventInspectorEditor;
-        private DirectorEvent _last;
+        private Object _last;
 
-        public void OnGUI(DirectorEvent evt)
+        public void OnGUI(Object evt)
         {
             if (_last != evt)
             {
