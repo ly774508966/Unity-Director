@@ -1,14 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Tangzx.Director
 {
     public class SequencerData : DirectorObject
     {
-        public List<SequencerEventContainer> containers = new List<SequencerEventContainer>();
+        [SerializeField]
+        internal List<SequencerEventContainer> containers = new List<SequencerEventContainer>();
 
         public SequencerData()
         {
+        }
+
+        public List<SequencerEventContainer>.Enumerator GetEnumerator()
+        {
+            return containers.GetEnumerator();
         }
     }
 }

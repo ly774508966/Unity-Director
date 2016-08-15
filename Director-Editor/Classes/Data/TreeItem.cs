@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Tangzx.Director;
-using UnityEngine;
 using UnityEditor;
-using TangzxInternal;
+using UnityEngine;
 
 namespace TangzxInternal.Data
 {
@@ -51,7 +50,12 @@ namespace TangzxInternal.Data
 
         public virtual void BuildTree(DirectorWindowState windowState)
         {
+            state = windowState;
+        }
 
+        public virtual void RemoveChild(TreeItem child)
+        {
+            Debug.Log("Remove : " + child);
         }
     }
 
@@ -73,10 +77,16 @@ namespace TangzxInternal.Data
             drawer.target = target;
             return drawer;
         }
-    }
 
-    class SeqAffectedItem : TreeItem
-    {
-
+        protected override void OnContextMenu()
+        {
+            GenericMenu menu = new GenericMenu();
+            menu.AddItem(new GUIContent("Remove"), false, () =>
+            {
+                TreeItem p = parent as TreeItem;
+                p.RemoveChild(this);
+            });
+            menu.ShowAsContext();
+        }
     }
 }

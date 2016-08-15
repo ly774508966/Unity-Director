@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Tangzx.Director
@@ -8,10 +7,16 @@ namespace Tangzx.Director
     {
         public Transform attach;
 
-        public List<TDEvent> evtList = new List<TDEvent>();
+        [SerializeField]
+        internal List<TDEvent> evtList = new List<TDEvent>();
 
         public SequencerEventContainer()
         {
+        }
+
+        public List<TDEvent>.Enumerator GetEnumerator()
+        {
+            return evtList.GetEnumerator();
         }
     }
 }

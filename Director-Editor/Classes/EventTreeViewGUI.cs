@@ -1,6 +1,6 @@
-﻿using UnityEditor;
+﻿using TangzxInternal.Data;
+using UnityEditor;
 using UnityEngine;
-using TangzxInternal.Data;
 
 namespace TangzxInternal
 {
@@ -82,16 +82,6 @@ namespace TangzxInternal
                 rect.height = windowState.rowHeight;
             }
             return rect;
-        }
-
-        GenericMenu CreateContextMenu(EventTreeItem item)
-        {
-            GenericMenu menu = new GenericMenu();
-
-            //Remove
-            menu.AddItem(new GUIContent("Remove Event"), false, () => { windowState.RemoveEvent(item.target); });
-
-            return menu;
         }
     }
 }

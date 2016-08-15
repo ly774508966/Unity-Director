@@ -70,9 +70,8 @@ namespace TangzxInternal
             refreshType = RefreshType.None;
         }
 
-        public void RemoveEvent(TDEvent evt)
+        public void ReloadData()
         {
-            //data.Remove(evt);
             refreshType = RefreshType.All;
         }
 

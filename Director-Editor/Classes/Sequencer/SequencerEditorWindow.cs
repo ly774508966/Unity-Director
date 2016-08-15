@@ -1,6 +1,6 @@
-﻿using UnityEditor;
+﻿using Tangzx.Director;
+using UnityEditor;
 using UnityEngine;
-using Tangzx.Director;
 
 namespace TangzxInternal
 {
@@ -27,6 +27,7 @@ namespace TangzxInternal
         protected override void OnCheckDataGUI()
         {
             GameObject selectGO = Selection.activeGameObject;
+
             if (_dataGO != selectGO)
             {
                 SequencerDataHolder holder = null;
@@ -42,13 +43,14 @@ namespace TangzxInternal
                     }
                 }
 
-                _dataGO = selectGO;
                 if (holder)
                 {
+                    _dataGO = selectGO;
                     SetData(holder.data);
                 }
                 else
                 {
+                    _dataGO = null;
                     SetData(null);
                 }
             }
@@ -73,6 +75,12 @@ namespace TangzxInternal
             GUILayout.BeginHorizontal(Styles.toolbar);
             {
                 //TODO
+                if (GUILayout.Button("Remove", Styles.toolbarButton))
+                {
+
+                }
+
+                GUILayout.FlexibleSpace();
             }
             GUILayout.EndHorizontal();
         }
@@ -82,12 +90,26 @@ namespace TangzxInternal
             for (int i = 0; i < objs.Length; i++)
             {
                 GameObject go = objs[i];
-                SequencerEventContainer ec = CreateInstance<SequencerEventContainer>();
-                ec.attach = go.transform;
-                AssetDatabase.AddObjectToAsset(ec, _data);
-                _data.containers.Add(ec);
+                SequencerEventContainer ec = null;
+                var e = _data.GetEnumerator();
+                while (e.MoveNext())
+                {
+                    if (e.Current.attach == go.transform)
+                    {
+                        ec = e.Current;
+                        break;
+                    }
+                }
+
+                if (ec == null)
+                {
+                    ec = _data.CreateSubAsset<SequencerEventContainer>();
+                    ec.attach = go.transform;
+                    _data.AddContainer(ec);
+                }
             }
-            this.state.refreshType = DirectorWindowState.RefreshType.All;
+
+            state.ReloadData();
 
             return DragAndDropVisualMode.Move;
         }

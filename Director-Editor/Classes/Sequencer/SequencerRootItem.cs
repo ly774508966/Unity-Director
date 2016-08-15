@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Tangzx.Director;
 using TangzxInternal.Data;
-using Tangzx.Director;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 namespace TangzxInternal
 {
@@ -20,9 +19,10 @@ namespace TangzxInternal
             children = null;
             list.Clear();
 
-            for (int i = 0; i < _data.containers.Count; i++)
+            var e = _data.GetEnumerator();
+            while (e.MoveNext())
             {
-                SequencerEventContainer ec = _data.containers[i];
+                SequencerEventContainer ec = e.Current;
                 SequencerEventContainerTreeItem ecTreeItem = new SequencerEventContainerTreeItem(ec);
                 Add(ecTreeItem, ec.GetInstanceID(), ec.attach.name);
                 ecTreeItem.BuildTree(windowState);
@@ -44,9 +44,12 @@ namespace TangzxInternal
 
         public override void BuildTree(DirectorWindowState windowState)
         {
-            for (int j = 0; j < target.evtList.Count; j++)
+            base.BuildTree(windowState);
+
+            var e = target.GetEnumerator();
+            while (e.MoveNext())
             {
-                TDEvent evt = target.evtList[j];
+                TDEvent evt = e.Current;
                 EventTreeItem item = new EventTreeItem(evt);
                 Add(item, evt.GetInstanceID(), evt.name);
                 item.BuildTree(windowState);
@@ -71,14 +74,22 @@ namespace TangzxInternal
         void HandleCreate(object data)
         {
             AttributeTool.EventInfo evtInfo = (AttributeTool.EventInfo)data;
-            TDEvent evt = (TDEvent)ScriptableObject.CreateInstance(evtInfo.eventType);
-            evt.name = evtInfo.eventType.Name;
-            target.evtList.Add(evt);
-            AssetDatabase.AddObjectToAsset(evt, target);
+            TDEvent evt = (TDEvent)target.CreateSubAsset(evtInfo.eventType);
+            target.AddEvent(evt);
 
             state.dataSource.SetExpanded(this, true);
+            state.ReloadData();
+        }
 
-            state.refreshType = DirectorWindowState.RefreshType.All;
+        public override void RemoveChild(TreeItem child)
+        {
+            if (child is EventTreeItem)
+            {
+                EventTreeItem eti = child as EventTreeItem;
+                target.Remove(eti.target);
+
+                state.ReloadData();
+            }
         }
     }
 }
