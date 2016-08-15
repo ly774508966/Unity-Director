@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class DirectorPlayer : MonoBehaviour
 {
+    public delegate void OnPlayCompleteHandler();
+
+    public OnPlayCompleteHandler onPlayComplete;
+
     private bool _isPlaying;
     private float _playTime;
     /// <summary>
@@ -15,14 +19,20 @@ public class DirectorPlayer : MonoBehaviour
     /// </summary>
     private List<TDEvent> _playingList = new List<TDEvent>();
 
-    private IEventContainer _eventContainer;
+    private IEventContainer[] _eventContainers;
+    private float _totalTime;
     
-    public void Play(IEventContainer sc)
+    public void Play(IEventContainer[] containers, float totalTime)
     {
         if (_isPlaying == false)
         {
-            _eventContainer = sc;
-            _eventContainer.Sort();
+            _totalTime = totalTime;
+            _playingList.Clear();
+            _eventContainers = containers;
+            for (int i = 0; i < _eventContainers.Length; i++)
+            {
+                _eventContainers[i].Sort();
+            }
             _isPlaying = true;
         }
     }
@@ -36,6 +46,7 @@ public class DirectorPlayer : MonoBehaviour
     {
         _isPlaying = false;
         _playTime = 0;
+        _playingList.Clear();
     }
 
     void Update()
@@ -56,18 +67,27 @@ public class DirectorPlayer : MonoBehaviour
     {
         float newTime = _currentTime + dt;
         float oldTime = _currentTime;
+
+        _currentTime = newTime;
         //正播
         if (dt > 0)
         {
-            //进入 playing list
-            var e = _eventContainer.GetEnumerator();
-            while (e.MoveNext())
+            if (newTime > _totalTime)
+                newTime = _totalTime;
+
+            for (int c = 0; c < _eventContainers.Length; c++)
             {
-                TDEvent p = e.Current;
-                if (p.time >= oldTime && p.time <= newTime)
+                IEventContainer ec = _eventContainers[c];
+                //进入 playing list
+                var e = ec.GetEnumerator();
+                while (e.MoveNext())
                 {
-                    p.Fire();
-                    _playingList.Add(p);
+                    TDEvent p = e.Current;
+                    if (p.time >= oldTime && p.time <= newTime)
+                    {
+                        p.Fire();
+                        _playingList.Add(p);
+                    }
                 }
             }
 
@@ -89,11 +109,25 @@ public class DirectorPlayer : MonoBehaviour
                     i--;
                 }
             }
+
+            //结束
+            if (newTime >= _totalTime)
+            {
+                OnPlayFrowardComplete();
+            }
         }
         else //反播
         {
 
         }
-        _currentTime = newTime;
+    }
+
+    protected virtual void OnPlayFrowardComplete()
+    {
+        _isPlaying = false;
+        _playingList.Clear();
+
+        if (onPlayComplete != null)
+            onPlayComplete();
     }
 }

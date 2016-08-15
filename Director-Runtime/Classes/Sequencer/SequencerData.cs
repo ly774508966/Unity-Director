@@ -16,7 +16,7 @@ namespace Tangzx.Director
 
         public SequencerData()
         {
-            hideFlags = HideFlags.None;
+            //hideFlags = HideFlags.None;
         }
 
         public SequencerCategory defaultCategory

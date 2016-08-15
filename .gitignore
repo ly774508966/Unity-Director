@@ -5,3 +5,4 @@ obj
 /Director-Unity/Library
 /Director-Unity/*.csproj
 /Director-Unity/*.sln
+*.suo

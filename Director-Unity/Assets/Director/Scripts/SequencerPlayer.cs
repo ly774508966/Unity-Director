@@ -1,4 +1,5 @@
-﻿using Tangzx.Director;
+﻿using System.Collections.Generic;
+using Tangzx.Director;
 
 public class SequencerPlayer : DirectorPlayer
 {
@@ -9,10 +10,19 @@ public class SequencerPlayer : DirectorPlayer
     {
         if (data == null)
             data = GetComponent<SequencerData>();
+        Play();
     }
 
     public void Play()
     {
-        //Play(data.defaultCategory);
+        Play(data.defaultCategory);
+    }
+
+    public void Play(SequencerCategory sc)
+    {
+        List<IEventContainer> list = new List<IEventContainer>();
+        var e = sc.GetEnumerator();
+        while (e.MoveNext()) list.Add(e.Current);
+        Play(list.ToArray(), data.totalDuration);
     }
 }

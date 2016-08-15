@@ -10,8 +10,18 @@ namespace Tangzx.Director
         [SerializeField]
         internal List<TDEvent> events = new List<TDEvent>();
 
-        public SequencerEventContainer()
+
+        void Awake()
         {
+            for (int i = 0; i < events.Count; i++)
+            {
+                TDEvent e = events[i];
+                if (e is ISequencerEvent)
+                {
+                    ISequencerEvent se = e as ISequencerEvent;
+                    se.container = this;
+                }
+            }
         }
 
         public List<TDEvent>.Enumerator GetEnumerator()
