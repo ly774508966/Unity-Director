@@ -51,8 +51,31 @@ namespace TangzxInternal
             target = sc;
         }
 
-        public void OnSheetRowGUI(ISheetEditor sheetEditor, Rect rect) { }
-        
+        GUIStyle tagStyle;
+
+        public void OnSheetRowGUI(ISheetEditor sheetEditor, Rect rect)
+        {
+            if (tagStyle == null)
+            {
+                tagStyle = "ChannelStripAttenuationMarkerSquare";
+            }
+
+            if (Event.current.type == EventType.Repaint)
+            {
+                GUIContent c = new GUIContent(string.Format("  {0} Container(s)", target.containers.Count));
+                Vector2 size = tagStyle.CalcSize(c);
+                Rect r = rect;
+                r.width = size.x;
+
+                tagStyle.Draw(r, c, 0);
+            }
+        }
+
+        public override ISheetRowDrawer GetDrawer()
+        {
+            return this;
+        }
+
         public override void BuildTree(DirectorWindowState windowState)
         {
             children = null;
@@ -128,9 +151,24 @@ namespace TangzxInternal
             }
         }
 
+        GUIStyle tagStyle;
+
         public void OnSheetRowGUI(ISheetEditor sheetEditor, Rect rect)
         {
-            
+            if (tagStyle == null)
+            {
+                tagStyle = "ChannelStripAttenuationMarkerSquare";
+            }
+
+            if (Event.current.type == EventType.Repaint)
+            {
+                GUIContent c = new GUIContent(string.Format("  {0} Event(s)", target.events.Count));
+                Vector2 size = tagStyle.CalcSize(c);
+                Rect r = rect;
+                r.width = size.x;
+
+                tagStyle.Draw(r, c, 0);
+            }
         }
 
         public override ISheetRowDrawer GetDrawer()
