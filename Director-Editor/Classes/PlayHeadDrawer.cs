@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System.Collections;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace TangzxInternal
 {
@@ -41,7 +40,7 @@ namespace TangzxInternal
             //拖动处理
             Rect dragArea = rect;
             dragArea.height = 15;
-            HandleDrag(dragArea, 0,
+            HandleDrag(true, dragArea, 0,
                 () =>
                 {
                     timeWhenDragStart = directorWindow.playHeadTime;

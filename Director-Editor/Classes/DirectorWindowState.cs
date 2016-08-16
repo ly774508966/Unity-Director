@@ -41,6 +41,8 @@ namespace TangzxInternal
         /// 层次树那里最下面的添加事件按钮的高度
         /// </summary>
         public float hierarchyAddEventButtonHeight = 30;
+
+        private bool _isPreview;
         
         public DirectorWindowState(DirectorWindow window)
         {
@@ -89,6 +91,12 @@ namespace TangzxInternal
             }
 
             return menu;
+        }
+
+        public bool isPreview
+        {
+            get { return _isPreview; }
+            set { _isPreview = value; }
         }
     }
 }

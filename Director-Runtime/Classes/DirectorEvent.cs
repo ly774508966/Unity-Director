@@ -34,7 +34,7 @@ namespace Tangzx.Director
 
         public bool isRangeEvent { get { return this is IRangeEvent; } }
 
-        public virtual void Fire()
+        public virtual void Fire(bool isFristTime)
         {
 
         }

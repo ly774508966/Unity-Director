@@ -115,11 +115,8 @@ namespace Tangzx.Director
                     DirectorEvent p = e.Current;
                     if (p.time >= oldTime && p.time <= newTime)
                     {
-                        if (p.isFried == false)
-                        {
-                            p.isFried = true;
-                            p.Fire();
-                        }
+                        p.Fire(!p.isFried);
+                        p.isFried = true;
                         _playingList.Add(p);
                     }
                 }
@@ -218,12 +215,12 @@ namespace Tangzx.Director
                 for (int c = 0; c < _eventContainers.Length; c++)
                 {
                     IEventContainer ec = _eventContainers[c];
-                    var e = ec.GetEnumerator();
-                    while (e.MoveNext())
+                    for (int i = ec.list.Count - 1; i >= 0; i--)
                     {
-                        DirectorEvent p = e.Current;
-                        if (p.time <= _playTime)
+                        DirectorEvent p = ec.list[i];
+                        if (p.isFried)
                         {
+                            p.isFried = false;
                             p.StopAndRecover();
                         }
                     }

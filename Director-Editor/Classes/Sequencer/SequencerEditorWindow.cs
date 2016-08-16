@@ -19,7 +19,6 @@ namespace TangzxInternal
         private SequencerData _data;
         private SequencerCategory _category;
         private SequencerPlayer _player;
-        private bool _isPreview;
 
         protected override void InitHierarchy()
         {
@@ -90,7 +89,7 @@ namespace TangzxInternal
         {
             GUILayout.BeginHorizontal(EditorStyles.toolbarButton);
             {
-                EditorGUI.BeginDisabledGroup(_data == null && !_isPreview);
+                EditorGUI.BeginDisabledGroup(_data == null);
                 {
                     if (GUILayout.Button("Create", EditorStyles.toolbarButton))
                     {
@@ -104,10 +103,10 @@ namespace TangzxInternal
 
                     //is preview
                     EditorGUI.BeginChangeCheck();
-                    _isPreview = GUILayout.Toggle(_isPreview, AnimationWindowStyles.playContent, EditorStyles.toolbarButton);
+                    windowState.isPreview = GUILayout.Toggle(windowState.isPreview, AnimationWindowStyles.playContent, EditorStyles.toolbarButton);
                     if (EditorGUI.EndChangeCheck())
                     {
-                        UpdatePreview(true);
+                        if (!windowState.isPreview) StopPreview();
                     }
 
                     GUILayout.FlexibleSpace();
@@ -119,40 +118,43 @@ namespace TangzxInternal
 
         protected override void OnHierarchyGUI(Rect rect)
         {
-            Rect treeRect = rect;
-            treeRect.yMin += DirectorWindowState.TOOLBAR_HEIGHT;
-            base.OnHierarchyGUI(treeRect);
-            //toolbar
-            rect.height = DirectorWindowState.TOOLBAR_HEIGHT;
-            GUILayout.BeginArea(rect);
+            EditorGUI.BeginDisabledGroup(windowState.isPreview);
             {
-                GUILayout.BeginHorizontal(EditorStyles.toolbar);
+                Rect treeRect = rect;
+                treeRect.yMin += DirectorWindowState.TOOLBAR_HEIGHT;
+                base.OnHierarchyGUI(treeRect);
+                //toolbar
+                rect.height = DirectorWindowState.TOOLBAR_HEIGHT;
+                GUILayout.BeginArea(rect);
                 {
-                    if (_category)
+                    GUILayout.BeginHorizontal(EditorStyles.toolbar);
                     {
-                        if (GUILayout.Button(_category.categoryName, EditorStyles.toolbarPopup, GUILayout.Width(100)))
+                        if (_category)
                         {
-                            ShowCategoryMenu();
+                            if (GUILayout.Button(_category.categoryName, EditorStyles.toolbarPopup, GUILayout.Width(100)))
+                            {
+                                ShowCategoryMenu();
+                            }
+                            //total duration
+                            EditorGUI.BeginChangeCheck();
+                            string totalDuration = _category.totalDuration.ToString();
+                            totalDuration = GUILayout.TextField(totalDuration, EditorStyles.toolbarTextField, GUILayout.Width(30));
+                            if (EditorGUI.EndChangeCheck())
+                            {
+                                int duration = 1;
+                                int.TryParse(totalDuration, out duration);
+                                duration = Mathf.Max(1, duration);
+                                _category.totalDuration = Mathf.Max(1, duration);
+                                ClampRange();
+                            }
                         }
-                        //total duration
-                        EditorGUI.BeginChangeCheck();
-                        string totalDuration = _category.totalDuration.ToString();
-                        totalDuration = GUILayout.TextField(totalDuration, EditorStyles.toolbarTextField, GUILayout.Width(30));
-                        if (EditorGUI.EndChangeCheck())
-                        {
-                            int duration = 1;
-                            int.TryParse(totalDuration, out duration);
-                            duration = Mathf.Max(1, duration);
-                            _category.totalDuration = Mathf.Max(1, duration);
-                            ClampRange();
-                        }
+                        GUILayout.FlexibleSpace();
                     }
-                    GUILayout.FlexibleSpace();
+                    GUILayout.EndHorizontal();
                 }
-                GUILayout.EndHorizontal();
+                GUILayout.EndArea();
             }
-            GUILayout.EndArea();
-
+            EditorGUI.EndDisabledGroup();
             //Menu
             /*if (Event.current.type == EventType.ContextClick && treeRect.Contains(Event.current.mousePosition))
             {
@@ -259,7 +261,7 @@ namespace TangzxInternal
             if (_data == null || _category == null)
                 return;
             
-            if (_isPreview)
+            if (windowState.isPreview)
             {
                 if (_player == null)
                     _player = _data.GetComponent<SequencerPlayer>();
@@ -270,7 +272,7 @@ namespace TangzxInternal
                         _player.ReadyToPlay();
                         _player.Play(_category);
                     }
-                    _player.Process(playHeadTime);
+                    ProcessPreview();
                 }
             }
             else
@@ -279,9 +281,18 @@ namespace TangzxInternal
             }
         }
 
+        void ProcessPreview()
+        {
+            if (_player)
+            {
+                _player.Process(playHeadTime);
+                SceneView.RepaintAll();
+            }
+        }
+
         void StopPreview()
         {
-            _isPreview = false;
+            windowState.isPreview = false;
             if (_player)
             {
                 _player.StopAndRecover();
@@ -297,14 +308,14 @@ namespace TangzxInternal
 
         public override void OnDragPlayHeadStart()
         {
-            if (_isPreview)
+            if (windowState.isPreview)
                 UpdatePreview(true);
         }
 
         public override void OnDragPlayHeadEnd()
         {
             base.OnDragPlayHeadEnd();
-            if (_isPreview && _player)
+            if (windowState.isPreview && _player)
             {
                 _player.StopAndRecover();
                 _player = null;

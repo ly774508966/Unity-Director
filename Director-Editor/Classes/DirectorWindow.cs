@@ -100,7 +100,7 @@ namespace TangzxInternal
 
         protected virtual void InitEventInspector()
         {
-            _eventInspector = new EventInspector();
+            _eventInspector = new EventInspector(_windowState);
         }
         
         /// <summary>

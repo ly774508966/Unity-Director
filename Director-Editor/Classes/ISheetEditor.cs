@@ -20,5 +20,7 @@ namespace TangzxInternal
         bool IsSelected(DirectorEvent evt);
 
         void SetSelected(DirectorEvent evt);
+
+        bool isPreview { get; }
     }
 }

@@ -5,9 +5,12 @@ public class SequencerPlayer : DirectorPlayer
 {
     public SequencerData data;
 
+    public bool isAutoPlay;
+
     void Awake()
     {
         ReadyToPlay();
+        if (isAutoPlay) Play();
     }
 
     public void Play()

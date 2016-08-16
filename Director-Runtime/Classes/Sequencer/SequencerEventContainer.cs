@@ -9,7 +9,15 @@ namespace Tangzx.Director
 
         [SerializeField, HideInInspector]
         internal List<DirectorEvent> events = new List<DirectorEvent>();
-        
+
+        public List<DirectorEvent> list
+        {
+            get
+            {
+                return events;
+            }
+        }
+
         void Awake()
         {
             ReadyToPlay();

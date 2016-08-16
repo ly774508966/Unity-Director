@@ -1,4 +1,5 @@
-﻿using Tangzx.Director;
+﻿using System;
+using Tangzx.Director;
 using UnityEditor;
 using UnityEngine;
 
@@ -131,6 +132,8 @@ namespace TangzxInternal
         }
 
         public int frameRate { get; set; }
+
+        public bool isPreview { get { return windowState.isPreview; } }
 
         public bool IsSelected(DirectorEvent evt)
         {

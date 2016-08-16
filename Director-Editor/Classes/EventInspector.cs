@@ -1,5 +1,4 @@
-﻿using Tangzx.Director;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace TangzxInternal
@@ -8,6 +7,12 @@ namespace TangzxInternal
     {
         private Editor _eventInspectorEditor;
         private Object _last;
+        private DirectorWindowState _windowState;
+
+        public EventInspector(DirectorWindowState state)
+        {
+            _windowState = state;
+        }
 
         public void OnGUI(Object evt)
         {
@@ -18,8 +23,12 @@ namespace TangzxInternal
             }
             
             GUILayout.BeginVertical();
-            _eventInspectorEditor.DrawHeader();
-            _eventInspectorEditor.OnInspectorGUI();
+            {
+                EditorGUI.BeginDisabledGroup(_windowState.isPreview);
+                _eventInspectorEditor.DrawHeader();
+                _eventInspectorEditor.OnInspectorGUI();
+                EditorGUI.EndDisabledGroup();
+            }
             GUILayout.EndVertical();
         }
     }

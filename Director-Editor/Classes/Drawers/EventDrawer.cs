@@ -55,7 +55,7 @@ namespace TangzxInternal
             {
                 eventSheetEditor.DrawVerticalLine(target.time, Color.yellow);
             }
-            HandleDrag(drawRect, 1,
+            HandleDrag(!eventSheetEditor.isPreview, drawRect, 1,
                 () =>
                 {
                     timeDragStart = target.time;
