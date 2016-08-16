@@ -8,12 +8,17 @@ public class SequencerPlayer : DirectorPlayer
     void Awake()
     {
         ReadyToPlay();
-        Play();
     }
 
     public void Play()
     {
         Play(data.defaultCategory);
+    }
+
+    public void Play(string name)
+    {
+        SequencerCategory sc = data.GetCategoryByName(name);
+        Play(sc);
     }
 
     public void Play(SequencerCategory sc)

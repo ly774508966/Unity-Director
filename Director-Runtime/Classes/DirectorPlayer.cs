@@ -36,6 +36,14 @@ namespace Tangzx.Director
                 _playingList.Clear();
                 _eventContainers = containers;
                 _isPlaying = true;
+
+                for (int c = 0; c < _eventContainers.Length; c++)
+                {
+                    IEventContainer ec = _eventContainers[c];
+                    var e = ec.GetEnumerator();
+                    while (e.MoveNext())
+                        e.Current.isFried = false;
+                }
             }
         }
 
@@ -73,13 +81,13 @@ namespace Tangzx.Director
 
         public void Tick(float dt)
         {
+            if (_eventContainers == null || _eventContainers.Length == 0 || dt == 0)
+                return;
+
             float newTime = _playTime + dt;
             float oldTime = _playTime;
 
             _playTime = newTime;
-            
-            if (_eventContainers == null || _eventContainers.Length == 0)
-                return;
 
             //正播
             if (dt > 0)
@@ -107,7 +115,11 @@ namespace Tangzx.Director
                     DirectorEvent p = e.Current;
                     if (p.time >= oldTime && p.time <= newTime)
                     {
-                        p.Fire();
+                        if (p.isFried == false)
+                        {
+                            p.isFried = true;
+                            p.Fire();
+                        }
                         _playingList.Add(p);
                     }
                 }
@@ -138,8 +150,7 @@ namespace Tangzx.Director
                 OnPlayForwardComplete();
             }
         }
-
-
+        
         private void PlayBack(float dt, float newTime, float oldTime)
         {
             if (newTime < 0)
@@ -198,6 +209,27 @@ namespace Tangzx.Director
 
             if (onPlayComplete != null)
                 onPlayComplete();
+        }
+
+        public void StopAndRecover()
+        {
+            if (_eventContainers != null)
+            {
+                for (int c = 0; c < _eventContainers.Length; c++)
+                {
+                    IEventContainer ec = _eventContainers[c];
+                    var e = ec.GetEnumerator();
+                    while (e.MoveNext())
+                    {
+                        DirectorEvent p = e.Current;
+                        if (p.time <= _playTime)
+                        {
+                            p.StopAndRecover();
+                        }
+                    }
+                }
+            }
+            Stop();
         }
     }
 }

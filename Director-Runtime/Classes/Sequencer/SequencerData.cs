@@ -27,5 +27,15 @@ namespace Tangzx.Director
         {
             return categories.GetEnumerator();
         }
+
+        public SequencerCategory GetCategoryByName(string name)
+        {
+            for (int i = 0; i < categories.Count; i++)
+            {
+                if (categories[i].categoryName == name)
+                    return categories[i];
+            }
+            return null;
+        }
     }
 }

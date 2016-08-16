@@ -1,7 +1,6 @@
 ﻿using Tangzx.Director;
 using UnityEditor;
 using UnityEngine;
-using UnityEditor.NScreen;
 
 namespace TangzxInternal
 {
@@ -67,7 +66,6 @@ namespace TangzxInternal
 
         void SetData(SequencerData sd)
         {
-            _player = null;
             _data = sd;
             if (sd)
             {
@@ -81,23 +79,18 @@ namespace TangzxInternal
 
         void ClampRange()
         {
-            if (_category)
-            {
-                eventSheetEditor.hRangeMax = _category.totalDuration;
-                eventSheetEditor.SetShownHRangeInsideMargins(0, _category.totalDuration);
-            }
-            else
-            {
-                eventSheetEditor.hRangeMax = 5;
-                eventSheetEditor.SetShownHRangeInsideMargins(0, 5);
-            }
+            float totalDuration = _category ? _category.totalDuration : 5;
+
+            eventSheetEditor.hRangeMax = totalDuration;
+            eventSheetEditor.SetShownHRangeInsideMargins(0, totalDuration);
+            playHeadTime = Mathf.Min(playHeadTime, totalDuration);
         }
 
         protected override void OnToolbarGUI()
         {
             GUILayout.BeginHorizontal(EditorStyles.toolbarButton);
             {
-                EditorGUI.BeginDisabledGroup(_data == null);
+                EditorGUI.BeginDisabledGroup(_data == null && !_isPreview);
                 {
                     if (GUILayout.Button("Create", EditorStyles.toolbarButton))
                     {
@@ -274,12 +267,9 @@ namespace TangzxInternal
                 {
                     if (init)
                     {
-                        NScreenManager.StartAll();
                         _player.ReadyToPlay();
-                    }
-                    if (!_player.isPlaying)
                         _player.Play(_category);
-
+                    }
                     _player.Process(playHeadTime);
                 }
             }
@@ -294,9 +284,7 @@ namespace TangzxInternal
             _isPreview = false;
             if (_player)
             {
-                NScreenManager.StopAll();
-                //_player.Process(0);
-                _player.Stop();
+                _player.StopAndRecover();
                 _player = null;
             }
         }
@@ -311,6 +299,16 @@ namespace TangzxInternal
         {
             if (_isPreview)
                 UpdatePreview(true);
+        }
+
+        public override void OnDragPlayHeadEnd()
+        {
+            base.OnDragPlayHeadEnd();
+            if (_isPreview && _player)
+            {
+                _player.StopAndRecover();
+                _player = null;
+            }
         }
 
         protected override void OnPlayModeStateChanged()

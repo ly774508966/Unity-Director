@@ -14,6 +14,8 @@ namespace Tangzx.Director
         /// </summary>
         public float time;
 
+        internal bool isFried;
+
         [FormerlySerializedAs("duration")]
         [SerializeField]
         private float _duration = 1;
@@ -53,6 +55,11 @@ namespace Tangzx.Director
         }
 
         public virtual void EndReverse()
+        {
+
+        }
+
+        public virtual void StopAndRecover()
         {
 
         }
