@@ -37,5 +37,17 @@ namespace Tangzx.Director
                 _totalDuration = value;
             }
         }
+
+        public void ReplaceActor(Transform trans, string name)
+        {
+            for (int i = 0; i < containers.Count; i++)
+            {
+                SequencerEventContainer sec = containers[i] as SequencerEventContainer;
+                if (sec.attachName == name)
+                {
+                    sec.attach = trans;
+                }
+            }
+        }
     }
 }

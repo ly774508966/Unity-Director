@@ -7,6 +7,8 @@ namespace Tangzx.Director
     {
         public Transform attach;
 
+        public string attachName;
+
         [SerializeField, HideInInspector]
         internal List<DirectorEvent> events = new List<DirectorEvent>();
 

@@ -3,12 +3,8 @@ using UnityEngine;
 
 namespace Tangzx.Director
 {
-    public class DirectorPlayer : MonoBehaviour
+    public abstract class DirectorPlayer : MonoBehaviour
     {
-        public delegate void OnPlayCompleteHandler();
-
-        public OnPlayCompleteHandler onPlayComplete;
-
         private bool _isPlaying;
 
         /// <summary>
@@ -21,7 +17,10 @@ namespace Tangzx.Director
         private List<DirectorEvent> _playingList = new List<DirectorEvent>();
 
         private IEventContainer[] _eventContainers;
+
         private float _totalTime;
+
+        private float _timeScale = 1;
 
         public virtual void ReadyToPlay()
         {
@@ -32,6 +31,8 @@ namespace Tangzx.Director
         {
             if (_isPlaying == false)
             {
+                OnPlayBegin();
+
                 _totalTime = totalTime;
                 _playingList.Clear();
                 _eventContainers = containers;
@@ -49,6 +50,12 @@ namespace Tangzx.Director
 
         public bool isPlaying { get { return _isPlaying; } }
 
+        public float timeScale
+        {
+            get { return _timeScale; }
+            set { _timeScale = value; }
+        }
+
         public void Pause()
         {
             _isPlaying = false;
@@ -65,7 +72,7 @@ namespace Tangzx.Director
         {
             if (_isPlaying)
             {
-                Tick(Time.deltaTime);
+                Tick(Time.deltaTime * timeScale);
             }
         }
 
@@ -143,9 +150,7 @@ namespace Tangzx.Director
 
             //结束
             if (newTime >= _totalTime)
-            {
-                OnPlayForwardComplete();
-            }
+                OnPlayFinish();
         }
         
         private void PlayBack(float dt, float newTime, float oldTime)
@@ -190,22 +195,19 @@ namespace Tangzx.Director
             }
 
             //结束
-            if (newTime >= _totalTime)
-            {
-                OnPlayForwardComplete();
-            }
-
             if (newTime <= 0)
-                OnPlayForwardComplete();
+                OnPlayFinish();
         }
 
-        protected virtual void OnPlayForwardComplete()
+        protected virtual void OnPlayFinish()
         {
             _isPlaying = false;
             _playingList.Clear();
+        }
 
-            if (onPlayComplete != null)
-                onPlayComplete();
+        protected virtual void OnPlayBegin()
+        {
+
         }
 
         public void StopAndRecover()
