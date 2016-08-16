@@ -1,5 +1,4 @@
-﻿using Tangzx.Director;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace TangzxInternal
@@ -8,17 +7,13 @@ namespace TangzxInternal
     {
         protected class Styles
         {
-            public static GUIStyle box;
-            public static GUIStyle toolbar;
-            public static GUIStyle toolbarButton;
-            public static GUIStyle tooltip;
             public static GUIStyle timeRulerBackground;
         }
 
-        private TreeRootItem _treeData;
+        private TreeRootItem _treeRootItem;
 
         //相当于上下文数据
-        private DirectorWindowState _state;
+        private DirectorWindowState _windowState;
 
         protected EventHierarchy eventHierarchy;
         Rect _hierarchyRect;
@@ -44,17 +39,17 @@ namespace TangzxInternal
             _playHeadDrawer = new PlayHeadDrawer(this, eventSheetEditor);
         }
 
-        public TreeRootItem treeData
+        public TreeRootItem treeRootItem
         {
             set
             {
-                _treeData = value;
-                _state.refreshType = DirectorWindowState.RefreshType.All;
+                _treeRootItem = value;
+                _windowState.ReloadData();
             }
-            get { return _treeData; }
+            get { return _treeRootItem; }
         }
 
-        public DirectorWindowState state { get { return _state; } }
+        public DirectorWindowState windowState { get { return _windowState; } }
 
         public float playHeadTime
         {
@@ -66,19 +61,36 @@ namespace TangzxInternal
             }
         }
 
+        protected virtual void OnDisable()
+        {
+
+            EditorApplication.playmodeStateChanged += OnPlayModeStateChanged;
+        }
+
+        protected virtual void OnEnable()
+        {
+
+            EditorApplication.playmodeStateChanged += OnPlayModeStateChanged;
+        }
+
+        protected virtual void OnPlayModeStateChanged()
+        {
+
+        }
+
         protected virtual void InitState()
         {
-            _state = new DirectorWindowState(this);
+            _windowState = new DirectorWindowState(this);
         }
 
         protected virtual void InitHierarchy()
         {
-            eventHierarchy = new EventHierarchy(_state);
+            eventHierarchy = new EventHierarchy(_windowState);
         }
 
         protected virtual void InitSheetEditor()
         {
-            eventSheetEditor = new EventSheetEditor(_state);
+            eventSheetEditor = new EventSheetEditor(_windowState);
             eventSheetEditor.hRangeMin = 0;
             eventSheetEditor.vRangeLocked = true;
             eventSheetEditor.vSlider = false;
@@ -111,11 +123,11 @@ namespace TangzxInternal
             OnToolbarGUI();
             OnCheckDataGUI();
 
-            if (treeData != null)
+            if (treeRootItem != null)
             {
                 RemoveNotification();
 
-                _state.OnGUI();
+                _windowState.OnGUI();
 
                 GUILayout.BeginHorizontal();
                 {
@@ -159,30 +171,15 @@ namespace TangzxInternal
 
         void UpdateStyles()
         {
-            if (Styles.box == null)
+            if (Styles.timeRulerBackground == null)
             {
-                Styles.box = new GUIStyle(GUI.skin.box);
-                Styles.box.margin = new RectOffset();
-                Styles.box.padding = new RectOffset();
-                Styles.toolbar = new GUIStyle(EditorStyles.toolbar);
-                Styles.toolbar.margin = new RectOffset();
-                Styles.toolbar.padding = new RectOffset();
-                Styles.toolbarButton = EditorStyles.toolbarButton;
-                Styles.tooltip = GUI.skin.GetStyle("AssetLabel");
-                Styles.timeRulerBackground = "AnimationEventBackground";
+                Styles.timeRulerBackground = AnimationWindowStyles.eventBackground;
             }
         }
 
         protected abstract void OnCheckDataGUI();
 
-        protected virtual void OnToolbarGUI()
-        {
-            GUILayout.BeginHorizontal(Styles.toolbar);
-            {
-                //TODO
-            }
-            GUILayout.EndHorizontal();
-        }
+        protected abstract void OnToolbarGUI();
         
         void OnMainContentGUI()
         {
@@ -208,14 +205,14 @@ namespace TangzxInternal
                     scrollbarRect.width = DirectorWindowState.SCROLLBAR_WIDTH;
 
                     float bottomValue = Mathf.Max(eventHierarchy.contentHeight, scrollbarRect.height);
-                    float scrollY = state.treeViewState.scrollPos.y;
+                    float scrollY = windowState.treeViewState.scrollPos.y;
                     scrollY = GUI.VerticalScrollbar(scrollbarRect, scrollY, scrollbarRect.height, 0, bottomValue);
-                    state.treeViewState.scrollPos.y = scrollY;
+                    windowState.treeViewState.scrollPos.y = scrollY;
                 }
 
-                areaRect.yMin += _state.timeRulerHeight;
+                areaRect.yMin += _windowState.timeRulerHeight;
                 //画主体
-                eventSheetEditor.OnGUI(areaRect, -state.treeViewState.scrollPos.y);
+                eventSheetEditor.OnGUI(areaRect, -windowState.treeViewState.scrollPos.y);
             }
             eventSheetEditor.EndViewGUI();
         }
@@ -228,7 +225,7 @@ namespace TangzxInternal
         {
             Rect timeRulerRect = rect;
             timeRulerRect.width -= DirectorWindowState.SCROLLBAR_WIDTH;
-            timeRulerRect.height = _state.timeRulerHeight;
+            timeRulerRect.height = _windowState.timeRulerHeight;
 
             if (Event.current.type == EventType.Repaint)
                 Styles.timeRulerBackground.Draw(timeRulerRect, GUIContent.none, 0);
@@ -252,8 +249,8 @@ namespace TangzxInternal
 
         void OnInspectorGUI()
         {
-            int lastClicked = state.treeViewState.lastClickedID;
-            TreeViewItem item = state.dataSource.FindItem(lastClicked);
+            int lastClicked = windowState.treeViewState.lastClickedID;
+            TreeViewItem item = windowState.dataSource.FindItem(lastClicked);
             if (item != null && item is IInspectorItem)
             {
                 IInspectorItem iii = item as IInspectorItem;

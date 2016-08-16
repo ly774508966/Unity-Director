@@ -51,7 +51,7 @@ namespace TangzxInternal
         {
             get
             {
-                return window.treeData;
+                return window.treeRootItem;
             }
         }
 

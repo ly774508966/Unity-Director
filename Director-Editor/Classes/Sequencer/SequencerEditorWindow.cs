@@ -1,6 +1,7 @@
 ﻿using Tangzx.Director;
 using UnityEditor;
 using UnityEngine;
+using UnityEditor.NScreen;
 
 namespace TangzxInternal
 {
@@ -58,7 +59,7 @@ namespace TangzxInternal
             if (_category == null && _data)
                 SetCategory(_data.defaultCategory);
 
-            if (treeData == null)
+            if (treeRootItem == null)
             {
                 ShowNotification(new GUIContent("Select GameObject"));
             }
@@ -85,11 +86,16 @@ namespace TangzxInternal
                 eventSheetEditor.hRangeMax = _category.totalDuration;
                 eventSheetEditor.SetShownHRangeInsideMargins(0, _category.totalDuration);
             }
+            else
+            {
+                eventSheetEditor.hRangeMax = 5;
+                eventSheetEditor.SetShownHRangeInsideMargins(0, 5);
+            }
         }
 
         protected override void OnToolbarGUI()
         {
-            GUILayout.BeginHorizontal(Styles.toolbar);
+            GUILayout.BeginHorizontal(EditorStyles.toolbarButton);
             {
                 EditorGUI.BeginDisabledGroup(_data == null);
                 {
@@ -98,14 +104,14 @@ namespace TangzxInternal
                         HandleCreateCategory();
                     }
 
-                    if (GUILayout.Button("Remove", Styles.toolbarButton))
+                    if (GUILayout.Button("Remove", EditorStyles.toolbarButton))
                     {
                         HandleRemoveCategroy();
                     }
 
                     //is preview
                     EditorGUI.BeginChangeCheck();
-                    _isPreview = EditorGUILayout.Toggle("Preview", _isPreview);
+                    _isPreview = GUILayout.Toggle(_isPreview, AnimationWindowStyles.playContent, EditorStyles.toolbarButton);
                     if (EditorGUI.EndChangeCheck())
                     {
                         UpdatePreview(true);
@@ -127,7 +133,7 @@ namespace TangzxInternal
             rect.height = DirectorWindowState.TOOLBAR_HEIGHT;
             GUILayout.BeginArea(rect);
             {
-                GUILayout.BeginHorizontal(Styles.toolbar);
+                GUILayout.BeginHorizontal(EditorStyles.toolbar);
                 {
                     if (_category)
                     {
@@ -195,10 +201,12 @@ namespace TangzxInternal
 
         void SetCategory(SequencerCategory sc)
         {
+            StopPreview();
+
             if (sc)
-                treeData = new SequencerCategoryTreeItem(sc);
+                treeRootItem = new SequencerCategoryTreeItem(sc);
             else
-                treeData = null;
+                treeRootItem = null;
             _category = sc;
 
             ClampRange();
@@ -228,7 +236,7 @@ namespace TangzxInternal
                 }
             }
 
-            state.ReloadData();
+            windowState.ReloadData();
 
             return DragAndDropVisualMode.Move;
         }
@@ -247,7 +255,7 @@ namespace TangzxInternal
                 SequencerCategory sc = _data.CreateSubAsset<SequencerCategory>(HideFlags.HideInInspector);
                 sc.categoryName = name;
                 _data.AddCategory(sc);
-                state.ReloadData();
+                windowState.ReloadData();
                 if (_category == null)
                     SetCategory(sc);
             }
@@ -265,7 +273,10 @@ namespace TangzxInternal
                 if (_player)
                 {
                     if (init)
+                    {
+                        NScreenManager.StartAll();
                         _player.ReadyToPlay();
+                    }
                     if (!_player.isPlaying)
                         _player.Play(_category);
 
@@ -274,11 +285,19 @@ namespace TangzxInternal
             }
             else
             {
-                if (_player)
-                {
-                    _player.Process(0);
-                    _player.Stop();
-                }
+                StopPreview();
+            }
+        }
+
+        void StopPreview()
+        {
+            _isPreview = false;
+            if (_player)
+            {
+                NScreenManager.StopAll();
+                //_player.Process(0);
+                _player.Stop();
+                _player = null;
             }
         }
 
@@ -294,9 +313,13 @@ namespace TangzxInternal
                 UpdatePreview(true);
         }
 
-        public override void OnDragPlayHeadEnd()
+        protected override void OnPlayModeStateChanged()
         {
-            
+            base.OnPlayModeStateChanged();
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                StopPreview();
+            }
         }
     }
 }
