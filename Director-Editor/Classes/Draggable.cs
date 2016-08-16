@@ -12,13 +12,22 @@ namespace TangzxInternal
         // 开始拖动时的鼠标位置纪录
         private float _xWhenDragStart;
 
-        protected void HandleDrag(Rect hotAreaRect, int id, Action onStart, Action onEnd, Action<float> onDrag, Action onMouseDownOutside)
+        protected void HandleDrag(bool canDrag, Rect hotAreaRect, int id, Action onStart, Action onEnd, Action<float> onDrag, Action onMouseDownOutside)
         {
             Event evt = Event.current;
             if (evt.isMouse)
             {
                 if (evt.type == EventType.MouseDown)
                 {
+                    //BUG FIX 拖出屏幕，再来拖一次？ MouseUpOutside
+                    if (_isDragging && id == _dragId)
+                    {
+                        _isDragging = false;
+                        if (onEnd != null)
+                            onEnd();
+                    }
+                    //BUG FIX
+
                     if (hotAreaRect.Contains(evt.mousePosition))
                     {
                         _xWhenDragStart = evt.mousePosition.x;
@@ -33,19 +42,9 @@ namespace TangzxInternal
                             onMouseDownOutside();
                     }
                 }
-                else if (evt.type == EventType.MouseUp)
-                {
-                    if (_isDragging && id == _dragId)
-                    {
-                        _isDragging = false;
-                        if (onEnd != null)
-                            onEnd();
-                        evt.Use();
-                    }
-                }
                 else if (evt.type == EventType.MouseDrag)
                 {
-                    if (_isDragging && id == _dragId)
+                    if (_isDragging && id == _dragId && canDrag)
                     {
                         if (onDrag != null)
                         {
@@ -54,6 +53,16 @@ namespace TangzxInternal
                         }
                         evt.Use();
                         Repaint();
+                    }
+                }
+                else
+                {
+                    if (_isDragging && id == _dragId)
+                    {
+                        _isDragging = false;
+                        if (onEnd != null)
+                            onEnd();
+                        evt.Use();
                     }
                 }
             }
