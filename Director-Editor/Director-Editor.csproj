@@ -58,6 +58,7 @@
     <Compile Include="Classes\EventTreeViewDataSource.cs" />
     <Compile Include="Classes\EventTreeViewGUI.cs" />
     <Compile Include="Classes\ISheetEditor.cs" />
+    <Compile Include="Classes\Sequencer\SequencerDataInspector.cs" />
     <Compile Include="Classes\Sequencer\SequencerEditorWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\Drawers\RangeEventDrawer.cs" />
