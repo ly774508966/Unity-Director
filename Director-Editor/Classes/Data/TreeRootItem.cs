@@ -36,4 +36,9 @@ namespace TangzxInternal
     {
         Object GetInspectorObject();
     }
+
+    interface IVisibleRootItem
+    {
+
+    }
 }

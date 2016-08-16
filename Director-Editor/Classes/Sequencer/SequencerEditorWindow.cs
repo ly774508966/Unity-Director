@@ -101,14 +101,29 @@ namespace TangzxInternal
                         HandleRemoveCategroy();
                     }
 
-                    //is preview
-                    EditorGUI.BeginChangeCheck();
-                    windowState.isPreview = GUILayout.Toggle(windowState.isPreview, AnimationWindowStyles.playContent, EditorStyles.toolbarButton);
-                    if (EditorGUI.EndChangeCheck())
+                    //Time Head
                     {
-                        if (!windowState.isPreview) StopPreview();
-                    }
+                        float v = playHeadTime;
+                        EditorGUILayout.LabelField("Time:", GUILayout.Width(40));
+                        EditorGUI.BeginChangeCheck();
+                        Rect r = GUILayoutUtility.GetRect(50, 50, 10, 14);
+                        r.y += 2;
+                        r.height = 14;
+                        v = EditorGUI.FloatField(r, v);
+                        if (EditorGUI.EndChangeCheck()) SetPlayHead(v);
 
+                        GUILayout.Space(5);
+                    }
+                    
+                    //is preview
+                    {
+                        EditorGUI.BeginChangeCheck();
+                        windowState.isPreview = GUILayout.Toggle(windowState.isPreview, AnimationWindowStyles.playContent, EditorStyles.toolbarButton);
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            if (!windowState.isPreview) StopPreview();
+                        }
+                    }
                     GUILayout.FlexibleSpace();
                 }
                 EditorGUI.EndDisabledGroup();
@@ -175,8 +190,7 @@ namespace TangzxInternal
         {
             if (_category && EditorUtility.DisplayDialog("警告", "确认删除分类：[" + _category.categoryName + "] ?", "确定", "取消"))
             {
-                _data.RemoveCategory(_category);
-                _category = null;
+                RemoveCategory(_category);
             }
         }
 
@@ -199,12 +213,19 @@ namespace TangzxInternal
             StopPreview();
 
             if (sc)
-                treeRootItem = new SequencerCategoryTreeItem(sc);
+                treeRootItem = new SequencerCategoryTreeItem(this, sc);
             else
                 treeRootItem = null;
             _category = sc;
 
             ClampRange();
+        }
+
+        public void RemoveCategory(SequencerCategory sc)
+        {
+            _data.RemoveCategory(sc);
+            if (_category == sc)
+                _category = null;
         }
 
         public DragAndDropVisualMode DoDrag(GameObject[] objs)
@@ -302,6 +323,9 @@ namespace TangzxInternal
 
         public override void SetPlayHead(float value)
         {
+            if (value > eventSheetEditor.hRangeMax)
+                value = eventSheetEditor.hRangeMax;
+
             base.SetPlayHead(value);
             UpdatePreview();
         }

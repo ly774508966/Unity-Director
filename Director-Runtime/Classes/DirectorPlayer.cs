@@ -43,7 +43,18 @@ namespace Tangzx.Director
                     IEventContainer ec = _eventContainers[c];
                     var e = ec.GetEnumerator();
                     while (e.MoveNext())
-                        e.Current.isFried = false;
+                    {
+                        DirectorEvent evt = e.Current;
+                        evt.isFried = false;
+                        if (evt.time == 0)
+                        {
+                            evt.isFried = true;
+                            evt.Fire(true);
+
+                            if (evt is IRangeEvent)
+                                evt.Process(0);
+                        }
+                    }
                 }
             }
         }
@@ -132,17 +143,17 @@ namespace Tangzx.Director
             //处理 playing list
             for (int i = 0; i < _playingList.Count; i++)
             {
-                DirectorEvent p = _playingList[i];
-                if (p.isRangeEvent)
+                DirectorEvent evt = _playingList[i];
+                if (evt.isRangeEvent)
                 {
-                    float endTime = p.time + p.duration;
+                    float endTime = evt.time + evt.duration;
                     endTime = endTime < newTime ? endTime : newTime;
-                    p.Process(endTime - p.time, false);
+                    evt.Process(endTime - evt.time, false);
                 }
                 // exit
-                if (p.time + p.duration <= newTime)
+                if (evt.time + evt.duration <= newTime)
                 {
-                    p.End();
+                    evt.End();
                     _playingList.RemoveAt(i);
                     i--;
                 }

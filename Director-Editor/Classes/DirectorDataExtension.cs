@@ -1,7 +1,7 @@
 ﻿using System;
 using Tangzx.Director;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace TangzxInternal
@@ -12,7 +12,7 @@ namespace TangzxInternal
         {
             DirectorObject so = (DirectorObject)obj.gameObject.AddComponent(subAssetType);
             so.enabled = false;
-            so.hideFlags = hideFlags;
+            so.hideFlags = hideFlags | HideFlags.HideInHierarchy;
             so.displayName = subAssetType.Name;
             return so;
         }

@@ -4,57 +4,24 @@ using UnityEngine;
 
 namespace TangzxInternal
 {
-    class SequencerRootItem : TreeRootItem
-    {
-        SequencerData target;
-
-        public SequencerRootItem(SequencerData data)
-        {
-            target = data;
-        }
-
-        public override void BuildTree(DirectorWindowState windowState)
-        {
-            children = null;
-            list.Clear();
-
-            var e = target.GetEnumerator();
-            while (e.MoveNext())
-            {
-                SequencerCategory ec = e.Current;
-                SequencerCategoryTreeItem ecTreeItem = new SequencerCategoryTreeItem(ec);
-                Add(ecTreeItem, ec.GetInstanceID(), ec.categoryName);
-                ecTreeItem.BuildTree(windowState);
-                //默认展开
-                windowState.dataSource.SetExpanded(ecTreeItem, true);
-            }
-        }
-
-        public override void RemoveChild(TreeItem child)
-        {
-            if (child is SequencerCategoryTreeItem)
-            {
-                SequencerCategoryTreeItem item = child as SequencerCategoryTreeItem;
-                target.RemoveCategory(item.target);
-
-                state.ReloadData();
-            }
-        }
-    }
-
-    class SequencerCategoryTreeItem : TreeRootItem, ISheetRowDrawer, IRenameableTreeItem
+    class SequencerCategoryTreeItem : TreeRootItem, ISheetRowDrawer, IRenameableTreeItem, IVisibleRootItem
     {
         public SequencerCategory target;
 
-        public SequencerCategoryTreeItem(SequencerCategory sc)
-        {
-            target = sc;
-        }
+        private SequencerEditorWindow editor;
 
-        GUIStyle tagStyle;
+        public SequencerCategoryTreeItem(SequencerEditorWindow ed, SequencerCategory sc)
+        {
+            editor = ed;
+            target = sc;
+            displayName = sc.categoryName;
+        }
+        
+        //static GUIStyle tagStyle;
 
         public void OnSheetRowGUI(ISheetEditor sheetEditor, Rect rect)
         {
+            /*
             if (tagStyle == null)
             {
                 tagStyle = "ChannelStripAttenuationMarkerSquare";
@@ -68,7 +35,7 @@ namespace TangzxInternal
                 r.width = size.x;
 
                 tagStyle.Draw(r, c, 0);
-            }
+            }*/
         }
 
         public override ISheetRowDrawer GetDrawer()
@@ -111,8 +78,7 @@ namespace TangzxInternal
             {
                 if (EditorUtility.DisplayDialog("警告", "确认删除分类：[" + target.categoryName + "] ?", "确定", "取消"))
                 {
-                    TreeItem p = parent as TreeItem;
-                    p.RemoveChild(this);
+                    editor.RemoveCategory(target);
                 }
             });
             return menu;
@@ -151,7 +117,7 @@ namespace TangzxInternal
             }
         }
 
-        GUIStyle tagStyle;
+        static GUIStyle tagStyle;
 
         public void OnSheetRowGUI(ISheetEditor sheetEditor, Rect rect)
         {
@@ -194,6 +160,7 @@ namespace TangzxInternal
         {
             AttributeTool.EventInfo evtInfo = (AttributeTool.EventInfo)data;
             DirectorEvent evt = (DirectorEvent)target.CreateSubAsset(evtInfo.eventType, HideFlags.HideInInspector);
+            evt.time = state.window.playHeadTime;
             target.AddEvent(evt);
 
             state.dataSource.SetExpanded(this, true);
@@ -211,9 +178,20 @@ namespace TangzxInternal
             }
         }
 
+        static GUIStyle treeRowBG;
+
         public override void OnTreeRowGUI(EventTreeViewGUI gui, Rect rect, int row, bool selected, bool focused, bool useBoldFont)
         {
-            base.OnTreeRowGUI(gui, rect, row, selected, focused, useBoldFont);
+            if (treeRowBG == null)
+                treeRowBG = "ChannelStripAttenuationBar";
+
+            if (Event.current.type == EventType.Repaint)
+            {
+                treeRowBG.Draw(rect, GUIContent.none, 0);
+            }
+
+            base.OnTreeRowGUI(gui, rect, row, false, false, true);
+
             if (_isSelected != selected && selected)
                 EditorGUIUtility.PingObject(target.attach);
             _isSelected = selected;

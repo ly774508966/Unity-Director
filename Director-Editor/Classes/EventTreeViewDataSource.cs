@@ -15,7 +15,9 @@ namespace TangzxInternal
         {
             TreeRootItem data = windowState.treeRootItem;
             if (data == null)
+            {
                 m_RootItem = new TreeViewItem(0, -1, null, "Root");
+            }
             else
             {
                 data.state = windowState;
@@ -25,7 +27,7 @@ namespace TangzxInternal
 
             m_NeedRefreshVisibleFolders = true;
 
-            showRootNode = false;
+            showRootNode = m_RootItem is IVisibleRootItem;
             rootIsCollapsable = false;
             SetExpanded(m_RootItem, true);
 

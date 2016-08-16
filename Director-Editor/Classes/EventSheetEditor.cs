@@ -1,5 +1,4 @@
-﻿using System;
-using Tangzx.Director;
+﻿using Tangzx.Director;
 using UnityEditor;
 using UnityEngine;
 
@@ -45,11 +44,11 @@ namespace TangzxInternal
 
         public void OnGUI(Rect rect)
         {
-            TreeRootItem treeData = windowState.treeRootItem;
+            TreeRootItem treeRootItem = windowState.treeRootItem;
 
-            if (treeData != null)
+            if (treeRootItem != null)
             {
-                OnItemGUI(rect, treeData, 0, false, true);
+                OnItemGUI(rect, treeRootItem, 0, treeRootItem is IVisibleRootItem, true);
             }
         }
 

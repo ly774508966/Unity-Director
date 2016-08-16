@@ -34,13 +34,34 @@ namespace Tangzx.Director
 
         public void Play(SequencerCategory sc)
         {
+            PlayCategory(sc, true);
+        }
+
+        public void PlayReverse()
+        {
+            PlayReverse(data.defaultCategory);
+        }
+
+        public void PlayReverse(SequencerCategory sc)
+        {
+            PlayCategory(sc, false);
+        }
+
+        void PlayCategory(SequencerCategory sc, bool isForward)
+        {
             _playingCategory = sc;
             sc.ReadyToPlay();
 
             List<IEventContainer> list = new List<IEventContainer>();
             var e = sc.GetEnumerator();
             while (e.MoveNext()) list.Add(e.Current);
+
+            timeScale = isForward ? 1 : -1;
             Play(list.ToArray(), sc.totalDuration);
+            if (isForward == false)
+            {
+                Process(sc.totalDuration);
+            }
         }
 
         public override void ReadyToPlay()
