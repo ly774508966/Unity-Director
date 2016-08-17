@@ -6,6 +6,7 @@ namespace Tangzx.Director
     public abstract class DirectorPlayer : MonoBehaviour
     {
         private bool _isPlaying;
+        private bool _isPause;
 
         /// <summary>
         /// 当前播放头时间
@@ -27,39 +28,45 @@ namespace Tangzx.Director
             
         }
 
-        public void Play(IEventContainer[] containers, float totalTime)
+        protected void BeginPlay(IEventContainer[] containers, float totalTime)
         {
-            if (_isPlaying == false)
+            for (int c = 0; c < containers.Length; c++)
             {
-                OnPlayBegin();
-
-                _totalTime = totalTime;
-                _playingList.Clear();
-                _eventContainers = containers;
-                _isPlaying = true;
-
-                for (int c = 0; c < _eventContainers.Length; c++)
+                IEventContainer ec = containers[c];
+                var e = ec.GetEnumerator();
+                while (e.MoveNext())
                 {
-                    IEventContainer ec = _eventContainers[c];
-                    var e = ec.GetEnumerator();
-                    while (e.MoveNext())
+                    DirectorEvent evt = e.Current;
+                    evt.isFried = false;
+                    if (evt.time == 0)
                     {
-                        DirectorEvent evt = e.Current;
-                        evt.isFried = false;
-                        if (evt.time == 0)
-                        {
-                            evt.isFried = true;
-                            evt.Fire(true);
+                        evt.isFried = true;
+                        evt.Fire(true);
 
-                            if (evt is IRangeEvent)
-                                evt.Process(0);
-                        }
+                        if (evt is IRangeEvent)
+                            evt.Process(0);
                     }
                 }
             }
         }
 
+        protected void Play(IEventContainer[] containers, float totalTime)
+        {
+            if (_isPlaying)
+                Stop();
+
+            OnPlayBegin();
+
+            _playTime = 0;
+            _totalTime = totalTime;
+            _playingList.Clear();
+            _eventContainers = containers;
+            _isPlaying = true;
+        }
+
         public bool isPlaying { get { return _isPlaying; } }
+
+        public bool isPause { get { return _isPause; } }
 
         public float timeScale
         {
@@ -69,19 +76,19 @@ namespace Tangzx.Director
 
         public void Pause()
         {
-            _isPlaying = false;
+            _isPause = true;
         }
 
-        public void Stop()
+        public virtual void Stop()
         {
             _playTime = 0;
+            _isPause = false;
             _isPlaying = false;
-            _playingList.Clear();
         }
 
         void Update()
         {
-            if (_isPlaying)
+            if (_isPlaying && !_isPause)
             {
                 Tick(Time.deltaTime * timeScale);
             }
@@ -99,6 +106,11 @@ namespace Tangzx.Director
 
         public void Tick(float dt)
         {
+            Tick(dt, true);
+        }
+
+        protected void Tick(float dt, bool fireCompleteEvent)
+        {
             if (_eventContainers == null || _eventContainers.Length == 0 || dt == 0)
                 return;
 
@@ -110,15 +122,15 @@ namespace Tangzx.Director
             //正播
             if (dt > 0)
             {
-                PlayForward(dt, newTime, oldTime);
+                PlayForward(newTime, oldTime, fireCompleteEvent);
             }
             else //反播
             {
-                PlayBack(dt, newTime, oldTime);
+                PlayBack(newTime, oldTime, fireCompleteEvent);
             }
         }
 
-        private void PlayForward(float dt, float newTime, float oldTime)
+        private void PlayForward(float newTime, float oldTime, bool fireCompleteEvent)
         {
             if (newTime > _totalTime)
                 newTime = _totalTime;
@@ -160,11 +172,11 @@ namespace Tangzx.Director
             }
 
             //结束
-            if (newTime >= _totalTime)
+            if (newTime >= _totalTime && fireCompleteEvent)
                 OnPlayFinish();
         }
         
-        private void PlayBack(float dt, float newTime, float oldTime)
+        private void PlayBack(float newTime, float oldTime, bool fireCompleteEvent)
         {
             if (newTime < 0)
                 newTime = 0;
@@ -206,7 +218,7 @@ namespace Tangzx.Director
             }
 
             //结束
-            if (newTime <= 0)
+            if (newTime <= 0 && fireCompleteEvent)
                 OnPlayFinish();
         }
 

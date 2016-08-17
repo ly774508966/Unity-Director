@@ -14,11 +14,23 @@ namespace Tangzx.Director
         public bool isAutoPlay;
 
         private SequencerCategory _playingCategory;
+        private SequencerCategory _beginCategory;
 
         void Awake()
         {
             ReadyToPlay();
             if (isAutoPlay) Play();
+        }
+
+        public void BeginPlay(SequencerCategory sc)
+        {
+            sc.ReadyToPlay();
+            _beginCategory = sc;
+
+            List<IEventContainer> list = new List<IEventContainer>();
+            var e = sc.GetEnumerator();
+            while (e.MoveNext()) list.Add(e.Current);
+            BeginPlay(list.ToArray(), sc.totalDuration);
         }
 
         public void Play()
@@ -49,18 +61,21 @@ namespace Tangzx.Director
 
         void PlayCategory(SequencerCategory sc, bool isForward)
         {
+            if (_beginCategory != sc && isForward)
+                BeginPlay(sc);
+            _beginCategory = sc;
             _playingCategory = sc;
-            sc.ReadyToPlay();
 
             List<IEventContainer> list = new List<IEventContainer>();
             var e = sc.GetEnumerator();
             while (e.MoveNext()) list.Add(e.Current);
 
-            timeScale = isForward ? 1 : -1;
+            timeScale = 1;
             Play(list.ToArray(), sc.totalDuration);
             if (isForward == false)
             {
-                Process(sc.totalDuration);
+                timeScale = -1;
+                Tick(sc.totalDuration, false);
             }
         }
 
@@ -74,6 +89,7 @@ namespace Tangzx.Director
         protected override void OnPlayBegin()
         {
             base.OnPlayBegin();
+            _beginCategory = null;
             if (onBegin != null && _playingCategory)
                 onBegin(_playingCategory);
         }
@@ -81,8 +97,15 @@ namespace Tangzx.Director
         protected override void OnPlayFinish()
         {
             base.OnPlayFinish();
+            _beginCategory = null;
             if (onFinish != null && _playingCategory)
                 onFinish(_playingCategory);
+        }
+
+        public override void Stop()
+        {
+            _beginCategory = null;
+            base.Stop();
         }
     }
 }

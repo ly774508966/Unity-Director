@@ -151,16 +151,18 @@ namespace TangzxInternal
                                 ShowCategoryMenu();
                             }
                             //total duration
-                            EditorGUI.BeginChangeCheck();
-                            string totalDuration = _category.totalDuration.ToString();
-                            totalDuration = GUILayout.TextField(totalDuration, EditorStyles.toolbarTextField, GUILayout.Width(30));
-                            if (EditorGUI.EndChangeCheck())
                             {
-                                int duration = 1;
-                                int.TryParse(totalDuration, out duration);
-                                duration = Mathf.Max(1, duration);
-                                _category.totalDuration = Mathf.Max(1, duration);
-                                ClampRange();
+                                EditorGUI.BeginChangeCheck();
+                                float v = _category.totalDuration;
+                                Rect r = GUILayoutUtility.GetRect(50, 50, 10, 14);
+                                r.y += 2;
+                                r.height = 14;
+                                v = EditorGUI.FloatField(r, v);
+                                if (EditorGUI.EndChangeCheck())
+                                {
+                                    _category.totalDuration = Mathf.Max(0.5f, v);
+                                    ClampRange();
+                                }
                             }
                         }
                         GUILayout.FlexibleSpace();
