@@ -53,7 +53,7 @@ namespace TangzxInternal
             {
                 SequencerEventContainer ec = e.Current;
                 SequencerEventContainerTreeItem ecTreeItem = new SequencerEventContainerTreeItem(ec);
-                Add(ecTreeItem, ec.GetInstanceID(), ec.attach.name);
+                Add(ecTreeItem, ec.GetInstanceID(), ec.displayName);
                 ecTreeItem.BuildTree(windowState);
                 //默认展开
                 windowState.dataSource.SetExpanded(ecTreeItem, true);

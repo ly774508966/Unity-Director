@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Tangzx.Director
 {
@@ -26,11 +27,8 @@ namespace Tangzx.Director
         {
             sc.ReadyToPlay();
             _beginCategory = sc;
-
-            List<IEventContainer> list = new List<IEventContainer>();
-            var e = sc.GetEnumerator();
-            while (e.MoveNext()) list.Add(e.Current);
-            BeginPlay(list.ToArray(), sc.totalDuration);
+            
+            BeginPlay(GetVaildConatainers(sc), sc.totalDuration);
         }
 
         public void Play()
@@ -65,18 +63,33 @@ namespace Tangzx.Director
                 BeginPlay(sc);
             _beginCategory = sc;
             _playingCategory = sc;
-
-            List<IEventContainer> list = new List<IEventContainer>();
-            var e = sc.GetEnumerator();
-            while (e.MoveNext()) list.Add(e.Current);
-
+            
             timeScale = 1;
-            Play(list.ToArray(), sc.totalDuration);
+            Play(GetVaildConatainers(sc), sc.totalDuration);
             if (isForward == false)
             {
                 timeScale = -1;
                 Tick(sc.totalDuration, false);
             }
+        }
+
+        IEventContainer[] GetVaildConatainers(SequencerCategory sc)
+        {
+            List<IEventContainer> list = new List<IEventContainer>();
+            var e = sc.GetEnumerator();
+            while (e.MoveNext())
+            {
+                if (e.Current.attach)
+                {
+                    list.Add(e.Current);
+                }
+                else
+                {
+                    Debug.LogWarning("No attach object found for EventConatainer : " + e.Current.displayName);
+                }
+            }
+
+            return list.ToArray();
         }
 
         public override void ReadyToPlay()

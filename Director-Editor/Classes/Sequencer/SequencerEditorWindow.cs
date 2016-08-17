@@ -160,7 +160,7 @@ namespace TangzxInternal
                                 v = EditorGUI.FloatField(r, v);
                                 if (EditorGUI.EndChangeCheck())
                                 {
-                                    _category.totalDuration = Mathf.Max(0.5f, v);
+                                    _category.totalDuration = Mathf.Max(1f / eventSheetEditor.frameRate, v);
                                     ClampRange();
                                 }
                             }
@@ -250,6 +250,8 @@ namespace TangzxInternal
                 {
                     ec = _data.CreateSubAsset<SequencerEventContainer>(HideFlags.HideInInspector);
                     ec.attach = go.transform;
+                    ec.displayName = go.name;
+                    ec.attachName = go.name;
                     _category.AddContainer(ec);
                 }
             }
