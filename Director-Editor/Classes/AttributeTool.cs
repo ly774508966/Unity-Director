@@ -90,5 +90,15 @@ namespace TangzxInternal
             }
             return allEventTypes;
         }
+
+        public static T GetAttribute<T>(object o) where T : Attribute
+        {
+            Type ot = o.GetType();
+            object[] attrs = ot.GetCustomAttributes(typeof(T), false);
+            if (attrs.Length > 0)
+                return (T)attrs[0];
+            else
+                return null;
+        }
     }
 }
