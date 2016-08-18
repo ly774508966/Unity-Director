@@ -6,9 +6,12 @@ namespace Tangzx.Director
     {
         public string category;
 
-        public DirectorPlayableAttribute(string category)
+        public bool hideDuration;
+
+        public DirectorPlayableAttribute(string category, bool hideDuration = false)
         {
             this.category = category;
+            this.hideDuration = hideDuration;
         }
     }
 }

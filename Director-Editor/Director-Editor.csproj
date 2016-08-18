@@ -70,6 +70,7 @@
     <Compile Include="Classes\ISheetRowDrawer.cs" />
     <Compile Include="Classes\Sequencer\CreateCategoryWindow.cs" />
     <Compile Include="Classes\PlayHeadDrawer.cs" />
+    <Compile Include="Classes\Editors\DirectorEventEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Director-Runtime\Director-Runtime.csproj">
@@ -85,4 +86,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Classes\Editors\" />
+  </ItemGroup>
 </Project>
