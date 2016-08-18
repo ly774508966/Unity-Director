@@ -18,6 +18,7 @@ namespace TangzxInternal
         public EventSheetEditor(DirectorWindowState state) : base(false)
         {
             windowState = state;
+            ApplySettings();
         }
 
         public void OnGUI(Rect position, float scrollPositionY)
