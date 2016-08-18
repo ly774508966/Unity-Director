@@ -15,6 +15,22 @@ namespace TangzxInternal
             GetWindow<SequencerEditorWindow>("Sequencer");
         }
 
+        [InitializeOnLoadMethod]
+        static void DrawHierarchyFlag()
+        {
+            EditorApplication.hierarchyWindowItemOnGUI += OnHierarchyWindowItemGUI;
+        }
+
+        static void OnHierarchyWindowItemGUI(int instanceID, Rect selectionRect)
+        {
+            GameObject go = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
+            if (go && go.GetComponent<SequencerData>())
+            {
+                selectionRect.xMin = selectionRect.xMax - 30;
+                GUI.Button(selectionRect, "S");
+            }
+        }
+
         private GameObject _dataGO;
         private SequencerData _data;
         private SequencerCategory _category;
@@ -290,6 +306,8 @@ namespace TangzxInternal
             {
                 if (_player == null)
                     _player = _data.GetComponent<SequencerPlayer>();
+                if (_player == null)
+                    _player = _data.gameObject.AddComponent<SequencerPlayer>();
                 if (_player)
                 {
                     if (init)
