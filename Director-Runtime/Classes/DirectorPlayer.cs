@@ -30,6 +30,8 @@ namespace Tangzx.Director
 
         private float _timeScale = 1;
 
+        private float _speed = 1;
+
         private int _loops;
 
         private LoopType _loopType;
@@ -40,8 +42,6 @@ namespace Tangzx.Director
         {
             if (_isPlaying)
                 Stop();
-
-            OnPlayBegin();
             
             _totalTime = totalTime;
             _eventContainers = containers;
@@ -70,10 +70,10 @@ namespace Tangzx.Director
 
         public float totalTime { get { return _totalTime; } }
 
-        public float timeScale
+        public float speed
         {
-            get { return _timeScale; }
-            set { _timeScale = value; }
+            get { return _speed; }
+            set { _speed = value; }
         }
 
         public float playTime
@@ -140,7 +140,7 @@ namespace Tangzx.Director
         {
             if (_isPlaying && !_isPause)
             {
-                playTime += dt * timeScale;
+                playTime += dt * _timeScale * _speed;
             }
         }
 
@@ -260,7 +260,7 @@ namespace Tangzx.Director
             }
         }
 
-        protected virtual void OnForwardFinish()
+        void OnForwardFinish()
         {
             _curLoop++;
             if (_curLoop < _loops)
@@ -276,11 +276,11 @@ namespace Tangzx.Director
             }
             else
             {
-                
+                OnFinish(false);
             }
         }
 
-        protected virtual void OnReverseFinish()
+        void OnReverseFinish()
         {
             _curLoop++;
             if (_curLoop < _loops)
@@ -296,13 +296,12 @@ namespace Tangzx.Director
             }
             else
             {
-                
+                OnFinish(true);
             }
         }
 
-        protected virtual void OnPlayBegin()
+        protected virtual void OnFinish(bool isReverse)
         {
-
         }
 
         public void StopAndRecover()

@@ -7,10 +7,10 @@ namespace Tangzx.Director
     {
         public delegate void OnPlayHandler(SequencerCategory sc);
 
-        public OnPlayHandler onBegin;
-        public OnPlayHandler onFinish;
+        public OnPlayHandler onReverseFinish;
+        public OnPlayHandler onForwardFinish;
 
-        public SequencerData data;
+        private SequencerData data;
 
         private SequencerCategory _playingCategory;
 
@@ -55,6 +55,21 @@ namespace Tangzx.Director
             }
 
             return list.ToArray();
+        }
+
+        protected override void OnFinish(bool isReverse)
+        {
+            base.OnFinish(isReverse);
+            if (isReverse)
+            {
+                if (onReverseFinish != null)
+                    onReverseFinish(_playingCategory);
+            }
+            else
+            {
+                if (onForwardFinish != null)
+                    onForwardFinish(_playingCategory);
+            }
         }
     }
 }
