@@ -34,6 +34,8 @@ namespace Tangzx.Director
 
         private LoopType _loopType;
 
+        private int _curLoop;
+
         public virtual void ReadyToPlay()
         {
             
@@ -50,11 +52,21 @@ namespace Tangzx.Director
             _eventContainers = containers;
             _loops = 1;
             _loopType = LoopType.Yoyo;
+            _curLoop = 0;
         }
 
-        public void Play()
+        public void PlayForward()
         {
+            playTime = 0;
             _isPlaying = true;
+            _timeScale = 1;
+        }
+
+        public void PlayReverse()
+        {
+            playTime = _totalTime;
+            _isPlaying = true;
+            _timeScale = -1;
         }
 
         public bool isPlaying { get { return _isPlaying; } }
@@ -74,14 +86,29 @@ namespace Tangzx.Director
             get { return _playTime; }
             set
             {
-                if (value < 0) value = 0;
-                else if (value > _totalTime) value = _totalTime;
-
+                bool isReverseFinish = false;
+                bool isForwardFinish = false;
+                if (value < 0)
+                {
+                    value = 0;
+                    isReverseFinish = _playTime > 0;
+                }
+                else if (value > _totalTime)
+                {
+                    value = _totalTime;
+                    isForwardFinish = _playTime < _totalTime;
+                }
+                 
                 if (_playTime != value)
                 {
                     _playTime = value;
                     Sample();
                 }
+
+                if (isReverseFinish)
+                    OnReverseFinish();
+                else if (isForwardFinish)
+                    OnForwardFinish();
             }
         }
 
@@ -130,10 +157,10 @@ namespace Tangzx.Director
 
         public void Sample()
         {
-            Tick(_playTime - _sampleTime, true);
+            Tick(_playTime - _sampleTime);
         }
 
-        protected void Tick(float dt, bool fireCompleteEvent)
+        protected void Tick(float dt)
         {
             if (_eventContainers == null || _eventContainers.Length == 0)
                 return;
@@ -146,15 +173,15 @@ namespace Tangzx.Director
             //正播
             if (dt >= 0)
             {
-                PlayForward(newTime, oldTime, fireCompleteEvent);
+                Forward(newTime, oldTime);
             }
             else //反播
             {
-                PlayBack(newTime, oldTime, fireCompleteEvent);
+                Reverse(newTime, oldTime);
             }
         }
 
-        private void PlayForward(float newTime, float oldTime, bool fireCompleteEvent)
+        private void Forward(float newTime, float oldTime)
         {
             if (newTime > _totalTime)
                 newTime = _totalTime;
@@ -194,13 +221,9 @@ namespace Tangzx.Director
                     i--;
                 }
             }
-
-            //结束
-            if (newTime >= _totalTime && fireCompleteEvent)
-                OnPlayFinish();
         }
         
-        private void PlayBack(float newTime, float oldTime, bool fireCompleteEvent)
+        private void Reverse(float newTime, float oldTime)
         {
             if (newTime < 0)
                 newTime = 0;
@@ -240,17 +263,46 @@ namespace Tangzx.Director
                     i--;
                 }
             }
-
-            //结束
-            if (newTime <= 0 && fireCompleteEvent)
-                OnPlayFinish();
         }
 
-        protected virtual void OnPlayFinish()
+        protected virtual void OnForwardFinish()
         {
-            _isPlaying = false;
-            _isPause = false;
-            _playingList.Clear();
+            _curLoop++;
+            if (_curLoop < _loops)
+            {
+                if (_loopType == LoopType.Restart)
+                {
+                    _playTime = 0;
+                }
+                else
+                {
+                    _timeScale *= -1;
+                }
+            }
+            else
+            {
+                
+            }
+        }
+
+        protected virtual void OnReverseFinish()
+        {
+            _curLoop++;
+            if (_curLoop < _loops)
+            {
+                if (_loopType == LoopType.Restart)
+                {
+                    _playTime = _totalTime;
+                }
+                else
+                {
+                    _timeScale *= -1;
+                }
+            }
+            else
+            {
+                
+            }
         }
 
         protected virtual void OnPlayBegin()

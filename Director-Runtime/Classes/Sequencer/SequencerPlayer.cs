@@ -19,12 +19,22 @@ namespace Tangzx.Director
         void Awake()
         {
             ReadyToPlay();
-            if (isAutoPlay) PlayDefault();
+            if (isAutoPlay)
+            {
+                BeginPlay(data.defaultCategory);
+                PlayForward();
+            }
+        }
+
+        public void BeginPlay()
+        {
+            BeginPlay(data.defaultCategory);
         }
 
         public void BeginPlay(string name)
         {
             SequencerCategory sc = data.GetCategoryByName(name);
+            _playingCategory = sc;
             BeginPlay(sc);
         }
 
@@ -33,42 +43,6 @@ namespace Tangzx.Director
             sc.ReadyToPlay();
 
             BeginPlay(GetVaildConatainers(sc), sc.totalDuration);
-        }
-
-        public void PlayDefault()
-        {
-            Play(data.defaultCategory);
-        }
-
-        public void Play(string name)
-        {
-            SequencerCategory sc = data.GetCategoryByName(name);
-            Play(sc);
-        }
-
-        public void Play(SequencerCategory sc)
-        {
-            PlayCategory(sc, true);
-        }
-
-        public void PlayReverse()
-        {
-            PlayReverse(data.defaultCategory);
-        }
-
-        public void PlayReverse(SequencerCategory sc)
-        {
-            PlayCategory(sc, false);
-        }
-
-        void PlayCategory(SequencerCategory sc, bool isForward)
-        {
-            BeginPlay(sc);
-            _playingCategory = sc;
-            
-            timeScale = -1;
-            playTime = sc.totalDuration;
-            Play();
         }
 
         IEventContainer[] GetVaildConatainers(SequencerCategory sc)
@@ -104,9 +78,9 @@ namespace Tangzx.Director
                 onBegin(_playingCategory);
         }
 
-        protected override void OnPlayFinish()
+        protected override void OnForwardFinish()
         {
-            base.OnPlayFinish();
+            base.OnForwardFinish();
             if (onFinish != null && _playingCategory)
                 onFinish(_playingCategory);
         }

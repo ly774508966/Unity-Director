@@ -313,7 +313,7 @@ namespace TangzxInternal
                     if (init)
                     {
                         //_player.ReadyToPlay();
-                        _player.Play(_category);
+                        _player.BeginPlay(_category);
                     }
                     ProcessPreview();
                 }
