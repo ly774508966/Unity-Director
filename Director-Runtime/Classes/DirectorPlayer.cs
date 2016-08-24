@@ -49,10 +49,42 @@ namespace Tangzx.Director
 
         public bool isPause { get { return _isPause; } }
 
+        public float totalTime { get { return _totalTime; } }
+
         public float timeScale
         {
             get { return _timeScale; }
             set { _timeScale = value; }
+        }
+
+        public float playTime
+        {
+            get { return _playTime; }
+            set
+            {
+                if (value < 0) value = 0;
+                else if (value > _totalTime) value = _totalTime;
+
+                if (_playTime != value)
+                {
+                    _playTime = value;
+                    Sample();
+                }
+            }
+        }
+
+        public float normalizeTime
+        {
+            get
+            {
+                if (_totalTime == 0) return 0;
+
+                return _playTime / _totalTime;
+            }
+            set
+            {
+                playTime = value * _totalTime;
+            }
         }
 
         public void Pause()
@@ -75,22 +107,6 @@ namespace Tangzx.Director
             if (_isPlaying && !_isPause)
             {
                 playTime += Time.deltaTime * timeScale;
-            }
-        }
-
-        public float playTime
-        {
-            get { return _playTime; }
-            set
-            {
-                if (value < 0) value = 0;
-                else if (value > _totalTime) value = _totalTime;
-
-                if (_playTime != value)
-                {
-                    _playTime = value;
-                    Sample();
-                }
             }
         }
 
