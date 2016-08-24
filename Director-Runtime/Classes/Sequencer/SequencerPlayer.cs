@@ -57,18 +57,18 @@ namespace Tangzx.Director
             return list.ToArray();
         }
 
-        protected override void OnFinish(bool isReverse)
+        protected override void OnFinish(bool isForward)
         {
-            base.OnFinish(isReverse);
-            if (isReverse)
-            {
-                if (onReverseFinish != null)
-                    onReverseFinish(_playingCategory);
-            }
-            else
+            base.OnFinish(isForward);
+            if (isForward)
             {
                 if (onForwardFinish != null)
                     onForwardFinish(_playingCategory);
+            }
+            else
+            {
+                if (onReverseFinish != null)
+                    onReverseFinish(_playingCategory);
             }
         }
     }

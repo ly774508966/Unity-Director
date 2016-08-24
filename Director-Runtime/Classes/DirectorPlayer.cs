@@ -13,6 +13,7 @@ namespace Tangzx.Director
 
         private bool _isPlaying;
         private bool _isPause;
+        private bool _isPlayForward;
 
         /// <summary>
         /// 当前播放头时间
@@ -53,6 +54,7 @@ namespace Tangzx.Director
         public void PlayForward()
         {
             playTime = 0;
+            _isPlayForward = true;
             _isPlaying = true;
             _timeScale = 1;
         }
@@ -60,6 +62,7 @@ namespace Tangzx.Director
         public void PlayReverse()
         {
             playTime = _totalTime;
+            _isPlayForward = false;
             _isPlaying = true;
             _timeScale = -1;
         }
@@ -276,7 +279,7 @@ namespace Tangzx.Director
             }
             else
             {
-                OnFinish(false);
+                OnFinish(_isPlayForward);
             }
         }
 
@@ -296,11 +299,11 @@ namespace Tangzx.Director
             }
             else
             {
-                OnFinish(true);
+                OnFinish(_isPlayForward);
             }
         }
 
-        protected virtual void OnFinish(bool isReverse)
+        protected virtual void OnFinish(bool isForward)
         {
         }
 
