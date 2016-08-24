@@ -24,9 +24,9 @@ namespace Tangzx.Director
             target.SetActive(enable);
         }
 
-        public override void FireReverse()
+        public override void EndReverse()
         {
-            base.FireReverse();
+            base.EndReverse();
             target.SetActive(originEnable);
         }
 

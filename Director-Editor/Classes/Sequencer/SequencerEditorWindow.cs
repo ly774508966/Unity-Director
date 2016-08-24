@@ -312,7 +312,7 @@ namespace TangzxInternal
                 {
                     if (init)
                     {
-                        _player.ReadyToPlay();
+                        //_player.ReadyToPlay();
                         _player.Play(_category);
                     }
                     ProcessPreview();
@@ -328,7 +328,7 @@ namespace TangzxInternal
         {
             if (_player)
             {
-                _player.Process(playHeadTime);
+                _player.playTime = playHeadTime;
                 SceneView.RepaintAll();
             }
         }

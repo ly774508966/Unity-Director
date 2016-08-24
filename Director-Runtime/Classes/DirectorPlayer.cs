@@ -12,6 +12,7 @@ namespace Tangzx.Director
         /// 当前播放头时间
         /// </summary>
         private float _playTime;
+        private float _sampleTime;
         /// <summary>
         /// 正在播放的
         /// </summary>
@@ -30,37 +31,17 @@ namespace Tangzx.Director
 
         protected void BeginPlay(IEventContainer[] containers, float totalTime)
         {
-            for (int c = 0; c < containers.Length; c++)
-            {
-                IEventContainer ec = containers[c];
-                var e = ec.GetEnumerator();
-                while (e.MoveNext())
-                {
-                    DirectorEvent evt = e.Current;
-                    evt.isFried = false;
-                    if (evt.time == 0)
-                    {
-                        evt.isFried = true;
-                        evt.Fire(true);
-
-                        if (evt is IRangeEvent)
-                            evt.Process(0);
-                    }
-                }
-            }
-        }
-
-        protected void Play(IEventContainer[] containers, float totalTime)
-        {
             if (_isPlaying)
                 Stop();
 
             OnPlayBegin();
-
-            _playTime = 0;
+            
             _totalTime = totalTime;
-            _playingList.Clear();
             _eventContainers = containers;
+        }
+
+        public void Play()
+        {
             _isPlaying = true;
         }
 
@@ -82,45 +63,54 @@ namespace Tangzx.Director
         public virtual void Stop()
         {
             _playTime = 0;
+            _sampleTime = 0;
             _isPause = false;
             _isPlaying = false;
+            _eventContainers = null;
+            _playingList.Clear();
         }
 
         void Update()
         {
             if (_isPlaying && !_isPause)
             {
-                Tick(Time.deltaTime * timeScale);
+                playTime += Time.deltaTime * timeScale;
             }
-        }
-
-        public void Process(float time)
-        {
-            Tick(time - _playTime);
         }
 
         public float playTime
         {
             get { return _playTime; }
+            set
+            {
+                if (value < 0) value = 0;
+                else if (value > _totalTime) value = _totalTime;
+
+                if (_playTime != value)
+                {
+                    _playTime = value;
+                    Sample();
+                }
+            }
         }
 
-        public void Tick(float dt)
+        public void Sample()
         {
-            Tick(dt, true);
+            Tick(_playTime - _sampleTime, true);
         }
 
         protected void Tick(float dt, bool fireCompleteEvent)
         {
-            if (_eventContainers == null || _eventContainers.Length == 0 || dt == 0)
+            if (_eventContainers == null || _eventContainers.Length == 0)
                 return;
 
-            float newTime = _playTime + dt;
-            float oldTime = _playTime;
+            float newTime = _sampleTime + dt;
+            float oldTime = _sampleTime;
 
-            _playTime = newTime;
+            _sampleTime = newTime;
 
             //正播
-            if (dt > 0)
+            if (dt >= 0)
             {
                 PlayForward(newTime, oldTime, fireCompleteEvent);
             }
@@ -209,7 +199,7 @@ namespace Tangzx.Director
                     p.Process(endTime - p.time, true);
                 }
                 // exit
-                if (p.time >= newTime)
+                if (p.time > newTime)
                 {
                     p.EndReverse();
                     _playingList.RemoveAt(i);
@@ -225,6 +215,7 @@ namespace Tangzx.Director
         protected virtual void OnPlayFinish()
         {
             _isPlaying = false;
+            _isPause = false;
             _playingList.Clear();
         }
 

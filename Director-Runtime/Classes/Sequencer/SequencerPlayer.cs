@@ -15,23 +15,27 @@ namespace Tangzx.Director
         public bool isAutoPlay;
 
         private SequencerCategory _playingCategory;
-        private SequencerCategory _beginCategory;
 
         void Awake()
         {
             ReadyToPlay();
-            if (isAutoPlay) Play();
+            if (isAutoPlay) PlayDefault();
+        }
+
+        public void BeginPlay(string name)
+        {
+            SequencerCategory sc = data.GetCategoryByName(name);
+            BeginPlay(sc);
         }
 
         public void BeginPlay(SequencerCategory sc)
         {
             sc.ReadyToPlay();
-            _beginCategory = sc;
-            
+
             BeginPlay(GetVaildConatainers(sc), sc.totalDuration);
         }
 
-        public void Play()
+        public void PlayDefault()
         {
             Play(data.defaultCategory);
         }
@@ -59,18 +63,12 @@ namespace Tangzx.Director
 
         void PlayCategory(SequencerCategory sc, bool isForward)
         {
-            if (_beginCategory != sc && isForward)
-                BeginPlay(sc);
-            _beginCategory = sc;
+            BeginPlay(sc);
             _playingCategory = sc;
             
-            timeScale = 1;
-            Play(GetVaildConatainers(sc), sc.totalDuration);
-            if (isForward == false)
-            {
-                timeScale = -1;
-                Tick(sc.totalDuration, false);
-            }
+            timeScale = -1;
+            playTime = sc.totalDuration;
+            Play();
         }
 
         IEventContainer[] GetVaildConatainers(SequencerCategory sc)
@@ -102,7 +100,6 @@ namespace Tangzx.Director
         protected override void OnPlayBegin()
         {
             base.OnPlayBegin();
-            _beginCategory = null;
             if (onBegin != null && _playingCategory)
                 onBegin(_playingCategory);
         }
@@ -110,15 +107,8 @@ namespace Tangzx.Director
         protected override void OnPlayFinish()
         {
             base.OnPlayFinish();
-            _beginCategory = null;
             if (onFinish != null && _playingCategory)
                 onFinish(_playingCategory);
-        }
-
-        public override void Stop()
-        {
-            _beginCategory = null;
-            base.Stop();
         }
     }
 }
