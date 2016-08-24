@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Classes\Data\EventTreeItem.cs" />
     <Compile Include="Classes\Draggable.cs" />
+    <Compile Include="Classes\Drawers\AnimationEvaluatorDrawer.cs" />
     <Compile Include="Classes\EventInspector.cs" />
     <Compile Include="Classes\EventSheetEditor.cs" />
     <Compile Include="Classes\AttributeTool.cs" />
@@ -86,7 +87,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="Classes\Editors\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
