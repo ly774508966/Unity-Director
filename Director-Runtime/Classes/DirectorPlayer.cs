@@ -5,6 +5,12 @@ namespace Tangzx.Director
 {
     public abstract class DirectorPlayer : MonoBehaviour
     {
+        public enum LoopType
+        {
+            Restart = 0,
+            Yoyo = 1
+        }
+
         private bool _isPlaying;
         private bool _isPause;
 
@@ -24,6 +30,10 @@ namespace Tangzx.Director
 
         private float _timeScale = 1;
 
+        private int _loops;
+
+        private LoopType _loopType;
+
         public virtual void ReadyToPlay()
         {
             
@@ -38,6 +48,8 @@ namespace Tangzx.Director
             
             _totalTime = totalTime;
             _eventContainers = containers;
+            _loops = 1;
+            _loopType = LoopType.Yoyo;
         }
 
         public void Play()
@@ -108,6 +120,12 @@ namespace Tangzx.Director
             {
                 playTime += Time.deltaTime * timeScale;
             }
+        }
+
+        public void SetLoops(int loop, LoopType type)
+        {
+            _loops = loop;
+            _loopType = type;
         }
 
         public void Sample()
