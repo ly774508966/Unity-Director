@@ -305,14 +305,11 @@ namespace TangzxInternal
             if (windowState.isPreview)
             {
                 if (_player == null)
-                    _player = _data.GetComponent<SequencerPlayer>();
-                if (_player == null)
-                    _player = _data.gameObject.AddComponent<SequencerPlayer>();
-                if (_player)
+                    _player = new SequencerPlayer(_data);
+                if (_player != null)
                 {
                     if (init)
                     {
-                        //_player.ReadyToPlay();
                         _player.BeginPlay(_category);
                     }
                     ProcessPreview();
@@ -326,7 +323,7 @@ namespace TangzxInternal
 
         void ProcessPreview()
         {
-            if (_player)
+            if (_player != null)
             {
                 _player.playTime = playHeadTime;
                 SceneView.RepaintAll();
@@ -336,7 +333,7 @@ namespace TangzxInternal
         void StopPreview()
         {
             windowState.isPreview = false;
-            if (_player)
+            if (_player != null)
             {
                 _player.StopAndRecover();
                 _player = null;
@@ -361,10 +358,11 @@ namespace TangzxInternal
         public override void OnDragPlayHeadEnd()
         {
             base.OnDragPlayHeadEnd();
-            if (windowState.isPreview && _player)
+            if (windowState.isPreview && _player != null)
             {
                 _player.StopAndRecover();
                 _player = null;
+                SceneView.RepaintAll();
             }
         }
 

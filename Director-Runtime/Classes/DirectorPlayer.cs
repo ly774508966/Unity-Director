@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Tangzx.Director
 {
-    public abstract class DirectorPlayer : MonoBehaviour
+    public class DirectorPlayer
     {
         public enum LoopType
         {
@@ -35,11 +35,6 @@ namespace Tangzx.Director
         private LoopType _loopType;
 
         private int _curLoop;
-
-        public virtual void ReadyToPlay()
-        {
-            
-        }
 
         protected void BeginPlay(IEventContainer[] containers, float totalTime)
         {
@@ -141,11 +136,11 @@ namespace Tangzx.Director
             _playingList.Clear();
         }
 
-        void Update()
+        public void Update(float dt)
         {
             if (_isPlaying && !_isPause)
             {
-                playTime += Time.deltaTime * timeScale;
+                playTime += dt * timeScale;
             }
         }
 

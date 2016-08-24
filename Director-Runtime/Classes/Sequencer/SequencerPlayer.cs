@@ -12,18 +12,11 @@ namespace Tangzx.Director
 
         public SequencerData data;
 
-        public bool isAutoPlay;
-
         private SequencerCategory _playingCategory;
 
-        void Awake()
+        public SequencerPlayer(SequencerData data)
         {
-            ReadyToPlay();
-            if (isAutoPlay)
-            {
-                BeginPlay(data.defaultCategory);
-                PlayForward();
-            }
+            this.data = data;
         }
 
         public void BeginPlay()
@@ -62,27 +55,6 @@ namespace Tangzx.Director
             }
 
             return list.ToArray();
-        }
-
-        public override void ReadyToPlay()
-        {
-            base.ReadyToPlay();
-            if (data == null)
-                data = GetComponent<SequencerData>();
-        }
-
-        protected override void OnPlayBegin()
-        {
-            base.OnPlayBegin();
-            if (onBegin != null && _playingCategory)
-                onBegin(_playingCategory);
-        }
-
-        protected override void OnForwardFinish()
-        {
-            base.OnForwardFinish();
-            if (onFinish != null && _playingCategory)
-                onFinish(_playingCategory);
         }
     }
 }
