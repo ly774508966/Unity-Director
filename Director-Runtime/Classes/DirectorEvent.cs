@@ -20,7 +20,7 @@ namespace Tangzx.Director
         [SerializeField]
         private float _duration = 1;
 
-        public float duration
+        public virtual float duration
         {
             set { _duration = value; }
             get
@@ -33,6 +33,11 @@ namespace Tangzx.Director
         }
 
         public bool isRangeEvent { get { return this is IRangeEvent; } }
+
+        public virtual void GetReady()
+        {
+
+        }
 
         public virtual void Fire(bool isFristTime)
         {

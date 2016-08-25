@@ -33,7 +33,7 @@ namespace Tangzx.Director
 
         public void BeginPlay(SequencerCategory sc)
         {
-            sc.ReadyToPlay();
+            sc.GetReady();
 
             BeginPlay(GetVaildConatainers(sc), sc.totalDuration);
         }

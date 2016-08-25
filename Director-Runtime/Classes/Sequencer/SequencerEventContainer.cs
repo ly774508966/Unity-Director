@@ -20,11 +20,6 @@ namespace Tangzx.Director
             }
         }
 
-        void Awake()
-        {
-            ReadyToPlay();
-        }
-
         public List<DirectorEvent>.Enumerator GetEnumerator()
         {
             return events.GetEnumerator();
@@ -35,7 +30,7 @@ namespace Tangzx.Director
             events.Sort();
         }
 
-        public void ReadyToPlay()
+        public void GetReady()
         {
             Sort();
             for (int i = 0; i < events.Count; i++)
@@ -46,6 +41,7 @@ namespace Tangzx.Director
                     ISequencerEvent se = e as ISequencerEvent;
                     se.container = this;
                 }
+                e.GetReady();
             }
         }
     }

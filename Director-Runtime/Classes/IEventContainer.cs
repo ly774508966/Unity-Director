@@ -11,7 +11,7 @@ namespace Tangzx.Director
 
         List<DirectorEvent> list { get; }
 
-        void ReadyToPlay();
+        void GetReady();
 
         void Sort();
     }

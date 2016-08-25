@@ -6,5 +6,7 @@
     public interface IRangeEvent
     {
         void Process(float time, bool isReverse = false);
+
+        float duration { get; set; }
     }
 }
